@@ -1,0 +1,190 @@
+import { Officer } from "../schemas/officer";
+import {
+	createColumnHelper,
+	FilterFn,
+	SortingFn,
+	sortingFns,
+} from "@tanstack/react-table";
+import { UserAvatar } from "@/components/Profile/UserAvatar";
+import {
+	compareItems,
+	RankingInfo,
+	rankItem,
+} from "@tanstack/match-sorter-utils";
+import { RoleList } from "@/components/Profile/RoleList";
+import Link from "next/link";
+
+export const divisions = [
+	"All",
+	"Media",
+	"Research",
+	"Development",
+	"Projects",
+	"Education",
+	"Executive",
+	"Community",
+	"HackUTD",
+	"Industry",
+];
+
+export const currentDivisionFilter: FilterFn<Officer> = (
+	row,
+	_,
+	filterValue
+) => {
+	if (filterValue === "") return true;
+	const currentRole = row.original.roles.filter(
+		(role) => role.endDate === null
+	);
+	return currentRole.some((role) => role.division === filterValue);
+};
+
+export const fuzzyFilter: FilterFn<Officer> = (
+	row,
+	columnId,
+	filterValue,
+	addMeta
+) => {
+	const itemRank = rankItem<Officer>(row.getValue(columnId), filterValue, {
+		accessors: [
+			(item) => `${item.firstName} ${item.lastName}`,
+			(item) => item.netId,
+		],
+	});
+	addMeta({ itemRank });
+	return itemRank.passed;
+};
+
+export const fuzzySort: SortingFn<Officer> = (rowA, rowB, columnId) => {
+	let dir = 0;
+
+	// Only sort by rank if the column has ranking information
+	if (rowA.columnFiltersMeta[columnId]) {
+		dir = compareItems(
+			rowA.columnFiltersMeta[columnId]?.itemRank!,
+			rowB.columnFiltersMeta[columnId]?.itemRank!
+		);
+	}
+
+	// Provide an alphanumeric fallback for when the item ranks are equal
+	return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
+};
+
+const termSort: SortingFn<Officer> = (a, b) => {
+	const aYear = a.original.joinDate.year;
+	const bYear = b.original.joinDate.year;
+	if (aYear > bYear) return 1;
+	if (aYear < bYear) return -1;
+
+	const aTerm = a.original.joinDate.term;
+	const bTerm = b.original.joinDate.term;
+	const termOrder = ["Spring", "Summer", "Fall"] as const;
+	const aTermIndex = termOrder.indexOf(aTerm);
+	const bTermIndex = termOrder.indexOf(bTerm);
+	if (aTermIndex > bTermIndex) return 1;
+	if (aTermIndex < bTermIndex) return -1;
+
+	return 0;
+};
+
+const columnHelper = createColumnHelper<Officer>();
+
+export const columns = [
+	columnHelper.accessor(
+		(row) => `${row.firstName} ${row.lastName} ${row.netId}`,
+		{
+			id: "name",
+			header: () => <span className="text-gray-400">Name</span>,
+			cell: ({ row }) => {
+				const officer = row.original;
+				return (
+					<Link
+						className="flex w-[280px] min-w-[280px] items-center gap-4"
+						href={`/directory/${officer.id}`}
+					>
+						<UserAvatar
+							firstName={officer.firstName}
+							lastName={officer.lastName}
+							src=""
+							className="h-10 w-10 shrink-0 bg-white/10"
+						/>
+						<div className="min-w-0 truncate">
+							<span className="block truncate font-medium text-white">
+								{officer.firstName} {officer.lastName}
+							</span>
+							<span className="block truncate text-sm text-gray-400">
+								{officer.netId}
+							</span>
+						</div>
+					</Link>
+				);
+			},
+		}
+	),
+	columnHelper.accessor("joinDate", {
+		header: () => <span className="text-gray-400">Join Date</span>,
+		cell: ({ row }) => (
+			<div className="w-[160px] min-w-[160px]">
+				<div className="flex flex-col">
+					<span className="truncate text-xs text-gray-400">
+						{row.original.joinDate.term} {row.original.joinDate.year}
+					</span>
+				</div>
+			</div>
+		),
+		sortingFn: termSort,
+	}),
+	columnHelper.accessor("expectedGrad", {
+		header: () => <span className="text-gray-400">Expected Graduation</span>,
+		cell: ({ row }) => (
+			<div className="w-[180px] min-w-[180px]">
+				<div className="flex flex-col">
+					<span className="truncate text-white">
+						{row.original.expectedGrad.term} {row.original.expectedGrad.year}
+					</span>
+					<span className="truncate text-xs text-gray-400">
+						{row.original.yearStanding}
+					</span>
+				</div>
+			</div>
+		),
+		sortingFn: termSort,
+	}),
+	columnHelper.accessor("roles", {
+		header: () => <span className="text-gray-400">Current Roles</span>,
+		filterFn: "currentDivision",
+		cell: ({ row }) => (
+			<div className="w-[320px] min-w-[320px]">
+				<div className="flex flex-wrap gap-1.5">
+					<RoleList roles={row.original.roles} />
+				</div>
+			</div>
+		),
+		sortingFn: (a, b) => {
+			const aRoles = a.original.roles.filter((role) => role.endDate === null);
+			const bRoles = b.original.roles.filter((role) => role.endDate === null);
+			if (aRoles.length === bRoles.length) return 0;
+			return aRoles.length > bRoles.length ? 1 : -1;
+		},
+	}),
+	columnHelper.accessor("isActive", {
+		header: () => <span className="text-gray-400">Active</span>,
+		cell: ({ row }) => (
+			<div className="w-[160px] min-w-[160px]">
+				<span className="text-white">
+					{row.original.isActive ? "🟢" : "🔴"}
+				</span>
+			</div>
+		),
+	}),
+];
+
+declare module "@tanstack/react-table" {
+	interface FilterFns {
+		fuzzy: FilterFn<Officer>;
+		currentDivision: FilterFn<Officer>;
+	}
+	interface FilterMeta {
+		itemRank: RankingInfo;
+	}
+}
