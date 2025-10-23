@@ -1,5 +1,5 @@
 import { DirectoryProfileTabs } from "@/components/Directory/DirectoryProfileTabs";
-import { ReadOnlyProfileView } from "@/components/Directory/ReadOnlyProfileView";
+import { ProfileView } from "@/components/Profile/ProfileView";
 import { TimeLine } from "@/components/Profile/TimeLine";
 import { getAuthenticatedAppForUser } from "@/lib/firebase/server";
 import { getQueryClient } from "@/lib/queryClient";
@@ -45,7 +45,7 @@ export default async function Page({ params }: Props) {
 		<HydrationBoundary state={dehydrate(queryClient)}>
 			<div className="flex justify-around gap-8 px-2">
 				<div className="container flex w-2/3 flex-col gap-8 pb-24">
-					<ReadOnlyProfileView officerId={userId} />
+					<ProfileView officerId={userId} />
 					<DirectoryProfileTabs officerId={userId} />
 				</div>
 				<div className="container w-1/3 flex-col">

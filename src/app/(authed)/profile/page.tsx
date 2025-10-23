@@ -35,7 +35,7 @@ export default async function Page({ searchParams }: Props) {
 		<HydrationBoundary state={dehydrate(queryClient)}>
 			<div className="flex justify-around gap-8 px-2">
 				<div className="container flex w-2/3 flex-col gap-8 pb-24">
-					<ProfileView />
+					<ProfileView editable />
 					<ProfileTabs />
 				</div>
 				<div className="container w-1/3 flex-col">

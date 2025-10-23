@@ -49,12 +49,12 @@ export function ProfileTabs() {
 					value="professional"
 					className="mt-6 flex flex-col gap-y-6"
 				>
-					<InternshipList />
-					<ResearchList />
+					<InternshipList editable />
+					<ResearchList editable />
 					{/* <ResumeUpload  /> */}
 				</TabsContent>
 				<TabsContent value="academics" className="mt-6">
-					<AcademicInfo />
+					<AcademicInfo editable />
 				</TabsContent>
 			</Tabs>
 		</div>

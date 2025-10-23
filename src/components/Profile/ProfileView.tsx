@@ -1,17 +1,25 @@
 "use client";
-import { Officer } from "../../schemas/officer";
 import { RoleList } from "./RoleList";
 import { ExternalLinks } from "../Socials/ExternalLinks";
 import { ImageUpdate } from "./ImageUpdate";
-import { getCurrentOfficerQueryOptions } from "@/queries/officer";
+import { UserAvatar } from "./UserAvatar";
+import {
+	getCurrentOfficerQueryOptions,
+	getOfficerByIdQueryOptions,
+} from "@/queries/officer";
 import { useQuery } from "@tanstack/react-query";
 
 type Props = {
-	officer: Officer;
+	officerId?: string;
+	editable?: boolean;
 };
 
-export function ProfileView() {
-	const { data: officer } = useQuery(getCurrentOfficerQueryOptions);
+export function ProfileView({ officerId, editable = false }: Props) {
+	const { data: officer } = useQuery(
+		officerId
+			? getOfficerByIdQueryOptions(officerId)
+			: getCurrentOfficerQueryOptions
+	);
 
 	if (!officer) {
 		return null;
@@ -30,7 +38,15 @@ export function ProfileView() {
 					</div>
 				</div>
 				<div className="relative shrink-0">
-					<ImageUpdate />
+					{editable ? (
+						<ImageUpdate />
+					) : (
+						<UserAvatar
+							firstName={officer.firstName}
+							lastName={officer.lastName}
+							src=""
+						/>
+					)}
 				</div>
 			</div>
 

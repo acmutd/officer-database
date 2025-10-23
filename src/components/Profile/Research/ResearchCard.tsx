@@ -6,12 +6,17 @@ import { EditResearchModal } from "./EditResearchModal";
 
 type Props = {
 	research: Research;
-	index: number;
+	index?: number;
+	editable?: boolean;
 };
 
-export function ResearchCard({ research, index }: Props) {
+export function ResearchCard({ research, index, editable = false }: Props) {
 	return (
-		<Card className="group relative border-white/10 bg-gradient-to-br from-white/[0.03] to-white/[0.06] transition-colors hover:border-white/20">
+		<Card
+			className={`${
+				editable ? "group relative" : ""
+			} border-white/10 bg-gradient-to-br from-white/3 to-white/6 transition-colors hover:border-white/20`}
+		>
 			<CardContent className="flex items-start justify-between p-6">
 				<div className="space-y-3">
 					<div className="flex items-center gap-3">
@@ -46,10 +51,12 @@ export function ResearchCard({ research, index }: Props) {
 					</div>
 				</div>
 
-				<div className="flex gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-					<EditResearchModal research={research} index={index} />
-					<DeleteResearchModal research={research} index={index} />
-				</div>
+				{editable && index !== undefined && (
+					<div className="flex gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+						<EditResearchModal research={research} index={index} />
+						<DeleteResearchModal research={research} index={index} />
+					</div>
+				)}
 			</CardContent>
 		</Card>
 	);

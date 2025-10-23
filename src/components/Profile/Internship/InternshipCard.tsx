@@ -6,11 +6,17 @@ import { Briefcase, Calendar } from "lucide-react";
 
 type Props = {
 	internship: Internships;
-	index: number;
+	index?: number;
+	editable?: boolean;
 };
-export function InternshipCard({ internship, index }: Props) {
+
+export function InternshipCard({ internship, index, editable = false }: Props) {
 	return (
-		<Card className="group relative border-white/10 bg-gradient-to-br from-white/[0.03] to-white/[0.06] transition-colors hover:border-white/20">
+		<Card
+			className={`${
+				editable ? "group relative" : ""
+			} border-white/10 bg-gradient-to-br from-white/3 to-white/6 transition-colors hover:border-white/20`}
+		>
 			<CardContent className="flex items-start justify-between p-6">
 				<div className="space-y-3">
 					<div className="flex items-center gap-3">
@@ -37,10 +43,12 @@ export function InternshipCard({ internship, index }: Props) {
 					</div>
 				</div>
 
-				<div className="flex gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-					<EditInternshipModal internship={internship} index={index} />
-					<DeleteInternshipModal internship={internship} index={index} />
-				</div>
+				{editable && index !== undefined && (
+					<div className="flex gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+						<EditInternshipModal internship={internship} index={index} />
+						<DeleteInternshipModal internship={internship} index={index} />
+					</div>
+				)}
 			</CardContent>
 		</Card>
 	);

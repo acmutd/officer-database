@@ -1,8 +1,8 @@
 "use client";
-import { ReadOnlyAcademicInfo } from "./ReadOnlyAcademicInfo";
-import { ReadOnlyInternshipList } from "./ReadOnlyInternshipList";
+import { AcademicInfo } from "../Profile/AcademicInfo";
+import { InternshipList } from "../Profile/Internship/InternshipList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { ReadOnlyResearchList } from "./ReadOnlyResearchList";
+import { ResearchList } from "../Profile/Research/ResearchList";
 import { RoleInfo } from "./RoleInfo";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -51,11 +51,11 @@ export function DirectoryProfileTabs({ officerId }: Props) {
 					value="professional"
 					className="mt-6 flex flex-col gap-y-6"
 				>
-					<ReadOnlyInternshipList officerId={officerId} />
-					<ReadOnlyResearchList officerId={officerId} />
+					<InternshipList officerId={officerId} />
+					<ResearchList officerId={officerId} />
 				</TabsContent>
 				<TabsContent value="academics" className="mt-6">
-					<ReadOnlyAcademicInfo officerId={officerId} />
+					<AcademicInfo officerId={officerId} />
 				</TabsContent>
 				<TabsContent value="roles" className="mt-6">
 					<RoleInfo officerId={officerId} />
