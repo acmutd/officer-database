@@ -10,7 +10,6 @@ import { auth, googleProvider } from "@/lib/firebase/client";
 import { useRouter } from "next/navigation";
 import { getOrCreateOfficer } from "@/functions/officer";
 import { Officer } from "@/schemas/officer";
-import { deleteCookie } from "cookies-next";
 import { getCurrentOfficerQueryOptions } from "@/queries/officer";
 
 const authFunctions = {
@@ -74,7 +73,6 @@ export function useAuth() {
 		onSuccess: () => {
 			queryClient.setQueryData(["auth", "user"], null);
 			queryClient.removeQueries(getCurrentOfficerQueryOptions);
-			deleteCookie("__session");
 			queryClient.clear();
 			router.push("/login");
 		},

@@ -105,7 +105,7 @@ export const columns = [
 						<UserAvatar
 							firstName={officer.firstName}
 							lastName={officer.lastName}
-							src=""
+							officerId={officer.id}
 							className="h-10 w-10 shrink-0 bg-white/10"
 						/>
 						<div className="min-w-0 truncate">

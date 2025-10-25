@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Providers from "@/lib/providers";
+import { Toaster } from "@/components/ui/sonner";
 
 const gilroy = localFont({
 	src: [
@@ -94,6 +95,7 @@ export default function RootLayout({
 			<body className={`${gilroy.variable} bg-[#151515] bg-cover bg-center`}>
 				<div className="fixed inset-0 -z-10 bg-[url('/Background.png')] bg-cover bg-center bg-no-repeat" />
 				<Providers>{children}</Providers>
+				<Toaster richColors />
 			</body>
 		</html>
 	);

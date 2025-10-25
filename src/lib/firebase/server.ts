@@ -28,5 +28,5 @@ export async function getAuthenticatedAppForUser() {
 		name: auth.currentUser?.displayName ?? null,
 	};
 
-	return { firebaseServerApp, user, auth };
+	return { firebaseServerApp, user, auth, authIdToken };
 }

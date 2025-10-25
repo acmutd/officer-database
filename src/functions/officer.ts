@@ -69,3 +69,16 @@ export async function getAllOfficers() {
 	const res = await fetchWithAuth(`${process.env.API_URL}/officers`, "GET");
 	return z.array(OfficerSchema).parse(res);
 }
+
+export async function getOfficerAvatar(officerId: string): Promise<string> {
+	try {
+		const res = await fetchWithAuth(
+			`${process.env.API_URL}/officers/${officerId}/image`,
+			"GET"
+		);
+		return res.image ?? "/peechi.png";
+	} catch (error) {
+		console.error("Failed to fetch officer avatar:", error);
+		return "/peechi.png";
+	}
+}
