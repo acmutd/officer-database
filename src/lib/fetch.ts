@@ -3,11 +3,26 @@ import { getAuthenticatedAppForUser } from "./firebase/server";
 export async function fetchWithAuth(
 	url: string,
 	method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
-	body?: any
+	body?: any,
+	authParams?: { authIdToken: string; userId: string }
 ) {
-	const { authIdToken, user } = await getAuthenticatedAppForUser();
+	let authIdToken: string;
+	let userId: string;
 
-	if (!authIdToken || !user.id) {
+	if (authParams) {
+		authIdToken = authParams.authIdToken;
+		userId = authParams.userId;
+	} else {
+		const { authIdToken: token, user } = await getAuthenticatedAppForUser();
+		if (!token || !user?.id) {
+			console.error("No ID token found");
+			return null;
+		}
+		authIdToken = token;
+		userId = user.id;
+	}
+
+	if (!authIdToken || !userId) {
 		console.error("No ID token found");
 		return null;
 	}
@@ -17,7 +32,7 @@ export async function fetchWithAuth(
 		headers: {
 			"Content-Type": "application/json",
 			Authorization: `Bearer ${authIdToken}`,
-			"X-User-Id": user.id,
+			"X-User-Id": userId,
 		},
 	});
 	if (!res.ok) {
@@ -30,10 +45,25 @@ export async function fetchWithAuth(
 export async function fetchWithAuthFormData(
 	url: string,
 	method: string,
-	data: FormData
+	data: FormData,
+	authParams?: { authIdToken: string; userId: string }
 ) {
-	const { authIdToken, user } = await getAuthenticatedAppForUser();
-	if (!authIdToken || !user.id) {
+	let authIdToken: string;
+	let userId: string;
+
+	if (authParams) {
+		authIdToken = authParams.authIdToken;
+		userId = authParams.userId;
+	} else {
+		const { authIdToken: token, user } = await getAuthenticatedAppForUser();
+		if (!token || !user?.id) {
+			throw new Error("No ID token found");
+		}
+		authIdToken = token;
+		userId = user.id;
+	}
+
+	if (!authIdToken || !userId) {
 		throw new Error("No ID token found");
 	}
 	const res = await fetch(url, {
@@ -41,7 +71,7 @@ export async function fetchWithAuthFormData(
 		body: data,
 		headers: {
 			Authorization: `Bearer ${authIdToken}`,
-			"X-User-Id": user.id,
+			"X-User-Id": userId,
 		},
 	});
 	if (!res.ok) {
