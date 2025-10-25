@@ -39,12 +39,16 @@ export function ProfileView({ officerId, editable = false }: Props) {
 				</div>
 				<div className="relative shrink-0">
 					{editable ? (
-						<ImageUpdate />
-					) : (
-						<UserAvatar
+						<ImageUpdate
+							officerId={officer.id}
 							firstName={officer.firstName}
 							lastName={officer.lastName}
-							src=""
+						/>
+					) : (
+						<UserAvatar
+							officerId={officer.id}
+							firstName={officer.firstName}
+							lastName={officer.lastName}
 						/>
 					)}
 				</div>

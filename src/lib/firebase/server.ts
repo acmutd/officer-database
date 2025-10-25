@@ -5,6 +5,13 @@ import { initializeServerApp, initializeApp } from "firebase/app";
 
 import { getAuth } from "firebase/auth";
 import { firebaseConfig } from "./config";
+import { Officer } from "@/schemas/officer";
+import { getOrCreateOfficer } from "@/functions/officer";
+
+type User = {
+	id: string | null;
+	name: string | null;
+};
 
 export async function getAuthenticatedAppForUser() {
 	const authIdToken = (await cookies()).get("__session")?.value;
@@ -23,10 +30,35 @@ export async function getAuthenticatedAppForUser() {
 	const auth = getAuth(firebaseServerApp);
 	await auth.authStateReady();
 
-	const user = {
-		id: auth.currentUser?.uid ?? null,
-		name: auth.currentUser?.displayName ?? null,
+	if (!auth.currentUser) {
+		return {
+			firebaseServerApp,
+			user: { id: null, name: null },
+			auth,
+			authIdToken,
+		};
+	}
+
+	const user: User = {
+		id: auth.currentUser.uid,
+		name: auth.currentUser.displayName!,
 	};
 
-	return { firebaseServerApp, user, auth };
+	// Ensure officer account exists in the database
+	// Only do this if user logged in through Google OAuth
+	if (
+		user.id &&
+		user.name &&
+		authIdToken &&
+		auth.currentUser.providerData.some(
+			(provider) => provider.providerId === "google.com"
+		)
+	) {
+		await getOrCreateOfficer(user.id, user.name, {
+			authIdToken,
+			userId: user.id,
+		});
+	}
+
+	return { firebaseServerApp, user, auth, authIdToken };
 }

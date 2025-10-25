@@ -20,7 +20,7 @@ export default async function Page({ searchParams }: Props) {
 		redirect("/login");
 	}
 	const queryClient = getQueryClient();
-	queryClient.ensureQueryData(getAllOfficersQueryOptions);
+	queryClient.prefetchQuery(getAllOfficersQueryOptions);
 
 	return (
 		<HydrationBoundary state={dehydrate(queryClient)}>

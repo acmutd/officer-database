@@ -6,13 +6,13 @@ import { redirect } from "next/navigation";
 
 export default async function Page() {
 	const { user } = await getAuthenticatedAppForUser();
-	if (user.id !== null) {
+	if (user !== null) {
 		redirect("/");
 	}
 
 	return (
 		<div className="flex min-h-screen w-full flex-col items-center justify-center">
-			<Navbar initialUserId={user.id} />
+			<Navbar initialUserId={null} />
 			<div className="flex w-full flex-col items-center space-y-12 px-8 py-12">
 				<div className="flex flex-col items-center space-y-4">
 					<Image src="/acm.png" alt="ACM Logo" width={112} height={77} />
