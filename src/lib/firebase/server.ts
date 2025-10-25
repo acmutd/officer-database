@@ -45,8 +45,15 @@ export async function getAuthenticatedAppForUser() {
 	};
 
 	// Ensure officer account exists in the database
-	// Pass auth params directly to avoid circular dependency
-	if (user.id && user.name && authIdToken) {
+	// Only do this if user logged in through Google OAuth
+	if (
+		user.id &&
+		user.name &&
+		authIdToken &&
+		auth.currentUser.providerData.some(
+			(provider) => provider.providerId === "google.com"
+		)
+	) {
 		await getOrCreateOfficer(user.id, user.name, {
 			authIdToken,
 			userId: user.id,
