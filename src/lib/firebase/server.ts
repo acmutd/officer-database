@@ -2,19 +2,27 @@ import "server-only";
 
 import { cookies } from "next/headers";
 import { initializeServerApp, initializeApp } from "firebase/app";
-
+import { cache } from "react";
 import { getAuth } from "firebase/auth";
 import { firebaseConfig } from "./config";
-import { Officer } from "@/schemas/officer";
-import { getOrCreateOfficer } from "@/functions/officer";
 
 type User = {
 	id: string | null;
 	name: string | null;
 };
 
-export async function getAuthenticatedAppForUser() {
+export const getAuthenticatedAppForUser = cache(async () => {
 	const authIdToken = (await cookies()).get("__session")?.value;
+
+	// No token = not authenticated
+	if (!authIdToken) {
+		return {
+			firebaseServerApp: null,
+			user: { id: null, name: null },
+			auth: null,
+			authIdToken: null,
+		};
+	}
 
 	// Firebase Server App is a new feature in the JS SDK that allows you to
 	// instantiate the SDK with credentials retrieved from the client & has
@@ -44,21 +52,5 @@ export async function getAuthenticatedAppForUser() {
 		name: auth.currentUser.displayName!,
 	};
 
-	// Ensure officer account exists in the database
-	// Only do this if user logged in through Google OAuth
-	if (
-		user.id &&
-		user.name &&
-		authIdToken &&
-		auth.currentUser.providerData.some(
-			(provider) => provider.providerId === "google.com"
-		)
-	) {
-		await getOrCreateOfficer(user.id, user.name, {
-			authIdToken,
-			userId: user.id,
-		});
-	}
-
 	return { firebaseServerApp, user, auth, authIdToken };
-}
+});

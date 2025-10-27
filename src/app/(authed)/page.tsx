@@ -20,6 +20,7 @@ export default async function Page() {
 						className="w-4/5"
 						width={200}
 						height={200}
+						priority
 					/>
 				</div>
 			</div>

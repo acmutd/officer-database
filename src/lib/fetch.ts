@@ -26,6 +26,7 @@ export async function fetchWithAuth(
 		console.error("No ID token found");
 		return null;
 	}
+
 	const res = await fetch(url, {
 		method,
 		body: JSON.stringify(body),
@@ -34,6 +35,9 @@ export async function fetchWithAuth(
 			Authorization: `Bearer ${authIdToken}`,
 			"X-User-Id": userId,
 		},
+		...(method === "GET" && {
+			next: { revalidate: 60 }, // Revalidate every 60 seconds
+		}),
 	});
 	if (!res.ok) {
 		console.error(await res.text(), res.status);
