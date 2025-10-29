@@ -2,7 +2,6 @@ import {
 	getAllOfficers,
 	getCurrentOfficer,
 	getOfficer,
-	getOfficerAvatar,
 } from "@/functions/officer";
 import { updateAcademicInfo } from "@/functions/academics";
 import { mutationOptions, queryOptions } from "@tanstack/react-query";

@@ -35,9 +35,7 @@ export async function fetchWithAuth(
 			Authorization: `Bearer ${authIdToken}`,
 			"X-User-Id": userId,
 		},
-		...(method === "GET" && {
-			next: { revalidate: 60 }, // Revalidate every 60 seconds
-		}),
+		cache: "no-store",
 	});
 	if (!res.ok) {
 		console.error(await res.text(), res.status);
@@ -77,6 +75,7 @@ export async function fetchWithAuthFormData(
 			Authorization: `Bearer ${authIdToken}`,
 			"X-User-Id": userId,
 		},
+		cache: "no-store",
 	});
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");

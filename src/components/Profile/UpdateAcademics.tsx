@@ -1,10 +1,15 @@
-import { Officer } from "@/schemas/officer";
+import { Officer, StandingSchema, TermSchema } from "@/schemas/officer";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { updateAcademicInfoMutationOptions } from "@/queries/officer";
-import { Label } from "../ui/label";
+import {
+	Field,
+	FieldContent,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "../ui/field";
 import {
 	Select,
 	SelectContent,
@@ -12,162 +17,185 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../ui/select";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
+
+const UpdateAcademicsSchema = z.object({
+	netId: z.string().min(1, "Net ID is required"),
+	creditStanding: StandingSchema,
+	yearStanding: StandingSchema,
+	expectedGrad: TermSchema,
+});
+
+type UpdateAcademicsFormData = z.infer<typeof UpdateAcademicsSchema>;
 
 export default function UpdateAcademics({ officer }: { officer: Officer }) {
-	const [formData, setFormData] = useState<
-		Pick<Officer, "netId" | "creditStanding" | "yearStanding" | "expectedGrad">
-	>({
-		netId: officer.netId,
-		creditStanding: officer.creditStanding,
-		yearStanding: officer.yearStanding,
-		expectedGrad: officer.expectedGrad,
-	});
-
 	const currentYear = new Date().getFullYear();
 	const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
-	const { mutate: updateAcademicInfo } = useMutation(
+
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+		control,
+	} = useForm<UpdateAcademicsFormData>({
+		resolver: zodResolver(UpdateAcademicsSchema),
+		defaultValues: {
+			netId: officer.netId,
+			creditStanding: officer.creditStanding,
+			yearStanding: officer.yearStanding,
+			expectedGrad: officer.expectedGrad,
+		},
+	});
+
+	const { mutate: updateAcademicInfo, isPending } = useMutation(
 		updateAcademicInfoMutationOptions
 	);
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		updateAcademicInfo({ academicInfo: formData });
+
+	const onSubmit = (data: UpdateAcademicsFormData) => {
+		try {
+			updateAcademicInfo({ academicInfo: data });
+			toast.success("Academic info updated successfully");
+		} catch (error) {
+			toast.error("Failed to update academic info");
+		}
 	};
 	return (
-		<form onSubmit={handleSubmit} className="space-y-6">
-			<div className="space-y-1.5">
-				<Label htmlFor="netId" className="text-sm font-medium text-white/70">
-					Net ID
-				</Label>
-				<Input
-					id="netId"
-					value={formData.netId}
-					onChange={(e) =>
-						setFormData({
-							...formData,
-							netId: e.target.value,
-						})
-					}
-					className="border-white/10 bg-white/5 text-white placeholder:text-white/50"
-					placeholder="Enter your Net ID"
-				/>
-			</div>
+		<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+			<FieldGroup>
+				<Field>
+					<FieldContent>
+						<FieldLabel htmlFor="netId" className="text-white/70">
+							Net ID
+						</FieldLabel>
+						<Input
+							id="netId"
+							{...register("netId")}
+							className="border-white/10 bg-white/5 text-white placeholder:text-white/50"
+							placeholder="Enter your Net ID"
+						/>
+						<FieldError errors={[errors.netId]} />
+					</FieldContent>
+				</Field>
 
-			<div className="grid grid-cols-2 gap-4">
-				<div className="space-y-1.5">
-					<Label
-						htmlFor="yearStanding"
-						className="text-sm font-medium text-white/70"
-					>
-						Standing (by year)
-					</Label>
-					<Select
-						value={formData.yearStanding}
-						onValueChange={(value) =>
-							setFormData({
-								...formData,
-								yearStanding: value as Officer["yearStanding"],
-							})
-						}
-					>
-						<SelectTrigger className="border-white/10 bg-white/5 text-white">
-							<SelectValue placeholder="Select year standing" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="Freshman">Freshman</SelectItem>
-							<SelectItem value="Sophomore">Sophomore</SelectItem>
-							<SelectItem value="Junior">Junior</SelectItem>
-							<SelectItem value="Senior">Senior</SelectItem>
-							<SelectItem value="Graduate">Graduate</SelectItem>
-							<SelectItem value="Alumni">Alumni</SelectItem>
-						</SelectContent>
-					</Select>
-				</div>
-				<div className="space-y-1.5">
-					<Label
-						htmlFor="creditStanding"
-						className="text-sm font-medium text-white/70"
-					>
-						Standing (by credit)
-					</Label>
-					<Select
-						value={formData.creditStanding}
-						onValueChange={(value) =>
-							setFormData({
-								...formData,
-								creditStanding: value as Officer["creditStanding"],
-							})
-						}
-					>
-						<SelectTrigger className="border-white/10 bg-white/5 text-white">
-							<SelectValue placeholder="Select credit standing" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="Freshman">Freshman</SelectItem>
-							<SelectItem value="Sophomore">Sophomore</SelectItem>
-							<SelectItem value="Junior">Junior</SelectItem>
-							<SelectItem value="Senior">Senior</SelectItem>
-							<SelectItem value="Graduate">Graduate</SelectItem>
-							<SelectItem value="Alumni">Alumni</SelectItem>
-						</SelectContent>
-					</Select>
-				</div>
-			</div>
+				<div className="grid grid-cols-2 gap-4">
+					<Field>
+						<FieldContent>
+							<FieldLabel htmlFor="yearStanding" className="text-white/70">
+								Standing (by year)
+							</FieldLabel>
+							<Controller
+								name="yearStanding"
+								control={control}
+								render={({ field }) => (
+									<Select value={field.value} onValueChange={field.onChange}>
+										<SelectTrigger className="border-white/10 bg-white/5 text-white">
+											<SelectValue placeholder="Select year standing" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="Freshman">Freshman</SelectItem>
+											<SelectItem value="Sophomore">Sophomore</SelectItem>
+											<SelectItem value="Junior">Junior</SelectItem>
+											<SelectItem value="Senior">Senior</SelectItem>
+											<SelectItem value="Graduate">Graduate</SelectItem>
+											<SelectItem value="Alumni">Alumni</SelectItem>
+										</SelectContent>
+									</Select>
+								)}
+							/>
+							<FieldError errors={[errors.yearStanding]} />
+						</FieldContent>
+					</Field>
 
-			<div className="space-y-1.5">
-				<Label className="text-sm font-medium text-white/70">
-					Expected Graduation
-				</Label>
-				<div className="flex space-x-2">
-					<Select
-						value={formData.expectedGrad.term}
-						onValueChange={(value) =>
-							setFormData({
-								...formData,
-								expectedGrad: {
-									...formData.expectedGrad,
-									term: value as typeof formData.expectedGrad.term,
-								},
-							})
-						}
-					>
-						<SelectTrigger className="border-white/10 bg-white/5 text-white">
-							<SelectValue placeholder="Select term" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="Fall">Fall</SelectItem>
-							<SelectItem value="Spring">Spring</SelectItem>
-							<SelectItem value="Summer">Summer</SelectItem>
-						</SelectContent>
-					</Select>
-					<Select
-						value={formData.expectedGrad.year.toString()}
-						onValueChange={(value) =>
-							setFormData({
-								...formData,
-								expectedGrad: {
-									...formData.expectedGrad,
-									year: parseInt(value),
-								},
-							})
-						}
-					>
-						<SelectTrigger className="border-white/10 bg-white/5 text-white">
-							<SelectValue placeholder="Select year" />
-						</SelectTrigger>
-						<SelectContent>
-							{years.map((year) => (
-								<SelectItem key={year} value={year.toString()}>
-									{year}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
+					<Field>
+						<FieldContent>
+							<FieldLabel htmlFor="creditStanding" className="text-white/70">
+								Standing (by credit)
+							</FieldLabel>
+							<Controller
+								name="creditStanding"
+								control={control}
+								render={({ field }) => (
+									<Select value={field.value} onValueChange={field.onChange}>
+										<SelectTrigger className="border-white/10 bg-white/5 text-white">
+											<SelectValue placeholder="Select credit standing" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="Freshman">Freshman</SelectItem>
+											<SelectItem value="Sophomore">Sophomore</SelectItem>
+											<SelectItem value="Junior">Junior</SelectItem>
+											<SelectItem value="Senior">Senior</SelectItem>
+											<SelectItem value="Graduate">Graduate</SelectItem>
+											<SelectItem value="Alumni">Alumni</SelectItem>
+										</SelectContent>
+									</Select>
+								)}
+							/>
+							<FieldError errors={[errors.creditStanding]} />
+						</FieldContent>
+					</Field>
 				</div>
-			</div>
+
+				<Field>
+					<FieldContent>
+						<FieldLabel className="text-white/70">
+							Expected Graduation
+						</FieldLabel>
+						<div className="flex space-x-2">
+							<div className="flex-1">
+								<Controller
+									name="expectedGrad.term"
+									control={control}
+									render={({ field }) => (
+										<Select value={field.value} onValueChange={field.onChange}>
+											<SelectTrigger className="border-white/10 bg-white/5 text-white">
+												<SelectValue placeholder="Select term" />
+											</SelectTrigger>
+											<SelectContent>
+												<SelectItem value="Fall">Fall</SelectItem>
+												<SelectItem value="Spring">Spring</SelectItem>
+												<SelectItem value="Summer">Summer</SelectItem>
+											</SelectContent>
+										</Select>
+									)}
+								/>
+							</div>
+							<div className="flex-1">
+								<Controller
+									name="expectedGrad.year"
+									control={control}
+									render={({ field }) => (
+										<Select
+											value={field.value.toString()}
+											onValueChange={(value) => field.onChange(parseInt(value))}
+										>
+											<SelectTrigger className="border-white/10 bg-white/5 text-white">
+												<SelectValue placeholder="Select year" />
+											</SelectTrigger>
+											<SelectContent>
+												{years.map((year) => (
+													<SelectItem key={year} value={year.toString()}>
+														{year}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+									)}
+								/>
+							</div>
+						</div>
+						<FieldError
+							errors={[errors.expectedGrad?.term, errors.expectedGrad?.year]}
+						/>
+					</FieldContent>
+				</Field>
+			</FieldGroup>
 
 			<div className="flex justify-end">
-				<Button type="submit" className="bg-acm-gradient">
-					Save Changes
+				<Button type="submit" disabled={isPending} className="bg-acm-gradient">
+					{isPending ? "Saving..." : "Save Changes"}
 				</Button>
 			</div>
 		</form>

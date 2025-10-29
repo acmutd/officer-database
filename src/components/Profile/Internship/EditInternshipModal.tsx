@@ -9,40 +9,57 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+	Field,
+	FieldContent,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "@/components/ui/field";
 import { updateInternshipMutationOptions } from "@/queries/officer/internships";
-import { Internships } from "@/schemas/officer";
+import { Internships, InternshipsSchema } from "@/schemas/officer";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
 
 type Props = {
 	internship: Internships;
 	index: number;
 };
 
+type InternshipFormData = z.infer<typeof InternshipsSchema>;
+
 export function EditInternshipModal({ internship, index }: Props) {
 	const [isOpen, setIsOpen] = useState(false);
-	const [isEditing, setIsEditing] = useState(false);
-	const [formData, setFormData] = useState<Internships>({
-		title: internship.title,
-		company: internship.company,
-		startDate: internship.startDate,
-		endDate: internship.endDate,
+
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<InternshipFormData>({
+		resolver: zodResolver(InternshipsSchema),
+		defaultValues: {
+			title: internship.title,
+			company: internship.company,
+			startDate: internship.startDate,
+			endDate: internship.endDate || "",
+		},
 	});
 
-	const { mutateAsync: updateInternship } = useMutation(
+	const { mutateAsync: updateInternship, isPending } = useMutation(
 		updateInternshipMutationOptions
 	);
 
-	const handleEdit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		setIsEditing(true);
+	const onSubmit = async (data: InternshipFormData) => {
 		try {
-			await updateInternship({ internship: formData, index });
+			await updateInternship({ internship: data, index });
 			setIsOpen(false);
+			toast.success("Internship updated successfully");
 		} catch (error) {
-			console.error("Failed to update internship:", error);
-		} finally {
-			setIsEditing(false);
+			toast.error("Failed to update internship");
 		}
 	};
 
@@ -76,76 +93,67 @@ export function EditInternshipModal({ internship, index }: Props) {
 						Update your internship details below
 					</DialogDescription>
 				</DialogHeader>
-				<form onSubmit={handleEdit} className="space-y-4">
-					<div className="space-y-2">
-						<label htmlFor="title" className="text-white/70">
-							Title
-						</label>
-						<Input
-							id="title"
-							value={formData.title}
-							onChange={(e) =>
-								setFormData({
-									...formData,
-									title: e.target.value,
-								})
-							}
-							required
-							className="border-white/10 bg-white/5 text-white"
-						/>
-					</div>
-					<div className="space-y-2">
-						<label htmlFor="company" className="text-white/70">
-							Company
-						</label>
-						<Input
-							id="company"
-							value={formData.company}
-							onChange={(e) =>
-								setFormData({
-									...formData,
-									company: e.target.value,
-								})
-							}
-							required
-							className="border-white/10 bg-white/5 text-white"
-						/>
-					</div>
-					<div className="space-y-2">
-						<label htmlFor="startDate" className="text-white/70">
-							Start Date
-						</label>
-						<Input
-							id="startDate"
-							type="date"
-							value={formData.startDate}
-							onChange={(e) =>
-								setFormData({
-									...formData,
-									startDate: e.target.value,
-								})
-							}
-							required
-							className="border-white/10 bg-white/5 text-white"
-						/>
-					</div>
-					<div className="space-y-2">
-						<label htmlFor="endDate" className="text-white/70">
-							End Date (Optional)
-						</label>
-						<Input
-							id="endDate"
-							type="date"
-							value={formData.endDate}
-							onChange={(e) =>
-								setFormData({
-									...formData,
-									endDate: e.target.value,
-								})
-							}
-							className="border-white/10 bg-white/5 text-white"
-						/>
-					</div>
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+					<FieldGroup>
+						<Field>
+							<FieldContent>
+								<FieldLabel htmlFor="title" className="text-white/70">
+									Title
+								</FieldLabel>
+								<Input
+									id="title"
+									{...register("title")}
+									className="border-white/10 bg-white/5 text-white"
+								/>
+								<FieldError errors={[errors.title]} />
+							</FieldContent>
+						</Field>
+
+						<Field>
+							<FieldContent>
+								<FieldLabel htmlFor="company" className="text-white/70">
+									Company
+								</FieldLabel>
+								<Input
+									id="company"
+									{...register("company")}
+									className="border-white/10 bg-white/5 text-white"
+								/>
+								<FieldError errors={[errors.company]} />
+							</FieldContent>
+						</Field>
+
+						<Field>
+							<FieldContent>
+								<FieldLabel htmlFor="startDate" className="text-white/70">
+									Start Date
+								</FieldLabel>
+								<Input
+									id="startDate"
+									type="date"
+									{...register("startDate")}
+									className="border-white/10 bg-white/5 text-white"
+								/>
+								<FieldError errors={[errors.startDate]} />
+							</FieldContent>
+						</Field>
+
+						<Field>
+							<FieldContent>
+								<FieldLabel htmlFor="endDate" className="text-white/70">
+									End Date (Optional)
+								</FieldLabel>
+								<Input
+									id="endDate"
+									type="date"
+									{...register("endDate")}
+									className="border-white/10 bg-white/5 text-white"
+								/>
+								<FieldError errors={[errors.endDate]} />
+							</FieldContent>
+						</Field>
+					</FieldGroup>
+
 					<DialogFooter>
 						<Button
 							variant="ghost"
@@ -157,10 +165,10 @@ export function EditInternshipModal({ internship, index }: Props) {
 						</Button>
 						<Button
 							type="submit"
-							disabled={isEditing}
+							disabled={isPending}
 							className="bg-blue-500/10 text-blue-400 hover:bg-blue-500/20"
 						>
-							{isEditing ? "Saving..." : "Save Changes"}
+							{isPending ? "Saving..." : "Save Changes"}
 						</Button>
 					</DialogFooter>
 				</form>

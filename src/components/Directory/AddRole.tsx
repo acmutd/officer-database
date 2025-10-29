@@ -8,29 +8,31 @@ import { Button } from "@/components/ui/button";
 import { DialogHeader } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
+	Field,
+	FieldContent,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "@/components/ui/field";
+import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Officer, Role } from "@/schemas/officer";
+import { RoleSchema } from "@/schemas/officer";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { divisions } from "@/schemas/officer";
 import { addOfficerRoleMutationOptions } from "@/queries/officer/roles";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
 
-const defaultRole: Role = {
-	title: "",
-	division: "",
-	level: 1,
-	startDate: {
-		term: "Fall",
-		year: new Date().getFullYear(),
-	},
-	endDate: null,
-};
+type RoleFormData = z.infer<typeof RoleSchema>;
 
 type Props = {
 	officerId: string;
@@ -38,17 +40,40 @@ type Props = {
 
 export function AddRole({ officerId }: Props) {
 	const [isOpen, setIsOpen] = useState(false);
-	const [formData, setFormData] = useState<Role>(defaultRole);
 
-	const { mutateAsync: addRole } = useMutation(
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+		control,
+		reset,
+	} = useForm<RoleFormData>({
+		resolver: zodResolver(RoleSchema),
+		defaultValues: {
+			title: "",
+			division: "",
+			level: 1,
+			startDate: {
+				term: "Fall",
+				year: new Date().getFullYear(),
+			},
+			endDate: null,
+		},
+	});
+
+	const { mutateAsync: addRole, isPending } = useMutation(
 		addOfficerRoleMutationOptions(officerId)
 	);
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		await addRole({ role: formData, officerId });
-		setIsOpen(false);
-		setFormData(defaultRole);
+	const onSubmit = async (data: RoleFormData) => {
+		try {
+			await addRole({ role: data, officerId });
+			setIsOpen(false);
+			reset();
+			toast.success("Role added successfully");
+		} catch (error) {
+			toast.error("Failed to add role");
+		}
 	};
 
 	return (
@@ -65,135 +90,144 @@ export function AddRole({ officerId }: Props) {
 				<DialogHeader>
 					<DialogTitle className="text-white">Add New Role</DialogTitle>
 				</DialogHeader>
-				<form onSubmit={handleSubmit} className="space-y-4">
-					<div className="space-y-2">
-						<label htmlFor="title" className="text-white/70">
-							Title
-						</label>
-						<Input
-							id="title"
-							value={formData.title}
-							onChange={(e) =>
-								setFormData({
-									...formData,
-									title: e.target.value,
-								})
-							}
-							required
-							className="border-white/10 bg-white/5 text-white"
-						/>
-					</div>
-					<div className="space-y-2">
-						<label htmlFor="division" className="text-white/70">
-							Division
-						</label>
-						<Select
-							value={formData.division}
-							onValueChange={(value) =>
-								setFormData({
-									...formData,
-									division: value,
-								})
-							}
-						>
-							<SelectTrigger className="border-white/10 bg-white/5 text-white">
-								<SelectValue />
-							</SelectTrigger>
-							<SelectContent className="border-white/10 bg-zinc-900">
-								{divisions.map((division) => (
-									<SelectItem
-										key={division}
-										value={division}
-										className="text-white"
-									>
-										{division}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-					</div>
-					<div className="space-y-2">
-						<label htmlFor="level" className="text-white/70">
-							Level
-						</label>
-						<Select
-							value={formData.level.toString()}
-							onValueChange={(value) =>
-								setFormData({
-									...formData,
-									level: parseInt(value),
-								})
-							}
-						>
-							<SelectTrigger className="border-white/10 bg-white/5 text-white">
-								<SelectValue />
-							</SelectTrigger>
-							<SelectContent className="border-white/10 bg-zinc-900">
-								<SelectItem value="1" className="text-white">
-									Officer
-								</SelectItem>
-								<SelectItem value="2" className="text-white">
-									Director
-								</SelectItem>
-								<SelectItem value="3" className="text-white">
-									Executive
-								</SelectItem>
-							</SelectContent>
-						</Select>
-					</div>
-					<div className="space-y-2">
-						<label className="text-white/70">Start Date</label>
-						<div className="flex space-x-2">
-							<Select
-								value={formData.startDate.term}
-								onValueChange={(value) =>
-									setFormData({
-										...formData,
-										startDate: {
-											...formData.startDate,
-											term: value as "Fall" | "Spring" | "Summer",
-										},
-									})
-								}
-							>
-								<SelectTrigger className="border-white/10 bg-white/5 text-white">
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent className="border-white/10 bg-zinc-900">
-									<SelectItem value="Fall" className="text-white">
-										Fall
-									</SelectItem>
-									<SelectItem value="Spring" className="text-white">
-										Spring
-									</SelectItem>
-									<SelectItem value="Summer" className="text-white">
-										Summer
-									</SelectItem>
-								</SelectContent>
-							</Select>
-							<Input
-								type="number"
-								min={2020}
-								value={formData.startDate.year}
-								onChange={(e) =>
-									setFormData({
-										...formData,
-										startDate: {
-											...formData.startDate,
-											year: parseInt(e.target.value),
-										},
-									})
-								}
-								required
-								className="border-white/10 bg-white/5 text-white"
-							/>
-						</div>
-					</div>
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+					<FieldGroup>
+						<Field>
+							<FieldContent>
+								<FieldLabel htmlFor="title" className="text-white/70">
+									Title
+								</FieldLabel>
+								<Input
+									id="title"
+									{...register("title")}
+									className="border-white/10 bg-white/5 text-white"
+									placeholder="Officer title"
+								/>
+								<FieldError errors={[errors.title]} />
+							</FieldContent>
+						</Field>
+
+						<Field>
+							<FieldContent>
+								<FieldLabel htmlFor="division" className="text-white/70">
+									Division
+								</FieldLabel>
+								<Controller
+									name="division"
+									control={control}
+									render={({ field }) => (
+										<Select value={field.value} onValueChange={field.onChange}>
+											<SelectTrigger className="border-white/10 bg-white/5 text-white">
+												<SelectValue placeholder="Select division" />
+											</SelectTrigger>
+											<SelectContent className="border-white/10 bg-zinc-900">
+												{divisions.map((division) => (
+													<SelectItem
+														key={division}
+														value={division}
+														className="text-white"
+													>
+														{division}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+									)}
+								/>
+								<FieldError errors={[errors.division]} />
+							</FieldContent>
+						</Field>
+
+						<Field>
+							<FieldContent>
+								<FieldLabel htmlFor="level" className="text-white/70">
+									Level
+								</FieldLabel>
+								<Controller
+									name="level"
+									control={control}
+									render={({ field }) => (
+										<Select
+											value={field.value.toString()}
+											onValueChange={(value) => field.onChange(parseInt(value))}
+										>
+											<SelectTrigger className="border-white/10 bg-white/5 text-white">
+												<SelectValue />
+											</SelectTrigger>
+											<SelectContent className="border-white/10 bg-zinc-900">
+												<SelectItem value="1" className="text-white">
+													Officer
+												</SelectItem>
+												<SelectItem value="2" className="text-white">
+													Director
+												</SelectItem>
+												<SelectItem value="3" className="text-white">
+													Executive
+												</SelectItem>
+											</SelectContent>
+										</Select>
+									)}
+								/>
+								<FieldError errors={[errors.level]} />
+							</FieldContent>
+						</Field>
+
+						<Field>
+							<FieldContent>
+								<FieldLabel className="text-white/70">Start Date</FieldLabel>
+								<div className="flex space-x-2">
+									<div className="flex-1">
+										<Controller
+											name="startDate.term"
+											control={control}
+											render={({ field }) => (
+												<Select
+													value={field.value}
+													onValueChange={field.onChange}
+												>
+													<SelectTrigger className="border-white/10 bg-white/5 text-white">
+														<SelectValue />
+													</SelectTrigger>
+													<SelectContent className="border-white/10 bg-zinc-900">
+														<SelectItem value="Fall" className="text-white">
+															Fall
+														</SelectItem>
+														<SelectItem value="Spring" className="text-white">
+															Spring
+														</SelectItem>
+														<SelectItem value="Summer" className="text-white">
+															Summer
+														</SelectItem>
+													</SelectContent>
+												</Select>
+											)}
+										/>
+									</div>
+									<div className="flex-1">
+										<Input
+											type="number"
+											min={2020}
+											{...register("startDate.year", {
+												valueAsNumber: true,
+											})}
+											className="border-white/10 bg-white/5 text-white"
+											placeholder="Year"
+										/>
+									</div>
+								</div>
+								<FieldError
+									errors={[errors.startDate?.term, errors.startDate?.year]}
+								/>
+							</FieldContent>
+						</Field>
+					</FieldGroup>
+
 					<Button
 						type="submit"
+						disabled={isPending}
 						className="w-full bg-white/10 text-white hover:bg-white/20"
 					>
-						Add Role
+						{isPending ? "Adding..." : "Add Role"}
 					</Button>
 				</form>
 			</DialogContent>

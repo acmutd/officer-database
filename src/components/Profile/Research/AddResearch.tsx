@@ -7,51 +7,69 @@ import {
 import { Button } from "../../ui/button";
 import { DialogHeader } from "../../ui/dialog";
 import { Input } from "../../ui/input";
+import {
+	Field,
+	FieldContent,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "@/components/ui/field";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { addResearchMutationOptions } from "@/queries/officer/research";
-import { Research } from "@/schemas/officer";
+import { ResearchSchema } from "@/schemas/officer";
 import { Plus } from "lucide-react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
+
+// Internal form schema with objects for useFieldArray compatibility
+const ResearchFormSchema = ResearchSchema.extend({
+	principalInvestigator: z.array(z.object({ name: z.string().min(1) })),
+});
+
+type ResearchFormData = z.infer<typeof ResearchFormSchema>;
 
 export function AddResearch() {
 	const [isOpen, setIsOpen] = useState(false);
-	const [formData, setFormData] = useState<Research>({
-		title: "",
-		lab: "",
-		principalInvestigator: [""],
-		startDate: "",
+
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+		control,
+		reset,
+	} = useForm<ResearchFormData>({
+		resolver: zodResolver(ResearchFormSchema),
+		defaultValues: {
+			principalInvestigator: [{ name: "" }],
+		},
 	});
 
-	const { mutateAsync: addResearch } = useMutation(addResearchMutationOptions);
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: "principalInvestigator",
+	});
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		await addResearch({ research: formData });
-		setIsOpen(false);
-		setFormData({
-			title: "",
-			lab: "",
-			principalInvestigator: [""],
-			startDate: "",
-		});
-	};
+	const { mutateAsync: addResearch, isPending } = useMutation(
+		addResearchMutationOptions
+	);
 
-	const handlePIChange = (index: number, value: string) => {
-		const newPIs = [...formData.principalInvestigator];
-		newPIs[index] = value;
-		setFormData({ ...formData, principalInvestigator: newPIs });
-	};
-
-	const addPI = () => {
-		setFormData({
-			...formData,
-			principalInvestigator: [...formData.principalInvestigator, ""],
-		});
-	};
-
-	const removePI = (index: number) => {
-		const newPIs = formData.principalInvestigator.filter((_, i) => i !== index);
-		setFormData({ ...formData, principalInvestigator: newPIs });
+	const onSubmit = async (data: ResearchFormData) => {
+		try {
+			// Transform the data to match the schema (string array instead of object array)
+			const transformedData = {
+				...data,
+				principalInvestigator: data.principalInvestigator.map((pi) => pi.name),
+			};
+			await addResearch({ research: transformedData });
+			setIsOpen(false);
+			reset();
+			toast.success("Research added successfully");
+		} catch (error) {
+			toast.error("Failed to add research");
+		}
 	};
 
 	return (
@@ -64,130 +82,132 @@ export function AddResearch() {
 					<Plus className="h-4 w-4 text-white" />
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="border-white/10 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl">
+			<DialogContent className="max-h-[90vh] overflow-y-auto border-white/10 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl">
 				<DialogHeader>
 					<DialogTitle className="text-white">Add New Research</DialogTitle>
 				</DialogHeader>
-				<form onSubmit={handleSubmit} className="space-y-4">
-					<div className="space-y-2">
-						<label htmlFor="title" className="text-white/70">
-							Title
-						</label>
-						<Input
-							id="title"
-							value={formData.title}
-							onChange={(e) =>
-								setFormData({
-									...formData,
-									title: e.target.value,
-								})
-							}
-							required
-							className="border-white/10 bg-white/5 text-white"
-						/>
-					</div>
-					<div className="space-y-2">
-						<label htmlFor="lab" className="text-white/70">
-							Lab
-						</label>
-						<Input
-							id="lab"
-							value={formData.lab}
-							onChange={(e) =>
-								setFormData({
-									...formData,
-									lab: e.target.value,
-								})
-							}
-							required
-							className="border-white/10 bg-white/5 text-white"
-						/>
-					</div>
-					<div className="space-y-2">
-						<label className="text-white/70">Principal Investigators</label>
-						{formData.principalInvestigator.map((pi, index) => (
-							<div key={index} className="flex gap-2">
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+					<FieldGroup>
+						<Field>
+							<FieldContent>
+								<FieldLabel htmlFor="title" className="text-white/70">
+									Title
+								</FieldLabel>
 								<Input
-									value={pi}
-									onChange={(e) => handlePIChange(index, e.target.value)}
-									required
+									id="title"
+									{...register("title")}
 									className="border-white/10 bg-white/5 text-white"
-									placeholder="Principal Investigator name"
+									placeholder="Research project title"
 								/>
-								{formData.principalInvestigator.length > 1 && (
-									<Button
-										type="button"
-										variant="ghost"
-										size="icon"
-										onClick={() => removePI(index)}
-										className="h-10 w-10 text-red-400 hover:bg-red-500/10"
-									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											strokeWidth="2"
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											className="h-4 w-4"
+								<FieldError errors={[errors.title]} />
+							</FieldContent>
+						</Field>
+
+						<Field>
+							<FieldContent>
+								<FieldLabel htmlFor="lab" className="text-white/70">
+									Lab
+								</FieldLabel>
+								<Input
+									id="lab"
+									{...register("lab")}
+									className="border-white/10 bg-white/5 text-white"
+									placeholder="Laboratory name"
+								/>
+								<FieldError errors={[errors.lab]} />
+							</FieldContent>
+						</Field>
+
+						<div className="space-y-2">
+							<FieldLabel className="text-white/70">
+								Principal Investigators
+							</FieldLabel>
+							{fields.map((field, index) => (
+								<div key={field.id} className="flex gap-2">
+									<div className="flex-1">
+										<Input
+											{...register(
+												`principalInvestigator.${index}.name` as const
+											)}
+											className="border-white/10 bg-white/5 text-white"
+											placeholder="Principal Investigator name"
+										/>
+										<FieldError
+											errors={[errors.principalInvestigator?.[index]?.name]}
+										/>
+									</div>
+									{fields.length > 1 && (
+										<Button
+											type="button"
+											variant="ghost"
+											size="icon"
+											onClick={() => remove(index)}
+											className="h-10 w-10 text-red-400 hover:bg-red-500/10"
 										>
-											<path d="M18 6 6 18" />
-											<path d="m6 6 12 12" />
-										</svg>
-									</Button>
-								)}
-							</div>
-						))}
-						<Button
-							type="button"
-							variant="ghost"
-							onClick={addPI}
-							className="mt-2 text-blue-400 hover:bg-blue-500/10"
-						>
-							Add Principal Investigator
-						</Button>
-					</div>
-					<div className="space-y-2">
-						<label htmlFor="startDate" className="text-white/70">
-							Start Date
-						</label>
-						<Input
-							id="startDate"
-							type="date"
-							value={formData.startDate}
-							onChange={(e) =>
-								setFormData({
-									...formData,
-									startDate: e.target.value,
-								})
-							}
-							required
-							className="border-white/10 bg-white/5 text-white"
-						/>
-					</div>
-					<div className="space-y-2">
-						<label htmlFor="endDate" className="text-white/70">
-							End Date (Optional)
-						</label>
-						<Input
-							id="endDate"
-							type="date"
-							value={formData.endDate}
-							onChange={(e) =>
-								setFormData({
-									...formData,
-									endDate: e.target.value,
-								})
-							}
-							className="border-white/10 bg-white/5 text-white"
-						/>
-					</div>
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												strokeWidth="2"
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												className="h-4 w-4"
+											>
+												<path d="M18 6 6 18" />
+												<path d="m6 6 12 12" />
+											</svg>
+										</Button>
+									)}
+								</div>
+							))}
+							<Button
+								type="button"
+								variant="ghost"
+								onClick={() => append({ name: "" })}
+								className="mt-2 text-blue-400 hover:bg-blue-500/10"
+							>
+								Add Principal Investigator
+							</Button>
+						</div>
+
+						<Field>
+							<FieldContent>
+								<FieldLabel htmlFor="startDate" className="text-white/70">
+									Start Date
+								</FieldLabel>
+								<Input
+									id="startDate"
+									type="date"
+									{...register("startDate")}
+									className="border-white/10 bg-white/5 text-white"
+								/>
+								<FieldError errors={[errors.startDate]} />
+							</FieldContent>
+						</Field>
+
+						<Field>
+							<FieldContent>
+								<FieldLabel htmlFor="endDate" className="text-white/70">
+									End Date (Optional)
+								</FieldLabel>
+								<Input
+									id="endDate"
+									type="date"
+									{...register("endDate")}
+									className="border-white/10 bg-white/5 text-white"
+								/>
+								<FieldError errors={[errors.endDate]} />
+							</FieldContent>
+						</Field>
+					</FieldGroup>
+
 					<Button
 						type="submit"
+						disabled={isPending}
 						className="w-full bg-white/10 text-white hover:bg-white/20"
 					>
-						Add Research
+						{isPending ? "Adding..." : "Add Research"}
 					</Button>
 				</form>
 			</DialogContent>
