@@ -12,6 +12,7 @@ const divisions = {
 	Development: "bg-development-gradient",
 	Projects: "bg-projects-gradient",
 	Education: "bg-education-gradient",
+	Executive: "bg-white",
 	Community: "bg-community-gradient",
 	HackUTD: "bg-hackutd-gradient",
 	Industry: "bg-industry-gradient",

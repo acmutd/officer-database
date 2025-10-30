@@ -39,43 +39,54 @@ export function Navbar({ initialUserId }: Props) {
 		return null;
 	}
 	return (
-		<nav className="fixed top-6 right-0 left-0 z-50 mx-auto flex max-w-md items-center justify-between gap-4 rounded-full bg-white/20 px-4 py-2 backdrop-blur-sm">
-			<div className="flex items-center gap-6">
-				<Link href="/">
-					<Image
-						src="/acm.png"
-						alt="ACM Logo"
-						className="h-10"
-						height={40}
-						width={60}
-					/>
-				</Link>
+		<nav className="fixed top-6 right-0 left-0 z-50 mx-auto flex max-w-lg items-center justify-between gap-4 rounded-full bg-white/10 px-6 py-3 backdrop-blur-md border border-white/20 shadow-lg">
+			<Link
+				href="/"
+				className="flex items-center transition-transform hover:scale-105"
+			>
+				<Image
+					src="/acm.png"
+					alt="ACM Logo"
+					className="h-10"
+					height={40}
+					width={60}
+				/>
+			</Link>
+
+			<div className="flex items-center gap-8">
 				<Link
 					href="/"
-					className={`text-white ${pathname === "/" ? activeLinkClasses : ""}`}
+					className={`text-white font-medium transition-all duration-200 hover:text-white/90 hover:scale-105 ${
+						pathname === "/" ? activeLinkClasses : ""
+					}`}
 				>
 					dashboard
 				</Link>
 				<Link
 					href="/directory"
-					className={`text-white ${
-						pathname === "/directory" ? activeLinkClasses : ""
+					className={`text-white font-medium transition-all duration-200 hover:text-white/90 hover:scale-105 ${
+						pathname.startsWith("/directory") ? activeLinkClasses : ""
 					}`}
 				>
 					directory
 				</Link>
 				<Link
 					href="/profile"
-					className={`text-white ${
+					className={`text-white font-medium transition-all duration-200 hover:text-white/90 hover:scale-105 ${
 						pathname === "/profile" ? activeLinkClasses : ""
 					}`}
 				>
 					my profile
 				</Link>
-				<button onClick={() => signOut()} className="cursor-pointer text-white">
-					<Settings className="h-5 w-5" />
-				</button>
 			</div>
+
+			<button
+				onClick={() => signOut()}
+				className="flex items-center justify-center h-10 w-10 rounded-full bg-white/10 text-white transition-all duration-200 hover:bg-white/20 hover:rotate-90 hover:scale-110"
+				aria-label="Sign out"
+			>
+				<Settings className="h-5 w-5" />
+			</button>
 		</nav>
 	);
 }
