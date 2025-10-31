@@ -98,3 +98,22 @@ export async function getOfficerAvatar(officerId: string): Promise<string> {
 		return "/peechi.png";
 	}
 }
+
+export async function updateOfficerName({
+	firstName,
+	lastName,
+}: {
+	firstName: string;
+	lastName: string;
+}) {
+	const officer = await getCurrentOfficer();
+	if (!officer) {
+		throw new Error("Officer not found");
+	}
+	const res = await fetchWithAuth(
+		`${process.env.API_URL}/officers/${officer.id}`,
+		"PATCH",
+		{ firstName, lastName }
+	);
+	return res;
+}

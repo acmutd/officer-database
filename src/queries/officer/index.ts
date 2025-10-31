@@ -2,6 +2,7 @@ import {
 	getAllOfficers,
 	getCurrentOfficer,
 	getOfficer,
+	updateOfficerName,
 } from "@/functions/officer";
 import { updateAcademicInfo } from "@/functions/academics";
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
@@ -13,6 +14,13 @@ export const getCurrentOfficerQueryOptions = queryOptions({
 
 export const updateAcademicInfoMutationOptions = mutationOptions({
 	mutationFn: updateAcademicInfo,
+	onSuccess: (_, _0, _1, context) => {
+		context.client.invalidateQueries(getCurrentOfficerQueryOptions);
+	},
+});
+
+export const updateOfficerNameMutationOptions = mutationOptions({
+	mutationFn: updateOfficerName,
 	onSuccess: (_, _0, _1, context) => {
 		context.client.invalidateQueries(getCurrentOfficerQueryOptions);
 	},

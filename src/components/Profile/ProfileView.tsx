@@ -29,9 +29,16 @@ export function ProfileView({ officerId, editable = false }: Props) {
 			<div className="flex flex-col justify-between gap-12 md:flex-row">
 				<div className="space-y-6">
 					<div className="space-y-4">
-						<h1 className="text-5xl font-bold tracking-tight text-white md:text-6xl">
-							{officer.firstName} {officer.lastName}
-						</h1>
+						{editable ? (
+							<UpdateName
+								firstName={officer.firstName}
+								lastName={officer.lastName}
+							/>
+						) : (
+							<h1 className="text-5xl font-bold tracking-tight text-white md:text-6xl">
+								{officer.firstName} {officer.lastName}
+							</h1>
+						)}
 						<div className="flex flex-wrap items-center gap-3">
 							<RoleList roles={officer.roles} showAll />
 						</div>
