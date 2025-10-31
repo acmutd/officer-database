@@ -3,6 +3,7 @@ import { RoleList } from "./RoleList";
 import { ExternalLinks } from "../Socials/ExternalLinks";
 import { ImageUpdate } from "./ImageUpdate";
 import { UserAvatar } from "./UserAvatar";
+import { UpdateName } from "./UpdateName";
 import {
 	getCurrentOfficerQueryOptions,
 	getOfficerByIdQueryOptions,
@@ -25,7 +26,7 @@ export function ProfileView({ officerId, editable = false }: Props) {
 		return null;
 	}
 	return (
-		<div className="col-span-2 space-y-8 rounded-3xl border border-white/10 bg-linear-to-br from-white/5 to-white/10 p-10 shadow-xl backdrop-blur-xl">
+		<div className="col-span-2 space-y-8 rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10 p-10 shadow-xl backdrop-blur-xl">
 			<div className="flex flex-col justify-between gap-12 md:flex-row">
 				<div className="space-y-6">
 					<div className="space-y-4">

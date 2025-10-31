@@ -84,7 +84,7 @@ export function EditSocials({ links }: EditSocialsProps) {
 									type="url"
 									id="linkedin"
 									{...register("linkedin")}
-									className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-white focus:ring-2 focus:ring-purple-500/50"
+									className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-white focus:ring-2 focus:ring-white/10 focus:border-white/20"
 									placeholder="https://linkedin.com/in/username"
 								/>
 								<FieldError errors={[errors.linkedin]} />
@@ -100,7 +100,7 @@ export function EditSocials({ links }: EditSocialsProps) {
 									type="url"
 									id="github"
 									{...register("github")}
-									className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-white focus:ring-2 focus:ring-purple-500/50"
+									className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-white focus:ring-2 focus:ring-white/10 focus:border-white/20"
 									placeholder="https://github.com/username"
 								/>
 								<FieldError errors={[errors.github]} />
@@ -116,7 +116,7 @@ export function EditSocials({ links }: EditSocialsProps) {
 									type="email"
 									id="personalEmail"
 									{...register("personalEmail")}
-									className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-white focus:ring-2 focus:ring-purple-500/50"
+									className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-white focus:ring-2 focus:ring-white/10 focus:border-white/20"
 									placeholder="your.email@example.com"
 								/>
 								<FieldError errors={[errors.personalEmail]} />

@@ -94,7 +94,7 @@ export const columns = [
 		(row) => `${row.firstName} ${row.lastName} ${row.netId}`,
 		{
 			id: "name",
-			header: () => <span className="text-gray-400">Name</span>,
+			header: () => <span className="text-white/70">Name</span>,
 			cell: ({ row }) => {
 				const officer = row.original;
 				return (
@@ -112,7 +112,7 @@ export const columns = [
 							<span className="block truncate font-medium text-white">
 								{officer.firstName} {officer.lastName}
 							</span>
-							<span className="block truncate text-sm text-gray-400">
+							<span className="block truncate text-sm text-white/50">
 								{officer.netId}
 							</span>
 						</div>
@@ -122,11 +122,11 @@ export const columns = [
 		}
 	),
 	columnHelper.accessor("joinDate", {
-		header: () => <span className="text-gray-400">Join Date</span>,
+		header: () => <span className="text-white/70">Join Date</span>,
 		cell: ({ row }) => (
 			<div className="w-[160px] min-w-[160px]">
 				<div className="flex flex-col">
-					<span className="truncate text-xs text-gray-400">
+					<span className="truncate text-xs text-white/50">
 						{row.original.joinDate.term} {row.original.joinDate.year}
 					</span>
 				</div>
@@ -135,14 +135,14 @@ export const columns = [
 		sortingFn: termSort,
 	}),
 	columnHelper.accessor("expectedGrad", {
-		header: () => <span className="text-gray-400">Expected Graduation</span>,
+		header: () => <span className="text-white/70">Expected Graduation</span>,
 		cell: ({ row }) => (
 			<div className="w-[180px] min-w-[180px]">
 				<div className="flex flex-col">
 					<span className="truncate text-white">
 						{row.original.expectedGrad.term} {row.original.expectedGrad.year}
 					</span>
-					<span className="truncate text-xs text-gray-400">
+					<span className="truncate text-xs text-white/50">
 						{row.original.yearStanding}
 					</span>
 				</div>
@@ -151,7 +151,7 @@ export const columns = [
 		sortingFn: termSort,
 	}),
 	columnHelper.accessor("roles", {
-		header: () => <span className="text-gray-400">Current Roles</span>,
+		header: () => <span className="text-white/70">Current Roles</span>,
 		filterFn: "currentDivision",
 		cell: ({ row }) => (
 			<div className="w-[320px] min-w-[320px]">
@@ -168,7 +168,7 @@ export const columns = [
 		},
 	}),
 	columnHelper.accessor("isActive", {
-		header: () => <span className="text-gray-400">Active</span>,
+		header: () => <span className="text-white/70">Active</span>,
 		cell: ({ row }) => (
 			<div className="w-[160px] min-w-[160px]">
 				<span className="text-white">

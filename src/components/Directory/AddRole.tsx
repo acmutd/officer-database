@@ -120,7 +120,7 @@ export function AddRole({ officerId }: Props) {
 											<SelectTrigger className="border-white/10 bg-white/5 text-white">
 												<SelectValue placeholder="Select division" />
 											</SelectTrigger>
-											<SelectContent className="border-white/10 bg-zinc-900">
+											<SelectContent className="border-white/10 bg-black/30 backdrop-blur-xl">
 												{divisions.map((division) => (
 													<SelectItem
 														key={division}
@@ -154,7 +154,7 @@ export function AddRole({ officerId }: Props) {
 											<SelectTrigger className="border-white/10 bg-white/5 text-white">
 												<SelectValue />
 											</SelectTrigger>
-											<SelectContent className="border-white/10 bg-zinc-900">
+											<SelectContent className="border-white/10 bg-black/30 backdrop-blur-xl">
 												<SelectItem value="1" className="text-white">
 													Officer
 												</SelectItem>
@@ -188,7 +188,7 @@ export function AddRole({ officerId }: Props) {
 													<SelectTrigger className="border-white/10 bg-white/5 text-white">
 														<SelectValue />
 													</SelectTrigger>
-													<SelectContent className="border-white/10 bg-zinc-900">
+													<SelectContent className="border-white/10 bg-black/30 backdrop-blur-xl">
 														<SelectItem value="Fall" className="text-white">
 															Fall
 														</SelectItem>

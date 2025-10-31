@@ -80,7 +80,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 	};
 
 	return (
-		<div className="group relative space-y-4 rounded-lg border border-white/10 bg-white/5 p-6 transition-all hover:border-white/20 hover:bg-white/[0.07]">
+		<div className="group relative space-y-4 rounded-lg border border-white/10 bg-white/5 p-6 transition-all hover:border-white/20 hover:bg-white/10">
 			{canEdit && (
 				<div className="absolute top-4 right-4 space-x-2">
 					{isEditing ? (
@@ -164,7 +164,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 											<SelectTrigger className="border-white/20 bg-white/10 text-white/90">
 												<SelectValue />
 											</SelectTrigger>
-											<SelectContent className="border-white/20 bg-zinc-900">
+											<SelectContent className="border-white/20 bg-black/30 backdrop-blur-xl">
 												{divisions.map((division) => (
 													<SelectItem
 														key={division}
@@ -198,7 +198,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 											<SelectTrigger className="mt-2 w-full border-white/20 bg-white/10 text-white/90">
 												<SelectValue />
 											</SelectTrigger>
-											<SelectContent className="border-white/20 bg-zinc-900">
+											<SelectContent className="border-white/20 bg-black/30 backdrop-blur-xl">
 												<SelectItem value="1" className="text-white/90">
 													Officer
 												</SelectItem>
@@ -235,7 +235,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 											<SelectTrigger className="border-white/20 bg-white/10 text-white/90">
 												<SelectValue />
 											</SelectTrigger>
-											<SelectContent className="border-white/20 bg-zinc-900">
+											<SelectContent className="border-white/20 bg-black/30 backdrop-blur-xl">
 												<SelectItem value="Fall" className="text-white/90">
 													Fall
 												</SelectItem>
@@ -305,7 +305,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 												<SelectTrigger className="border-white/20 bg-white/10 text-white/90">
 													<SelectValue />
 												</SelectTrigger>
-												<SelectContent className="border-white/20 bg-zinc-900">
+												<SelectContent className="border-white/20 bg-black/30 backdrop-blur-xl">
 													<SelectItem value="Fall" className="text-white/90">
 														Fall
 													</SelectItem>

@@ -27,7 +27,7 @@ export function InternshipList({ officerId, editable = false }: Props) {
 	);
 
 	return (
-		<Card className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10 shadow-xl backdrop-blur-xl">
+		<Card className="rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10 shadow-xl backdrop-blur-xl">
 			<CardHeader
 				className={
 					editable ? "flex flex-row items-center justify-between space-y-0" : ""

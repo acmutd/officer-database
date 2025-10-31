@@ -24,7 +24,7 @@ export function RoleInfo({ officerId }: Props) {
 	if (!currentUser) throw new Error("Current user not found");
 	const canEdit = isAdmin(currentUser);
 	return (
-		<Card className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10 shadow-xl backdrop-blur-xl">
+		<Card className="rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10 shadow-xl backdrop-blur-xl">
 			<CardHeader className="flex flex-row items-center justify-between space-y-0">
 				<div>
 					<CardTitle className="text-xl font-semibold text-white">

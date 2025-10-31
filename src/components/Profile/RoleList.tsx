@@ -28,11 +28,11 @@ function RestRoles({ roles }: { roles: Role[] }) {
 	return (
 		<Popover>
 			<PopoverTrigger className="cursor-pointer">
-				<div className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-gray-400 transition-colors hover:bg-white/10 hover:text-white">
+				<div className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white">
 					+{roles.length}
 				</div>
 			</PopoverTrigger>
-			<PopoverContent className="rounded-lg border border-white/10 bg-[#111111] p-4 shadow-lg">
+			<PopoverContent className="rounded-lg border border-white/10 bg-black/30 p-4 shadow-lg backdrop-blur-xl">
 				<div className="flex flex-col gap-2">
 					{roles.map((role) => (
 						<Badge key={role.title} role={role} />

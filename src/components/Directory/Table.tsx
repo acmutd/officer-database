@@ -65,13 +65,13 @@ export function Table() {
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
 						className={cn(
-							"w-full bg-[#111111] text-white placeholder-gray-500",
+							"w-full bg-black/30 text-white placeholder:text-white/50",
 							"rounded-lg px-5 py-3 pl-11 text-sm",
-							"focus:ring-2 focus:ring-white/10 focus:outline-none",
+							"focus:ring-2 focus:ring-white/10 focus:border-white/20 focus:outline-none",
 							"border border-white/10 transition-colors hover:border-white/20"
 						)}
 					/>
-					<Search className="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-gray-500" />
+					<Search className="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-white/50" />
 				</div>
 				<select
 					value={(table.getColumn("roles")?.getFilterValue() as string) ?? ""}
@@ -79,9 +79,9 @@ export function Table() {
 						table.getColumn("roles")?.setFilterValue(e.target.value)
 					}
 					className={cn(
-						"rounded-lg bg-[#111111] text-sm text-white",
+						"rounded-lg bg-black/30 text-sm text-white",
 						"border border-white/10 px-4 py-3",
-						"focus:ring-2 focus:ring-white/10 focus:outline-none",
+						"focus:ring-2 focus:ring-white/10 focus:border-white/20 focus:outline-none",
 						"transition-colors hover:border-white/20",
 						"cursor-pointer appearance-none"
 					)}
@@ -94,7 +94,7 @@ export function Table() {
 				</select>
 			</div>
 
-			<div className="rounded-lg border border-white/10 bg-[#111111]">
+			<div className="rounded-lg border border-white/10 bg-black/30">
 				<div className="overflow-x-auto">
 					<div className="max-h-[calc(100vh-280px)] overflow-y-auto">
 						<table className="w-full min-w-[940px] border-collapse">
@@ -109,9 +109,9 @@ export function Table() {
 													className={cn(
 														"sticky top-0 z-10 bg-black/30 backdrop-blur-sm",
 														"px-6 py-3 text-left text-xs font-medium tracking-wider uppercase",
-														"border-b border-white/5",
+														"border-b border-white/10",
 														"group cursor-pointer select-none",
-														isSorted ? "text-white" : "text-gray-400"
+														isSorted ? "text-white" : "text-white/70"
 													)}
 													onClick={() => header.column.toggleSorting()}
 												>
@@ -132,9 +132,9 @@ export function Table() {
 																)}
 															>
 																{isSorted === "asc" ? (
-																	<SortAsc className="h-3.5 w-3.5 text-gray-500" />
+																	<SortAsc className="h-3.5 w-3.5 text-white/50" />
 																) : isSorted === "desc" ? (
-																	<SortDesc className="h-3.5 w-3.5 text-gray-500" />
+																	<SortDesc className="h-3.5 w-3.5 text-white/50" />
 																) : null}
 															</div>
 														)}
@@ -150,8 +150,8 @@ export function Table() {
 									<tr
 										key={row.id}
 										className={cn(
-											"border-b border-white/5 last:border-0",
-											"transition-colors hover:bg-white/2"
+											"border-b border-white/10 last:border-0",
+											"transition-colors hover:bg-white/5"
 										)}
 									>
 										{row.getVisibleCells().map((cell) => (
@@ -168,14 +168,14 @@ export function Table() {
 						</table>
 					</div>
 
-					<div className="border-t border-white/5 bg-black/30 px-6 py-4">
+					<div className="border-t border-white/10 bg-black/30 px-6 py-4">
 						<div className="flex items-center justify-between">
 							<div className="flex items-center gap-4">
-								<span className="text-sm text-gray-400">
+								<span className="text-sm text-white/70">
 									{table.getRowModel().rows.length} officers
 								</span>
 								<div className="flex items-center gap-2">
-									<span className="text-sm text-gray-500">Show</span>
+									<span className="text-sm text-white/50">Show</span>
 									<select
 										value={pagination.pageSize}
 										onChange={(e) => {
@@ -245,7 +245,7 @@ export function Table() {
 									<span className="text-sm font-medium text-white">
 										{pagination.pageIndex + 1}
 									</span>
-									<span className="text-sm text-gray-500">of</span>
+									<span className="text-sm text-white/50">of</span>
 									<span className="text-sm font-medium text-white">
 										{table.getPageCount()}
 									</span>

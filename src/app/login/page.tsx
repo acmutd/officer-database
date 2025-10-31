@@ -21,7 +21,7 @@ export default async function Page() {
 
 				<LoginButton />
 
-				<p className="text-center text-3xl text-gray-400">
+				<p className="text-center text-3xl text-white/70">
 					sign in with your ACM email.
 				</p>
 			</div>
