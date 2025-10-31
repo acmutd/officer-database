@@ -75,10 +75,10 @@ const createOfficer = async (
 
 export async function getCurrentOfficer() {
 	const { user } = await getAuthenticatedAppForUser();
-	if (!user || !user.id) {
+	if (!user || !user.officer) {
 		redirect("/login");
 	}
-	return await getOfficer(user.id);
+	return user.officer;
 }
 
 export async function getAllOfficers() {
@@ -99,13 +99,12 @@ export async function getOfficerAvatar(officerId: string): Promise<string> {
 	}
 }
 
-export async function updateOfficerName({
-	firstName,
-	lastName,
-}: {
+type NameParams = {
 	firstName: string;
 	lastName: string;
-}) {
+};
+
+export async function updateOfficerName({ firstName, lastName }: NameParams) {
 	const officer = await getCurrentOfficer();
 	if (!officer) {
 		throw new Error("Officer not found");

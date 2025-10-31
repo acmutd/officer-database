@@ -14,7 +14,7 @@ export async function fetchWithAuth(
 		userId = authParams.userId;
 	} else {
 		const { authIdToken: token, user } = await getAuthenticatedAppForUser();
-		if (!token || !user?.id) {
+		if (!token || !user) {
 			console.error("No ID token found");
 			return null;
 		}
@@ -58,7 +58,7 @@ export async function fetchWithAuthFormData(
 		userId = authParams.userId;
 	} else {
 		const { authIdToken: token, user } = await getAuthenticatedAppForUser();
-		if (!token || !user?.id) {
+		if (!token || !user) {
 			throw new Error("No ID token found");
 		}
 		authIdToken = token;

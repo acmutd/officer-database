@@ -5,7 +5,7 @@ import { fetchWithAuth } from "@/lib/fetch";
 
 export async function updateUserSocials({ socials }: { socials: SocialLinks }) {
 	const { user } = await getAuthenticatedAppForUser();
-	if (!user.id || !user.name) {
+	if (!user || !user.officer) {
 		throw new Error("User not authenticated");
 	}
 	const res = await fetchWithAuth(

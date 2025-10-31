@@ -5,10 +5,12 @@ import { initializeServerApp, initializeApp } from "firebase/app";
 import { cache } from "react";
 import { getAuth } from "firebase/auth";
 import { firebaseConfig } from "./config";
+import { Officer, OfficerSchema } from "@/schemas/officer";
 
 type User = {
-	id: string | null;
-	name: string | null;
+	id: string;
+	name: string;
+	officer: Officer | null;
 };
 
 export const getAuthenticatedAppForUser = cache(async () => {
@@ -18,7 +20,7 @@ export const getAuthenticatedAppForUser = cache(async () => {
 	if (!authIdToken) {
 		return {
 			firebaseServerApp: null,
-			user: { id: null, name: null },
+			user: null,
 			auth: null,
 			authIdToken: null,
 		};
@@ -41,16 +43,115 @@ export const getAuthenticatedAppForUser = cache(async () => {
 	if (!auth.currentUser) {
 		return {
 			firebaseServerApp,
-			user: { id: null, name: null },
+			user: null,
 			auth,
 			authIdToken,
 		};
 	}
 
+	const userId = auth.currentUser.uid;
+	const userName = auth.currentUser.displayName!;
+
+	// Get or create officer - authentication succeeds even if this fails
+	const officer = await getOrCreateOfficerInternal(
+		userId,
+		userName,
+		authIdToken
+	);
+
 	const user: User = {
-		id: auth.currentUser.uid,
-		name: auth.currentUser.displayName!,
+		id: userId,
+		name: userName,
+		officer: officer || null,
 	};
 
 	return { firebaseServerApp, user, auth, authIdToken };
 });
+
+// Internal function to get or create officer without circular dependency
+async function getOrCreateOfficerInternal(
+	userId: string,
+	name: string,
+	authIdToken: string
+): Promise<Officer | null> {
+	try {
+		// Try to get existing officer
+		const existingOfficer = await fetchOfficerInternal(userId, authIdToken);
+		if (existingOfficer) {
+			return existingOfficer;
+		}
+
+		// Create new officer if doesn't exist
+		const [firstName, lastName] = name.split(" ");
+		const newOfficer: Officer = {
+			id: userId,
+			firstName: firstName,
+			lastName: lastName,
+			netId: "xxxxxx",
+			socialLinks: {},
+			creditStanding: "Freshman",
+			yearStanding: "Freshman",
+			expectedGrad: {
+				year: new Date().getFullYear() + 4,
+				term: "Fall",
+			},
+			internships: [],
+			research: [],
+			accessLevel: 1,
+			isActive: true,
+			joinDate: {
+				term: "Fall",
+				year: new Date().getFullYear(),
+			},
+			roles: [],
+		};
+
+		const res = await fetch(`${process.env.API_URL}/officers`, {
+			method: "POST",
+			body: JSON.stringify(newOfficer),
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${authIdToken}`,
+				"X-User-Id": userId,
+			},
+			cache: "no-store",
+		});
+
+		if (!res.ok) {
+			console.error("Failed to create officer:", await res.text());
+			return null;
+		}
+
+		const createdOfficer = await res.json();
+		return OfficerSchema.parse(createdOfficer);
+	} catch (error) {
+		console.error("Failed to get or create officer:", error);
+		return null;
+	}
+}
+
+async function fetchOfficerInternal(
+	userId: string,
+	authIdToken: string
+): Promise<Officer | null> {
+	try {
+		const res = await fetch(`${process.env.API_URL}/officers/${userId}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${authIdToken}`,
+				"X-User-Id": userId,
+			},
+			cache: "no-store",
+		});
+
+		if (!res.ok) {
+			return null;
+		}
+
+		const officer = await res.json();
+		return OfficerSchema.parse(officer);
+	} catch (error) {
+		return null;
+	}
+}

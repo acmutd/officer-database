@@ -10,7 +10,7 @@ type RouteContext = {
 export async function POST(req: Request, context: RouteContext) {
 	try {
 		const { user } = await getAuthenticatedAppForUser();
-		if (!user.id || !user.name) {
+		if (!user || !user.officer) {
 			redirect("/login");
 		}
 

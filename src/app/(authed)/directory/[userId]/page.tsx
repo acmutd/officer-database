@@ -21,23 +21,21 @@ export default async function Page({ params }: Props) {
 		params,
 	]);
 
-	if (!user.id || !userId) {
+	if (!user || !user.officer || !userId) {
 		redirect("/login");
 	}
 
 	const queryClient = getQueryClient();
-	const currentOfficerPromise = queryClient.ensureQueryData(
-		getCurrentOfficerQueryOptions
+	queryClient.setQueryData(
+		getCurrentOfficerQueryOptions.queryKey,
+		user.officer
 	);
-	const officerByIdPromise = queryClient.ensureQueryData(
+
+	const officerById = await queryClient.ensureQueryData(
 		getOfficerByIdQueryOptions(userId)
 	);
-	const [currentOfficer, officerById] = await Promise.all([
-		currentOfficerPromise,
-		officerByIdPromise,
-	]);
 
-	if (!currentOfficer || !officerById) {
+	if (!officerById) {
 		redirect("/login");
 	}
 

@@ -16,7 +16,7 @@ export default async function Page({ searchParams }: Props) {
 	await validateDirectoryTabs({ searchParams });
 	const { user } = await getAuthenticatedAppForUser();
 
-	if (!user.id || !user.name) {
+	if (!user || !user.officer) {
 		redirect("/login");
 	}
 	const queryClient = getQueryClient();

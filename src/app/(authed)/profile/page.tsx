@@ -20,17 +20,14 @@ export default async function Page({ searchParams }: Props) {
 
 	const { user } = await getAuthenticatedAppForUser();
 
-	if (!user.id || !user.name) {
+	if (!user || !user.officer) {
 		redirect("/login");
 	}
 	const queryClient = getQueryClient();
-	const officer = await queryClient.ensureQueryData(
-		getCurrentOfficerQueryOptions
+	queryClient.setQueryData(
+		getCurrentOfficerQueryOptions.queryKey,
+		user.officer
 	);
-
-	if (!officer) {
-		redirect("/login");
-	}
 	return (
 		<HydrationBoundary state={dehydrate(queryClient)}>
 			<div className="flex justify-around gap-8 px-2">
@@ -39,7 +36,7 @@ export default async function Page({ searchParams }: Props) {
 					<ProfileTabs />
 				</div>
 				<div className="container w-1/3 flex-col">
-					<TimeLine officerId={officer.id} />
+					<TimeLine officerId={user.officer.id} />
 				</div>
 
 				<div className="absolute right-0 bottom-0">

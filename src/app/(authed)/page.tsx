@@ -1,14 +1,13 @@
-import { getCurrentOfficer } from "@/functions/officer";
 import { getAuthenticatedAppForUser } from "@/lib/firebase/server";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
 	const { user } = await getAuthenticatedAppForUser();
-	const officer = await getCurrentOfficer();
-	if (!user.id || !officer) {
+	if (!user || !user.officer) {
 		redirect("/login");
 	}
+	const officer = user.officer;
 	return (
 		<div className="mx-auto flex w-full justify-between px-16 pt-20">
 			<div className="flex w-1/2 items-center gap-8">
