@@ -1,89 +1,53 @@
-"use client";
 import { Settings } from "lucide-react";
-import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
-import { onIdTokenChanged } from "firebase/auth";
-import { useEffect } from "react";
-import { auth } from "@/lib/firebase/client";
-import { deleteCookie, setCookie } from "cookies-next";
-import { usePathname } from "next/navigation";
-import Image from "next/image";
+import { useAuth } from "@/lib/auth";
+import { Link } from "@tanstack/react-router";
 
-type Props = {
-	initialUserId: string | null;
-};
+const activeLinkClasses =
+	"text-white font-semibold underline decoration-2 underline-offset-[6px]";
+const linkClasses =
+	"text-white/80 font-medium transition-colors duration-200 hover:text-white";
 
-const activeLinkClasses = "underline underline-offset-4";
+export function Navbar() {
+	const { logout } = useAuth();
 
-export function Navbar({ initialUserId }: Props) {
-	useEffect(() => {
-		return onIdTokenChanged(auth, async (user) => {
-			if (user) {
-				const idToken = await user.getIdToken();
-				setCookie("__session", idToken);
-			} else {
-				deleteCookie("__session");
-			}
-			if (initialUserId === (user?.uid ?? null)) {
-				return;
-			} else {
-				window.location.reload();
-			}
-		});
-	}, [initialUserId]);
-
-	const { signOut } = useAuth();
-	const pathname = usePathname();
-
-	if (!initialUserId) {
-		return null;
-	}
 	return (
-		<nav className="fixed top-6 right-0 left-0 z-50 mx-auto flex max-w-lg items-center justify-between gap-4 rounded-full bg-white/10 px-6 py-3 backdrop-blur-md border border-white/20 shadow-lg">
+		<nav className="fixed top-6 right-0 left-0 z-50 mx-auto flex max-w-2xl items-center justify-between gap-6 rounded-full bg-white/10 px-8 py-3.5 backdrop-blur-xl border border-white/30 shadow-xl shadow-black/10">
 			<Link
-				href="/"
-				className="flex items-center transition-transform hover:scale-105"
+				to="/"
+				className="flex items-center shrink-0 transition-opacity duration-200 hover:opacity-80"
 			>
-				<Image
-					src="/acm.png"
-					alt="ACM Logo"
-					className="h-10"
-					height={40}
-					width={60}
-				/>
+				<img src="/acm.png" alt="ACM Logo" className="h-11" />
 			</Link>
 
-			<div className="flex items-center gap-8">
+			<div className="flex items-center gap-10">
 				<Link
-					href="/"
-					className={`text-white font-medium transition-all duration-200 hover:text-white/90 hover:scale-105 ${
-						pathname === "/" ? activeLinkClasses : ""
-					}`}
+					to="/"
+					className={linkClasses}
+					activeProps={{ className: activeLinkClasses }}
 				>
 					dashboard
 				</Link>
 				<Link
-					href="/directory"
-					className={`text-white font-medium transition-all duration-200 hover:text-white/90 hover:scale-105 ${
-						pathname.startsWith("/directory") ? activeLinkClasses : ""
-					}`}
+					to="/directory"
+					className={linkClasses}
+					activeProps={{ className: activeLinkClasses }}
 				>
 					directory
 				</Link>
 				<Link
-					href="/profile"
-					className={`text-white font-medium transition-all duration-200 hover:text-white/90 hover:scale-105 ${
-						pathname === "/profile" ? activeLinkClasses : ""
-					}`}
+					to="/profile"
+					className={linkClasses}
+					activeProps={{ className: activeLinkClasses }}
 				>
 					my profile
 				</Link>
 			</div>
 
 			<button
-				onClick={() => signOut()}
-				className="flex items-center justify-center h-10 w-10 rounded-full bg-white/10 text-white transition-all duration-200 hover:bg-white/20 hover:rotate-90 hover:scale-110"
-				aria-label="Sign out"
+				onClick={() => logout()}
+				className="flex items-center justify-center shrink-0 h-10 w-10 rounded-full bg-white/15 text-white transition-all duration-200 hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white/40 focus:ring-offset-2 focus:ring-offset-transparent"
+				aria-label="Settings"
+				title="Settings"
 			>
 				<Settings className="h-5 w-5" />
 			</button>

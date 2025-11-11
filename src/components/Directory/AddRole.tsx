@@ -26,7 +26,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { divisions } from "@/schemas/officer";
-import { addOfficerRoleMutationOptions } from "@/queries/officer/roles";
+import { addOfficerRoleMutation } from "@/queries/roles";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -62,7 +62,7 @@ export function AddRole({ officerId }: Props) {
 	});
 
 	const { mutateAsync: addRole, isPending } = useMutation(
-		addOfficerRoleMutationOptions(officerId)
+		addOfficerRoleMutation(officerId)
 	);
 
 	const onSubmit = async (data: RoleFormData) => {

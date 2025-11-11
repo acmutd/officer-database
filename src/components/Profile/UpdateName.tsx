@@ -1,9 +1,8 @@
-"use client";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { updateOfficerNameMutationOptions } from "@/queries/officer";
+import { updateOfficerNameMutation } from "@/queries/officer";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -38,7 +37,7 @@ export function UpdateName({ firstName, lastName }: Props) {
 	});
 
 	const { mutate: updateName, isPending } = useMutation(
-		updateOfficerNameMutationOptions
+		updateOfficerNameMutation
 	);
 
 	const onSubmit = (data: UpdateNameFormData) => {

@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/field";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { addResearchMutationOptions } from "@/queries/officer/research";
+import { addResearchMutation } from "@/queries/research";
 import { ResearchSchema } from "@/schemas/officer";
 import { Plus } from "lucide-react";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -52,9 +52,8 @@ export function AddResearch() {
 		name: "principalInvestigator",
 	});
 
-	const { mutateAsync: addResearch, isPending } = useMutation(
-		addResearchMutationOptions
-	);
+	const { mutateAsync: addResearch, isPending } =
+		useMutation(addResearchMutation);
 
 	const onSubmit = async (data: ResearchFormData) => {
 		try {
@@ -63,7 +62,7 @@ export function AddResearch() {
 				...data,
 				principalInvestigator: data.principalInvestigator.map((pi) => pi.name),
 			};
-			await addResearch({ research: transformedData });
+			await addResearch(transformedData);
 			setIsOpen(false);
 			reset();
 			toast.success("Research added successfully");

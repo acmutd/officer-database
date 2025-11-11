@@ -3,9 +3,9 @@ import {
 	DialogTrigger,
 	DialogContent,
 	DialogTitle,
+	DialogHeader,
 } from "@/components/ui/dialog";
 import { Button } from "../../ui/button";
-import { DialogHeader } from "../../ui/dialog";
 import { Input } from "../../ui/input";
 import {
 	Field,
@@ -17,7 +17,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { addInternshipMutationOptions } from "@/queries/officer/internships";
+import { addInternshipMutation } from "@/queries/internships";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InternshipsSchema } from "@/schemas/officer";
@@ -45,12 +45,12 @@ export function AddInternship() {
 	});
 
 	const { mutateAsync: addInternship, isPending } = useMutation(
-		addInternshipMutationOptions
+		addInternshipMutation
 	);
 
 	const onSubmit = async (data: InternshipFormData) => {
 		try {
-			await addInternship({ internship: data });
+			await addInternship(data);
 			setIsOpen(false);
 			reset();
 			toast.success("Internship added successfully");

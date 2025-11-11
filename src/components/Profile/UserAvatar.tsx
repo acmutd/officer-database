@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
 
 type UserAvatarProps = {
 	officerId: string;
@@ -15,7 +14,7 @@ export function UserAvatar({
 	...props
 }: UserAvatarProps) {
 	const path = encodeURIComponent(`officers/${firstName}_${lastName}.webp`);
-	const avatar = `https://firebasestorage.googleapis.com/v0/b/${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}/o/${path}?alt=media`;
+	const avatar = `https://firebasestorage.googleapis.com/v0/b/${import.meta.env.VITE_PUBLIC_FIREBASE_STORAGE_BUCKET}/o/${path}?alt=media`;
 	const initials = `${firstName?.[0] ?? ""}${
 		lastName?.[0] ?? ""
 	}`.toUpperCase();

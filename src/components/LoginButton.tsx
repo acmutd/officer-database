@@ -1,13 +1,9 @@
-"use client";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
-
-import Image from "next/image";
+import { useAuth } from "@/lib/auth";
 
 export default function LoginButton() {
-	const { signIn } = useAuth();
+	const { login } = useAuth();
 
 	return (
 		<Button
@@ -16,7 +12,7 @@ export default function LoginButton() {
 				"rounded-full bg-white px-6 py-3 text-black",
 				"transition-colors hover:bg-gray-100"
 			)}
-			onClick={() => signIn()}
+			onClick={() => login()}
 		>
 			<GoogleIcon />
 			<span>Sign in with Google</span>

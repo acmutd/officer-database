@@ -1,14 +1,13 @@
-"use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
-import { getOfficerByIdQueryOptions } from "@/queries/officer";
+import { getOfficerByIdQuery } from "@/queries/officer";
 
 type Props = {
 	officerId: string;
 };
 
 export function TimeLine({ officerId }: Props) {
-	const { data: officer } = useQuery(getOfficerByIdQueryOptions(officerId));
+	const { data: officer } = useQuery(getOfficerByIdQuery(officerId));
 	const sortedRoles = officer?.roles
 		? [...officer.roles].sort((a, b) => {
 				if (a.startDate.year !== b.startDate.year) {
@@ -16,7 +15,7 @@ export function TimeLine({ officerId }: Props) {
 				}
 				const termOrder = { Fall: 1, Spring: 2, Summer: 3 };
 				return termOrder[b.startDate.term] - termOrder[a.startDate.term];
-		  })
+			})
 		: [];
 
 	return (

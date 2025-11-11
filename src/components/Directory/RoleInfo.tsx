@@ -9,20 +9,18 @@ import { RoleCard } from "./RoleCard";
 import { AddRole } from "./AddRole";
 import { useQuery } from "@tanstack/react-query";
 import { isAdmin } from "@/lib/admin";
-import {
-	getCurrentOfficerQueryOptions,
-	getOfficerByIdQueryOptions,
-} from "@/queries/officer";
+import { getOfficerQuery, getOfficerByIdQuery } from "@/queries/officer";
 
 type Props = {
 	officerId: string;
 };
 
 export function RoleInfo({ officerId }: Props) {
-	const { data: officer } = useQuery(getOfficerByIdQueryOptions(officerId));
-	const { data: currentUser } = useQuery(getCurrentOfficerQueryOptions);
-	if (!currentUser) throw new Error("Current user not found");
-	const canEdit = isAdmin(currentUser);
+	const { data: officer } = useQuery(getOfficerByIdQuery(officerId));
+	const { data: currentUser } = useQuery(getOfficerQuery);
+
+	const canEdit = currentUser && isAdmin(currentUser);
+
 	return (
 		<Card className="rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10 shadow-xl backdrop-blur-xl">
 			<CardHeader className="flex flex-row items-center justify-between space-y-0">

@@ -1,4 +1,4 @@
-import { Officer, StandingSchema, TermSchema } from "@/schemas/officer";
+import { type Officer, StandingSchema, TermSchema } from "@/schemas/officer";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -56,7 +56,7 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 
 	const onSubmit = (data: UpdateAcademicsFormData) => {
 		try {
-			updateAcademicInfo({ academicInfo: data });
+			updateAcademicInfo(data);
 			toast.success("Academic info updated successfully");
 		} catch (error) {
 			toast.error("Failed to update academic info");

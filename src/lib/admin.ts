@@ -1,4 +1,4 @@
-import { Officer, Role } from "@/schemas/officer";
+import type { Officer, Role } from "@/schemas/officer";
 
 type GetAdminLevel = Officer | Role;
 export function isAdmin(account: GetAdminLevel) {

@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Internships } from "@/schemas/officer";
+import type { Internships } from "@/schemas/officer";
 import { DeleteInternshipModal } from "./DeleteInternshipModal";
 import { EditInternshipModal } from "./EditInternshipModal";
 import { Briefcase, Calendar } from "lucide-react";

@@ -1,11 +1,7 @@
-"use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import UpdateAcademics from "./UpdateAcademics";
-import {
-	getCurrentOfficerQueryOptions,
-	getOfficerByIdQueryOptions,
-} from "@/queries/officer";
+import { getOfficerByIdQuery, getOfficerQuery } from "@/queries/officer";
 
 type Props = {
 	officerId?: string;
@@ -14,9 +10,7 @@ type Props = {
 
 export function AcademicInfo({ officerId, editable = false }: Props) {
 	const { data: officer } = useQuery(
-		officerId
-			? getOfficerByIdQueryOptions(officerId)
-			: getCurrentOfficerQueryOptions
+		officerId ? getOfficerByIdQuery(officerId) : getOfficerQuery
 	);
 
 	if (!officer) {
