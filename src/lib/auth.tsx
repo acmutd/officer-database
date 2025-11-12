@@ -59,14 +59,14 @@ export function AuthContextProvider({
 	const login = React.useCallback(async () => {
 		const result = await signInWithPopup(auth, googleProvider);
 
-		await getOrCreateOfficer();
+		const officer = await getOrCreateOfficer();
 
 		flushSync(() => {
 			setUser(result.user);
 			setIsInitialLoading(false);
 		});
 
-		await queryClient.prefetchQuery(getOfficerQuery);
+		queryClient.setQueryData(getOfficerQuery.queryKey, officer);
 	}, [queryClient]);
 
 	return (
