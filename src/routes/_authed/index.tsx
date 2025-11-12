@@ -1,3 +1,4 @@
+import { ACMErrorComponent } from "@/components/ErrorComponent";
 import { getOfficerQuery } from "@/queries/officer";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
@@ -7,10 +8,20 @@ export const Route = createFileRoute("/_authed/")({
 	loader: async ({ context }) => {
 		await context.queryClient.prefetchQuery(getOfficerQuery);
 	},
+	errorComponent: ACMErrorComponent,
 });
 
 function App() {
-	const { data: officer } = useQuery(getOfficerQuery);
+	const { data: officer, isLoading, error } = useQuery(getOfficerQuery);
+	if (error) {
+		throw error;
+	}
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
+	if (!officer) {
+		throw new Error("Officer not found");
+	}
 	return (
 		<div className="mx-auto flex w-full justify-between px-16 pt-20">
 			<div className="flex w-1/2 items-center gap-8">

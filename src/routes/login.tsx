@@ -1,6 +1,7 @@
 import LoginButton from "@/components/LoginButton";
 import { useAuth } from "@/lib/auth";
 import { createFileRoute, Navigate, redirect } from "@tanstack/react-router";
+import { ACMErrorComponent } from "@/components/ErrorComponent";
 
 export const Route = createFileRoute("/login")({
 	beforeLoad: async ({ context }) => {
@@ -10,6 +11,7 @@ export const Route = createFileRoute("/login")({
 		}
 	},
 	component: RouteComponent,
+	errorComponent: ACMErrorComponent,
 });
 
 function RouteComponent() {

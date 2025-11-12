@@ -1,4 +1,5 @@
 import { DirectoryProfileTabs } from "@/components/Directory/DirectoryProfileTabs";
+import { ACMErrorComponent } from "@/components/ErrorComponent";
 import { ProfileView } from "@/components/Profile/ProfileView";
 import { TimeLine } from "@/components/Profile/TimeLine";
 import { getOfficerByIdQuery, getOfficerQuery } from "@/queries/officer";
@@ -24,6 +25,7 @@ export const Route = createFileRoute("/_authed/directory/$userId")({
 		if (!officer) throw redirect({ to: "/directory" });
 		context.queryClient.prefetchQuery(getOfficerQuery);
 	},
+	errorComponent: ACMErrorComponent,
 });
 
 function RouteComponent() {
