@@ -36,7 +36,8 @@ export async function deleteInternship(index: number): Promise<Officer> {
 	}
 	const officer = await getCurrentOfficer();
 	if (!officer) throw new Error("Officer not found");
-	const newInternships = officer.internships.splice(index, 1);
+	const newInternships = [...officer.internships];
+	newInternships.splice(index, 1);
 	const res = await fetchWithAuth(`${API_URL}/officers/${id}`, {
 		method: "PATCH",
 		headers: {
@@ -44,7 +45,10 @@ export async function deleteInternship(index: number): Promise<Officer> {
 		},
 		body: JSON.stringify({ internships: newInternships }),
 	});
-	return OfficerSchema.parse(res);
+
+	const data = await res.json();
+
+	return OfficerSchema.parse(data);
 }
 
 export async function updateInternship({
@@ -60,7 +64,8 @@ export async function updateInternship({
 	}
 	const officer = await getCurrentOfficer();
 	if (!officer) throw new Error("Officer not found");
-	const newInternships = officer.internships.splice(index, 1, data);
+	const newInternships = [...officer.internships];
+	newInternships[index] = data;
 	const res = await fetchWithAuth(`${API_URL}/officers/${id}`, {
 		method: "PATCH",
 		headers: {
@@ -68,5 +73,6 @@ export async function updateInternship({
 		},
 		body: JSON.stringify({ internships: newInternships }),
 	});
-	return OfficerSchema.parse(res);
+	const newData = await res.json();
+	return OfficerSchema.parse(newData);
 }

@@ -12,7 +12,8 @@ export async function deleteResearch(index: number) {
 	}
 	const officer = await getCurrentOfficer();
 	if (!officer) throw new Error("Officer not found");
-	const newResearch = officer.research.splice(index, 1);
+	const newResearch = [...officer.research];
+	newResearch.splice(index, 1);
 	const res = await fetchWithAuth(`${API_URL}/officers/${id}`, {
 		method: "PATCH",
 		headers: {
@@ -38,7 +39,8 @@ export async function updateResearch({
 	}
 	const officer = await getCurrentOfficer();
 	if (!officer) throw new Error("Officer not found");
-	const newResearch = officer.research.splice(index, 1, data);
+	const newResearch = [...officer.research];
+	newResearch[index] = data;
 	const res = await fetchWithAuth(`${API_URL}/officers/${id}`, {
 		method: "PATCH",
 		headers: {

@@ -20,7 +20,8 @@ export const updateOfficerRole = async ({
 
 	const officer = await getOfficerById(officerId);
 	if (!officer) throw new Error("Officer not found");
-	const newRoles = officer.roles.splice(index, 1, role);
+	const newRoles = [...officer.roles];
+	newRoles[index] = role;
 	const newLevel = updateLevel(newRoles);
 	const res = await fetchWithAuth(`${API_URL}/officers/${officerId}`, {
 		method: "PATCH",
