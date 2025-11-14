@@ -3,8 +3,6 @@ import { getCurrentOfficer, getOfficerById } from "./officer";
 import { fetchWithAuth } from "./fetch";
 import { isAdmin } from "@/lib/admin";
 
-const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
-
 export const updateOfficerRole = async ({
 	officerId,
 	role,
@@ -23,8 +21,8 @@ export const updateOfficerRole = async ({
 	const newRoles = [...officer.roles];
 	newRoles[index] = role;
 	const newLevel = updateLevel(newRoles);
-	const res = await fetchWithAuth(`${API_URL}/officers/${officerId}`, {
-		method: "PATCH",
+	const res = await fetchWithAuth(`/updateOfficer?id=${officerId}`, {
+		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -49,8 +47,8 @@ export const addOfficerRole = async ({
 	if (!officer) throw new Error("Officer not found");
 	const newRoles = [...officer.roles, role];
 	const newLevel = updateLevel(newRoles);
-	const res = await fetchWithAuth(`${API_URL}/officers/${officerId}`, {
-		method: "PATCH",
+	const res = await fetchWithAuth(`/updateOfficer?id=${officerId}`, {
+		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},

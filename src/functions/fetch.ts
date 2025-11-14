@@ -1,6 +1,14 @@
 import { auth } from "@/lib/firebase";
 
-export async function fetchWithAuth(url: string, options: RequestInit) {
+const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
+
+type Endpoint =
+	| "/createOfficer"
+	| `/getOfficer?id=${string}`
+	| "/getOfficers"
+	| `/updateOfficer?id=${string}`;
+
+export async function fetchWithAuth(endpoint: Endpoint, options: RequestInit) {
 	const idToken = await auth.currentUser?.getIdToken();
 	const userId = auth.currentUser?.uid;
 
@@ -8,7 +16,7 @@ export async function fetchWithAuth(url: string, options: RequestInit) {
 		throw new Error("Unauthorized");
 	}
 
-	return fetch(url, {
+	return fetch(`${API_URL}${endpoint}`, {
 		...options,
 		headers: {
 			...options.headers,

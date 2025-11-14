@@ -2,8 +2,6 @@ import { auth } from "@/lib/firebase";
 import { OfficerSchema, type Officer } from "@/schemas/officer";
 import { fetchWithAuth } from "./fetch";
 
-const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
-
 export async function getCurrentOfficer(): Promise<Officer | null> {
 	const idToken = await auth.currentUser?.getIdToken();
 	const userId = auth.currentUser?.uid;
@@ -20,7 +18,7 @@ async function createOfficer(): Promise<Officer> {
 	if (!id || !name) {
 		throw new Error("Unauthorized");
 	}
-	const officer = await fetchWithAuth(`${API_URL}/officers/`, {
+	const officer = await fetchWithAuth(`/createOfficer`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -46,7 +44,7 @@ export async function getOrCreateOfficer(): Promise<Officer> {
 export async function getOfficerById(
 	officerId: string
 ): Promise<Officer | null> {
-	const res = await fetchWithAuth(`${API_URL}/officers/${officerId}`, {
+	const res = await fetchWithAuth(`/getOfficer?id=${officerId}`, {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
@@ -54,6 +52,7 @@ export async function getOfficerById(
 	});
 
 	if (!res.ok) {
+		console.error(res.statusText);
 		return null;
 	}
 	const data = await res.json();
@@ -67,8 +66,8 @@ export async function updateOfficerName(
 	if (!id) {
 		throw new Error("Unauthorized");
 	}
-	const officer = await fetchWithAuth(`${API_URL}/officers/${id}`, {
-		method: "PATCH",
+	const officer = await fetchWithAuth(`/updateOfficer?id=${id}`, {
+		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -88,8 +87,8 @@ export async function updateAcademicInfo(
 	if (!id) {
 		throw new Error("Unauthorized");
 	}
-	const officer = await fetchWithAuth(`${API_URL}/officers/${id}`, {
-		method: "PATCH",
+	const officer = await fetchWithAuth(`/updateOfficer?id=${id}`, {
+		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -100,7 +99,7 @@ export async function updateAcademicInfo(
 }
 
 export async function getAllOfficers(): Promise<Officer[]> {
-	const officers = await fetchWithAuth(`${API_URL}/officers`, {
+	const officers = await fetchWithAuth(`/getOfficers`, {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",

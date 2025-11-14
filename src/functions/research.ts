@@ -3,8 +3,6 @@ import { fetchWithAuth } from "./fetch";
 import { getCurrentOfficer } from "./officer";
 import { OfficerSchema, type Research } from "@/schemas/officer";
 
-const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
-
 export async function deleteResearch(index: number) {
 	const id = auth.currentUser?.uid;
 	if (!id) {
@@ -14,8 +12,8 @@ export async function deleteResearch(index: number) {
 	if (!officer) throw new Error("Officer not found");
 	const newResearch = [...officer.research];
 	newResearch.splice(index, 1);
-	const res = await fetchWithAuth(`${API_URL}/officers/${id}`, {
-		method: "PATCH",
+	const res = await fetchWithAuth(`/updateOfficer?id=${id}`, {
+		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -41,8 +39,8 @@ export async function updateResearch({
 	if (!officer) throw new Error("Officer not found");
 	const newResearch = [...officer.research];
 	newResearch[index] = data;
-	const res = await fetchWithAuth(`${API_URL}/officers/${id}`, {
-		method: "PATCH",
+	const res = await fetchWithAuth(`/updateOfficer?id=${id}`, {
+		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -61,8 +59,8 @@ export async function addResearch(data: Research) {
 	const officer = await getCurrentOfficer();
 	if (!officer) throw new Error("Officer not found");
 	const newResearch = [...officer.research, data];
-	const res = await fetchWithAuth(`${API_URL}/officers/${id}`, {
-		method: "PATCH",
+	const res = await fetchWithAuth(`/updateOfficer?id=${id}`, {
+		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},

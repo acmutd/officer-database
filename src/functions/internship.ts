@@ -7,8 +7,6 @@ import { fetchWithAuth } from "./fetch";
 import { auth } from "@/lib/firebase";
 import { getCurrentOfficer } from "./officer";
 
-const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
-
 export async function addInternship(data: Internships): Promise<Officer> {
 	const id = auth.currentUser?.uid;
 	if (!id) {
@@ -18,8 +16,8 @@ export async function addInternship(data: Internships): Promise<Officer> {
 	const officer = await getCurrentOfficer();
 	if (!officer) throw new Error("Officer not found");
 	const newInternships = [...officer.internships, data];
-	const newOfficer = await fetchWithAuth(`${API_URL}/officers/${id}`, {
-		method: "PATCH",
+	const newOfficer = await fetchWithAuth(`/updateOfficer?id=${id}`, {
+		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -38,8 +36,8 @@ export async function deleteInternship(index: number): Promise<Officer> {
 	if (!officer) throw new Error("Officer not found");
 	const newInternships = [...officer.internships];
 	newInternships.splice(index, 1);
-	const res = await fetchWithAuth(`${API_URL}/officers/${id}`, {
-		method: "PATCH",
+	const res = await fetchWithAuth(`/updateOfficer?id=${id}`, {
+		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -66,8 +64,8 @@ export async function updateInternship({
 	if (!officer) throw new Error("Officer not found");
 	const newInternships = [...officer.internships];
 	newInternships[index] = data;
-	const res = await fetchWithAuth(`${API_URL}/officers/${id}`, {
-		method: "PATCH",
+	const res = await fetchWithAuth(`/updateOfficer?id=${id}`, {
+		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},

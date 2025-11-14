@@ -1,4 +1,4 @@
-import { Settings } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Link } from "@tanstack/react-router";
 
@@ -49,7 +49,7 @@ export function Navbar() {
 				aria-label="Settings"
 				title="Settings"
 			>
-				<Settings className="h-5 w-5" />
+				<LogOut className="h-5 w-5" />
 			</button>
 		</nav>
 	);
