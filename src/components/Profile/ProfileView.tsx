@@ -1,13 +1,9 @@
-"use client";
 import { RoleList } from "./RoleList";
 import { ExternalLinks } from "../Socials/ExternalLinks";
 import { ImageUpdate } from "./ImageUpdate";
 import { UserAvatar } from "./UserAvatar";
 import { UpdateName } from "./UpdateName";
-import {
-	getCurrentOfficerQueryOptions,
-	getOfficerByIdQueryOptions,
-} from "@/queries/officer";
+import { getOfficerQuery, getOfficerByIdQuery } from "@/queries/officer";
 import { useQuery } from "@tanstack/react-query";
 
 type Props = {
@@ -17,9 +13,7 @@ type Props = {
 
 export function ProfileView({ officerId, editable = false }: Props) {
 	const { data: officer } = useQuery(
-		officerId
-			? getOfficerByIdQueryOptions(officerId)
-			: getCurrentOfficerQueryOptions
+		officerId ? getOfficerByIdQuery(officerId) : getOfficerQuery
 	);
 
 	if (!officer) {

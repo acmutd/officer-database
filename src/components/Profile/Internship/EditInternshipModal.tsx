@@ -16,8 +16,8 @@ import {
 	FieldGroup,
 	FieldLabel,
 } from "@/components/ui/field";
-import { updateInternshipMutationOptions } from "@/queries/officer/internships";
-import { Internships, InternshipsSchema } from "@/schemas/officer";
+import { updateInternshipMutation } from "@/queries/internships";
+import { type Internships, InternshipsSchema } from "@/schemas/officer";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -50,12 +50,12 @@ export function EditInternshipModal({ internship, index }: Props) {
 	});
 
 	const { mutateAsync: updateInternship, isPending } = useMutation(
-		updateInternshipMutationOptions
+		updateInternshipMutation
 	);
 
 	const onSubmit = async (data: InternshipFormData) => {
 		try {
-			await updateInternship({ internship: data, index });
+			await updateInternship({ index, data });
 			setIsOpen(false);
 			toast.success("Internship updated successfully");
 		} catch (error) {

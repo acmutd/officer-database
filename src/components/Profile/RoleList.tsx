@@ -1,4 +1,4 @@
-import { Role } from "@/schemas/officer";
+import type { Role } from "@/schemas/officer";
 import { Badge } from "./Badge";
 import {
 	Popover,

@@ -1,9 +1,9 @@
 import { Pencil, Loader2 } from "lucide-react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import React from "react";
-import { updateOfficerImageMutationOptions } from "@/queries/officer";
+import { updateOfficerImageMutation } from "@/queries/officer";
 import { toast } from "sonner";
 
 type Props = {
@@ -14,9 +14,9 @@ type Props = {
 
 export function ImageUpdate({ officerId, firstName, lastName }: Props) {
 	const path = encodeURIComponent(`officers/${firstName}_${lastName}.webp`);
-	const avatar = `https://firebasestorage.googleapis.com/v0/b/${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}/o/${path}?alt=media`;
+	const avatar = `https://firebasestorage.googleapis.com/v0/b/${import.meta.env.VITE_PUBLIC_FIREBASE_STORAGE_BUCKET}/o/${path}?alt=media`;
 	const { mutate: updateUserImage, isPending } = useMutation({
-		...updateOfficerImageMutationOptions(officerId),
+		...updateOfficerImageMutation(officerId),
 		onSuccess: () => {
 			toast.success("Image updated successfully", {
 				description: "refresh the page to see the new image",

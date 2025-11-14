@@ -1,8 +1,4 @@
-"use client";
-import {
-	getCurrentOfficerQueryOptions,
-	getOfficerByIdQueryOptions,
-} from "@/queries/officer";
+import { getOfficerByIdQuery, getOfficerQuery } from "@/queries/officer";
 import {
 	Card,
 	CardContent,
@@ -21,9 +17,7 @@ type Props = {
 
 export function InternshipList({ officerId, editable = false }: Props) {
 	const { data: officer } = useQuery(
-		officerId
-			? getOfficerByIdQueryOptions(officerId)
-			: getCurrentOfficerQueryOptions
+		officerId ? getOfficerByIdQuery(officerId) : getOfficerQuery
 	);
 
 	return (

@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Research } from "@/schemas/officer";
+import type { Research } from "@/schemas/officer";
 import { Calendar, FlaskConical, Users } from "lucide-react";
 import { DeleteResearchModal } from "./DeleteResearchModal";
 import { EditResearchModal } from "./EditResearchModal";

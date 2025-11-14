@@ -1,4 +1,3 @@
-"use client";
 import { EditSocials } from "./Socials/EditSocials";
 import {
 	Card,
@@ -7,11 +6,11 @@ import {
 	CardHeader,
 	CardTitle,
 } from "../ui/card";
-import { getCurrentOfficerQueryOptions } from "@/queries/officer";
+import { getOfficerQuery } from "@/queries/officer";
 import { useQuery } from "@tanstack/react-query";
 
 export function ProfileSettings() {
-	const { data: officer } = useQuery(getCurrentOfficerQueryOptions);
+	const { data: officer } = useQuery(getOfficerQuery);
 	if (!officer) {
 		return null;
 	}

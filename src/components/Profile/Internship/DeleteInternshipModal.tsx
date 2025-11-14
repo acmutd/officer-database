@@ -8,8 +8,8 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { deleteInternshipMutationOptions } from "@/queries/officer/internships";
-import { Internships } from "@/schemas/officer";
+import { deleteInternshipMutation } from "@/queries/internships";
+import type { Internships } from "@/schemas/officer";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -23,13 +23,13 @@ export function DeleteInternshipModal({ internship, index }: Props) {
 	const [isDeleting, setIsDeleting] = useState(false);
 
 	const { mutateAsync: deleteInternship } = useMutation(
-		deleteInternshipMutationOptions
+		deleteInternshipMutation
 	);
 
 	const handleDelete = async () => {
 		setIsDeleting(true);
 		try {
-			await deleteInternship({ index });
+			await deleteInternship(index);
 			setIsOpen(false);
 		} catch (error) {
 			console.error("Failed to delete internship:", error);

@@ -7,8 +7,8 @@ import {
 	FieldGroup,
 	FieldLabel,
 } from "@/components/ui/field";
-import { updateUserSocialsMutationOptions } from "@/queries/officer/socials";
-import { SocialLinks } from "@/schemas/officer";
+import { updateSocialsMutation } from "@/queries/socials";
+import { type Officer } from "@/schemas/officer";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,7 +16,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 
 interface EditSocialsProps {
-	links: SocialLinks;
+	links: Officer["socialLinks"];
 }
 
 const EditSocialsFormSchema = z.object({
@@ -56,15 +56,18 @@ export function EditSocials({ links }: EditSocialsProps) {
 		},
 	});
 
-	const { mutate, isPending, isError } = useMutation(
-		updateUserSocialsMutationOptions
-	);
+	const {
+		mutateAsync: mutate,
+		isPending,
+		isError,
+	} = useMutation(updateSocialsMutation);
 
-	const onSubmit = (data: EditSocialsFormData) => {
-		const newSocialObject = Object.fromEntries(
+	const onSubmit = async (data: EditSocialsFormData) => {
+		const newSocialObject: Officer["socialLinks"] = Object.fromEntries(
 			Object.entries(data).filter(([_, value]) => value !== "")
 		);
-		mutate({ socials: newSocialObject });
+		await mutate({ ...links, ...newSocialObject });
+		toast.success("Social links updated successfully");
 	};
 
 	return (

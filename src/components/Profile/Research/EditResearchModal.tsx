@@ -16,10 +16,10 @@ import {
 	FieldGroup,
 	FieldLabel,
 } from "@/components/ui/field";
-import { Research, ResearchSchema } from "@/schemas/officer";
+import { type Research, ResearchSchema } from "@/schemas/officer";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { updateResearchMutationOptions } from "@/queries/officer/research";
+import { updateResearchMutation } from "@/queries/research";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -66,7 +66,7 @@ export function EditResearchModal({ research, index }: Props) {
 	});
 
 	const { mutateAsync: updateResearch, isPending } = useMutation(
-		updateResearchMutationOptions
+		updateResearchMutation
 	);
 
 	const onSubmit = async (data: ResearchFormData) => {
@@ -75,7 +75,7 @@ export function EditResearchModal({ research, index }: Props) {
 				...data,
 				principalInvestigator: data.principalInvestigator.map((pi) => pi.name),
 			};
-			await updateResearch({ research: transformedData, index });
+			await updateResearch({ index, data: transformedData });
 			setIsOpen(false);
 			toast.success("Research updated successfully");
 		} catch (error) {

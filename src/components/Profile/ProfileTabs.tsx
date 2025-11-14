@@ -1,15 +1,12 @@
-"use client";
-import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { useSearchParams } from "next/navigation";
 import { ProfileSettings } from "./ProfileSettings";
 import { InternshipList } from "./Internship/InternshipList";
 import { ResearchList } from "./Research/ResearchList";
 import { AcademicInfo } from "./AcademicInfo";
+import { Link, useSearch } from "@tanstack/react-router";
 
 export function ProfileTabs() {
-	const searchparams = useSearchParams();
-	const tab = searchparams.get("tab") || "personal";
+	const { tab } = useSearch({ from: "/_authed/profile" });
 	return (
 		<div className="p-10">
 			<Tabs defaultValue={tab} className="w-full">
@@ -19,7 +16,7 @@ export function ProfileTabs() {
 						className="text-white/70 data-[state=active]:bg-white/10 data-[state=active]:text-white"
 						asChild
 					>
-						<Link href="/profile?tab=personal" replace>
+						<Link to="/profile" search={{ tab: "personal" }} replace>
 							Personal
 						</Link>
 					</TabsTrigger>
@@ -28,7 +25,7 @@ export function ProfileTabs() {
 						className="text-white/70 data-[state=active]:bg-white/10 data-[state=active]:text-white"
 						asChild
 					>
-						<Link href="/profile?tab=professional" replace>
+						<Link to="/profile" search={{ tab: "professional" }} replace>
 							Professional
 						</Link>
 					</TabsTrigger>
@@ -37,7 +34,7 @@ export function ProfileTabs() {
 						className="text-white/70 data-[state=active]:bg-white/10 data-[state=active]:text-white"
 						asChild
 					>
-						<Link href="/profile?tab=academics" replace>
+						<Link to="/profile" search={{ tab: "academics" }} replace>
 							Academic
 						</Link>
 					</TabsTrigger>

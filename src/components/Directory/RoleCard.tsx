@@ -14,11 +14,11 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { isAdmin } from "@/lib/admin";
-import { Role, RoleSchema, divisions } from "@/schemas/officer";
+import { type Role, RoleSchema, divisions } from "@/schemas/officer";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { getCurrentOfficerQueryOptions } from "@/queries/officer";
-import { updateOfficerRolesMutationOptions } from "@/queries/officer/roles";
+import { getOfficerQuery } from "@/queries/officer";
+import { updateOfficerRoleMutation } from "@/queries/roles";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -33,12 +33,10 @@ type RoleCardProps = {
 type RoleFormData = z.infer<typeof RoleSchema>;
 
 export function RoleCard({ role, officerId, index }: RoleCardProps) {
-	const { data: currentUser } = useQuery(getCurrentOfficerQueryOptions);
-
-	if (!currentUser) throw new Error("Current user or officer not found");
+	const { data: currentUser } = useQuery(getOfficerQuery);
 
 	const [isEditing, setIsEditing] = useState(false);
-	const canEdit = isAdmin(currentUser);
+	const canEdit = currentUser && isAdmin(currentUser);
 
 	const {
 		register,
@@ -47,7 +45,6 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 		control,
 		reset,
 		watch,
-		getValues,
 	} = useForm<RoleFormData>({
 		resolver: zodResolver(RoleSchema),
 		defaultValues: role,
@@ -57,7 +54,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 	const currentEndDate = watch("endDate");
 
 	const { mutateAsync: updateRoles, isPending } = useMutation(
-		updateOfficerRolesMutationOptions(officerId)
+		updateOfficerRoleMutation(officerId)
 	);
 
 	const onSubmit = async (data: RoleFormData) => {
@@ -122,15 +119,15 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 						currentLevel === 1
 							? "bg-blue-500/20 text-blue-200"
 							: currentLevel === 2
-							? "bg-purple-500/20 text-purple-200"
-							: "bg-yellow-500/20 text-yellow-200"
+								? "bg-purple-500/20 text-purple-200"
+								: "bg-yellow-500/20 text-yellow-200"
 					}`}
 				>
 					{currentLevel === 1
 						? "Officer"
 						: currentLevel === 2
-						? "Director"
-						: "Executive"}
+							? "Director"
+							: "Executive"}
 				</span>
 			</div>
 

@@ -8,8 +8,8 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { deleteResearchMutationOptions } from "@/queries/officer/research";
-import { Research } from "@/schemas/officer";
+import { deleteResearchMutation } from "@/queries/research";
+import type { Research } from "@/schemas/officer";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -22,14 +22,12 @@ export function DeleteResearchModal({ research, index }: Props) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 
-	const { mutateAsync: deleteResearch } = useMutation(
-		deleteResearchMutationOptions
-	);
+	const { mutateAsync: deleteResearch } = useMutation(deleteResearchMutation);
 
 	const handleDelete = async () => {
 		setIsDeleting(true);
 		try {
-			await deleteResearch({ index });
+			await deleteResearch(index);
 			setIsOpen(false);
 		} catch (error) {
 			console.error("Failed to delete research:", error);

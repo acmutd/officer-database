@@ -1,60 +1,71 @@
-"use server";
-import { Research } from "@/schemas/officer";
+import { auth } from "@/lib/firebase";
+import { fetchWithAuth } from "./fetch";
 import { getCurrentOfficer } from "./officer";
-import { fetchWithAuth } from "@/lib/fetch";
+import { OfficerSchema, type Research } from "@/schemas/officer";
 
-export async function addResearch({ research }: { research: Research }) {
-	const officer = await getCurrentOfficer();
-	if (!officer) {
-		throw new Error("Officer not found");
+export async function deleteResearch(index: number) {
+	const id = auth.currentUser?.uid;
+	if (!id) {
+		throw new Error("Unauthorized");
 	}
-	const newResearch = [...officer.research, research];
-	const res = await fetchWithAuth(
-		`${process.env.API_URL}/officers/${officer.id}`,
-		"PATCH",
-		{
-			research: newResearch,
-		}
-	);
-	return res;
+	const officer = await getCurrentOfficer();
+	if (!officer) throw new Error("Officer not found");
+	const newResearch = [...officer.research];
+	newResearch.splice(index, 1);
+	const res = await fetchWithAuth(`/updateOfficer?id=${id}`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({ research: newResearch }),
+	});
+
+	const data = await res.json();
+	return OfficerSchema.parse(data);
 }
 
 export async function updateResearch({
-	research,
 	index,
+	data,
 }: {
-	research: Research;
 	index: number;
+	data: Research;
 }) {
-	const officer = await getCurrentOfficer();
-	if (!officer) {
-		throw new Error("Officer not found");
+	const id = auth.currentUser?.uid;
+	if (!id) {
+		throw new Error("Unauthorized");
 	}
+	const officer = await getCurrentOfficer();
+	if (!officer) throw new Error("Officer not found");
 	const newResearch = [...officer.research];
-	newResearch[index] = research;
-	const res = await fetchWithAuth(
-		`${process.env.API_URL}/officers/${officer.id}`,
-		"PATCH",
-		{
-			research: newResearch,
-		}
-	);
-	return res;
+	newResearch[index] = data;
+	const res = await fetchWithAuth(`/updateOfficer?id=${id}`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({ research: newResearch }),
+	});
+	const newData = await res.json();
+	return OfficerSchema.parse(newData);
 }
 
-export async function deleteResearch({ index }: { index: number }) {
-	const officer = await getCurrentOfficer();
-	if (!officer) {
-		throw new Error("Officer not found");
+export async function addResearch(data: Research) {
+	const id = auth.currentUser?.uid;
+	if (!id) {
+		throw new Error("Unauthorized");
 	}
-	const newResearch = [...officer.research];
-	newResearch.splice(index, 1);
-	const res = await fetchWithAuth(
-		`${process.env.API_URL}/officers/${officer.id}`,
-		"PATCH",
-		{
-			research: newResearch,
-		}
-	);
-	return res;
+
+	const officer = await getCurrentOfficer();
+	if (!officer) throw new Error("Officer not found");
+	const newResearch = [...officer.research, data];
+	const res = await fetchWithAuth(`/updateOfficer?id=${id}`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({ research: newResearch }),
+	});
+	const newData = await res.json();
+	return OfficerSchema.parse(newData);
 }

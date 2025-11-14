@@ -1,12 +1,10 @@
-"use client";
-
 import {
 	columns,
 	currentDivisionFilter,
 	divisions,
 	fuzzyFilter,
 	fuzzySort,
-} from "@/config/table-columns";
+} from "@/lib/table";
 import {
 	flexRender,
 	getCoreRowModel,
@@ -19,10 +17,10 @@ import { Search, SortAsc, SortDesc } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { getAllOfficersQueryOptions } from "@/queries/officer";
+import { getAllOfficersQuery } from "@/queries/officer";
 
-export function Table() {
-	const { data } = useSuspenseQuery(getAllOfficersQueryOptions);
+export default function Table() {
+	const { data } = useSuspenseQuery(getAllOfficersQuery);
 
 	const [pagination, setPagination] = useState({
 		pageIndex: 0,
@@ -122,7 +120,7 @@ export function Table() {
 																: flexRender(
 																		header.column.columnDef.header,
 																		header.getContext()
-																  )}
+																	)}
 														</span>
 														{!header.isPlaceholder && (
 															<div
