@@ -2,9 +2,12 @@ import { ACMErrorComponent } from "@/components/ErrorComponent";
 import { ProfileTabs } from "@/components/Profile/ProfileTabs";
 import { ProfileView } from "@/components/Profile/ProfileView";
 import { TimeLine } from "@/components/Profile/TimeLine";
+import { Spinner } from "@/components/Spinner";
+import { ProfileWelcomeModal } from "@/components/Profile/ProfileWelcomeModal";
+import { useAuth } from "@/lib/auth";
 import { getOfficerQuery } from "@/queries/officer";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { z } from "zod";
 
 const searchSchema = z.object({
@@ -26,15 +29,19 @@ export const Route = createFileRoute("/_authed/profile")({
 });
 
 function RouteComponent() {
-	const { data: officer, isLoading, error } = useQuery(getOfficerQuery);
+	const { data: officer, isLoading } = useQuery(getOfficerQuery);
+	const { user } = useAuth();
+
+	const isNewUser =
+		user?.metadata.creationTime === user?.metadata.lastSignInTime;
 
 	if (isLoading) {
-		return <div>Loading...</div>;
+		return <Spinner />;
 	}
-	if (!officer || error) {
-		console.error(error);
-		throw error || new Error("Officer not found");
+	if (!officer) {
+		return <Navigate to="/login" />;
 	}
+
 	return (
 		<div className="flex justify-around gap-8 px-2">
 			<div className="container flex w-2/3 flex-col gap-8 pb-24">
@@ -54,6 +61,7 @@ function RouteComponent() {
 					className="animate-bounce"
 				/>
 			</div>
+			<ProfileWelcomeModal isNewUser={isNewUser} />
 		</div>
 	);
 }

@@ -1,7 +1,9 @@
 import { ACMErrorComponent } from "@/components/ErrorComponent";
+import { Spinner } from "@/components/Spinner";
+import { useAuth } from "@/lib/auth";
 import { getOfficerQuery } from "@/queries/officer";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authed/")({
 	component: App,
@@ -12,22 +14,31 @@ export const Route = createFileRoute("/_authed/")({
 });
 
 function App() {
-	const { data: officer, isLoading, error } = useQuery(getOfficerQuery);
-	if (error) {
-		throw error;
-	}
+	const { data: officer, isLoading } = useQuery(getOfficerQuery);
+	const { user } = useAuth();
+
 	if (isLoading) {
-		return <div>Loading...</div>;
+		return <Spinner />;
 	}
+
 	if (!officer) {
-		throw new Error("Officer not found");
+		return <Navigate to="/login" />;
 	}
+
+	const isNewUser =
+		user?.metadata.creationTime === user?.metadata.lastSignInTime;
+	const shouldRedirect = localStorage.getItem("visitedProfile") !== "true";
+
+	if (isNewUser && shouldRedirect) {
+		return <Navigate to="/profile" />;
+	}
+
 	return (
 		<div className="mx-auto flex w-full justify-between px-16 pt-20">
 			<div className="flex w-1/2 items-center gap-8">
 				<div>
 					<h1 className="mb-2 text-6xl font-bold text-white lowercase">
-						welcome back, <br /> {officer?.firstName} {officer?.lastName}
+						welcome back, <br /> {officer.firstName} {officer.lastName}
 					</h1>
 					<img
 						src="/peechi.png"
