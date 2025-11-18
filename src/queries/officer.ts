@@ -41,6 +41,7 @@ export const updateOfficerNameMutation = mutationOptions({
 	mutationFn: updateOfficerName,
 	onSuccess: (res, _, __, context) => {
 		context.client.setQueryData(getOfficerQuery.queryKey, res);
+		context.client.invalidateQueries(getAllOfficersQuery);
 	},
 });
 
@@ -48,5 +49,6 @@ export const updateAcademicInfoMutationOptions = mutationOptions({
 	mutationFn: updateAcademicInfo,
 	onSuccess: (res, _, __, context) => {
 		context.client.setQueryData(getOfficerQuery.queryKey, res);
+		context.client.invalidateQueries(getAllOfficersQuery);
 	},
 });
