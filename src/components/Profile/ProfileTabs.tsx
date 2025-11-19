@@ -1,5 +1,4 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { ProfileSettings } from "./ProfileSettings";
 import { InternshipList } from "./Internship/InternshipList";
 import { ResearchList } from "./Research/ResearchList";
 import { AcademicInfo } from "./AcademicInfo";
@@ -21,15 +20,6 @@ export function ProfileTabs() {
 						</Link>
 					</TabsTrigger>
 					<TabsTrigger
-						value="personal"
-						className="text-white/70 data-[state=active]:bg-white/10 data-[state=active]:text-white"
-						asChild
-					>
-						<Link to="/profile" search={{ tab: "personal" }} replace>
-							Personal
-						</Link>
-					</TabsTrigger>
-					<TabsTrigger
 						value="academics"
 						className="text-white/70 data-[state=active]:bg-white/10 data-[state=active]:text-white"
 						asChild
@@ -46,9 +36,6 @@ export function ProfileTabs() {
 					<InternshipList editable />
 					<ResearchList editable />
 					{/* <ResumeUpload  /> */}
-				</TabsContent>
-				<TabsContent value="personal" className="mt-6">
-					<ProfileSettings />
 				</TabsContent>
 				<TabsContent value="academics" className="mt-6">
 					<AcademicInfo editable />

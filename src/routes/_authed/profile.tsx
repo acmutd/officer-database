@@ -12,7 +12,7 @@ import { z } from "zod";
 
 const searchSchema = z.object({
 	tab: z
-		.enum(["personal", "professional", "academics"])
+		.enum(["professional", "academics"])
 		.default("professional")
 		.catch("professional"),
 });
@@ -52,7 +52,7 @@ function RouteComponent() {
 				<TimeLine officerId={officer.id} />
 			</div>
 
-			<div className="absolute right-0 bottom-0">
+			<div className="absolute right-0 top-5">
 				<img
 					src="/peechi.png"
 					alt="Peechi"

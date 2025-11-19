@@ -56,7 +56,7 @@ export function ProfileView({ officerId, editable = false }: Props) {
 				</div>
 			</div>
 
-			<ExternalLinks links={officer.socialLinks} />
+			<ExternalLinks links={officer.socialLinks} editable={editable} />
 		</div>
 	);
 }
