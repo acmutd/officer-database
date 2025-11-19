@@ -13,8 +13,8 @@ import { z } from "zod";
 const searchSchema = z.object({
 	tab: z
 		.enum(["personal", "professional", "academics"])
-		.default("personal")
-		.catch("personal"),
+		.default("professional")
+		.catch("professional"),
 });
 
 const searchTab = searchSchema.optional().default(searchSchema.parse({}));

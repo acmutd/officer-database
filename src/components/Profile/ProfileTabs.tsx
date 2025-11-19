@@ -12,21 +12,21 @@ export function ProfileTabs() {
 			<Tabs defaultValue={tab} className="w-full">
 				<TabsList className="w-full justify-start bg-white/5">
 					<TabsTrigger
-						value="personal"
-						className="text-white/70 data-[state=active]:bg-white/10 data-[state=active]:text-white"
-						asChild
-					>
-						<Link to="/profile" search={{ tab: "personal" }} replace>
-							Personal
-						</Link>
-					</TabsTrigger>
-					<TabsTrigger
 						value="professional"
 						className="text-white/70 data-[state=active]:bg-white/10 data-[state=active]:text-white"
 						asChild
 					>
 						<Link to="/profile" search={{ tab: "professional" }} replace>
 							Professional
+						</Link>
+					</TabsTrigger>
+					<TabsTrigger
+						value="personal"
+						className="text-white/70 data-[state=active]:bg-white/10 data-[state=active]:text-white"
+						asChild
+					>
+						<Link to="/profile" search={{ tab: "personal" }} replace>
+							Personal
 						</Link>
 					</TabsTrigger>
 					<TabsTrigger
@@ -39,9 +39,6 @@ export function ProfileTabs() {
 						</Link>
 					</TabsTrigger>
 				</TabsList>
-				<TabsContent value="personal" className="mt-6">
-					<ProfileSettings />
-				</TabsContent>
 				<TabsContent
 					value="professional"
 					className="mt-6 flex flex-col gap-y-6"
@@ -49,6 +46,9 @@ export function ProfileTabs() {
 					<InternshipList editable />
 					<ResearchList editable />
 					{/* <ResumeUpload  /> */}
+				</TabsContent>
+				<TabsContent value="personal" className="mt-6">
+					<ProfileSettings />
 				</TabsContent>
 				<TabsContent value="academics" className="mt-6">
 					<AcademicInfo editable />
