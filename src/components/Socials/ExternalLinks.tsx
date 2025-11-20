@@ -36,7 +36,7 @@ export function ExternalLinks({ links, editable = false }: Props) {
 
 	if (!editable) {
 		return (
-			<div className="flex items-center gap-2">
+			<div className="flex flex-col gap-2 items-start">
 				{links.linkedin && <LinkedInLink url={links.linkedin} />}
 				{links.github && <GithubLink url={links.github} />}
 				{links.personalEmail && <EmailLink url={links.personalEmail} />}

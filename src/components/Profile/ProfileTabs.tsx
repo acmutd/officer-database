@@ -14,7 +14,6 @@ export function ProfileTabs() {
 					className="text-white/70 data-[state=active]:bg-white/10 data-[state=active]:text-white"
 					asChild
 				>
-					{/* <ResumeUpload  /> */}
 					<Link to="/profile" search={{ tab: "professional" }} replace>
 						Professional
 					</Link>
