@@ -20,43 +20,45 @@ export function ProfileView({ officerId, editable = false }: Props) {
 		return null;
 	}
 	return (
-		<div className="col-span-2 space-y-8 rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10 p-10 shadow-xl backdrop-blur-xl">
-			<div className="flex flex-col justify-between gap-12 md:flex-row">
-				<div className="space-y-6">
-					<div className="space-y-4">
-						{editable ? (
-							<UpdateName
-								firstName={officer.firstName}
-								lastName={officer.lastName}
-							/>
-						) : (
-							<h1 className="text-5xl font-bold tracking-tight text-white md:text-6xl">
-								{officer.firstName} {officer.lastName}
-							</h1>
-						)}
-						<div className="flex flex-wrap items-center gap-3">
-							<RoleList roles={officer.roles} showAll />
-						</div>
-					</div>
-				</div>
-				<div className="relative shrink-0">
-					{editable ? (
-						<ImageUpdate
-							officerId={officer.id}
-							firstName={officer.firstName}
-							lastName={officer.lastName}
-						/>
-					) : (
-						<UserAvatar
-							officerId={officer.id}
-							firstName={officer.firstName}
-							lastName={officer.lastName}
-						/>
-					)}
+		<div className="overflow-hidden rounded-3xl border border-white/10 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
+			<div className="flex flex-col items-center gap-6 text-center">
+				{editable ? (
+					<ImageUpdate
+						officerId={officer.id}
+						firstName={officer.firstName}
+						lastName={officer.lastName}
+					/>
+				) : (
+					<UserAvatar
+						officerId={officer.id}
+						firstName={officer.firstName}
+						lastName={officer.lastName}
+						className="shadow-2xl ring-4 ring-white/30"
+					/>
+				)}
+
+				{editable ? (
+					<UpdateName
+						firstName={officer.firstName}
+						lastName={officer.lastName}
+					/>
+				) : (
+					<h1 className="text-2xl font-semibold tracking-tight text-white">
+						{officer.firstName} {officer.lastName}
+					</h1>
+				)}
+
+				<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70">
+					<RoleList roles={officer.roles} showAll />
 				</div>
 			</div>
 
-			<ExternalLinks links={officer.socialLinks} editable={editable} />
+			<div className="flex flex-col gap-4 pt-6">
+				<span className="text-xs font-semibold uppercase text-white/60">
+					Socials
+				</span>
+				<ExternalLinks links={officer.socialLinks} editable={editable} />
+			</div>
 		</div>
 	);
 }

@@ -1,7 +1,6 @@
 import { ACMErrorComponent } from "@/components/ErrorComponent";
 import { ProfileTabs } from "@/components/Profile/ProfileTabs";
 import { ProfileView } from "@/components/Profile/ProfileView";
-import { TimeLine } from "@/components/Profile/TimeLine";
 import { Spinner } from "@/components/Spinner";
 import { ProfileWelcomeModal } from "@/components/Profile/ProfileWelcomeModal";
 import { useAuth } from "@/lib/auth";
@@ -43,13 +42,12 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="flex justify-around gap-8 px-2">
-			<div className="container flex w-2/3 flex-col gap-8 pb-24">
+		<div className="flex justify-around gap-8 px-6">
+			<div className="container w-1/5 flex-col">
 				<ProfileView editable />
-				<ProfileTabs />
 			</div>
-			<div className="container w-1/3 flex-col">
-				<TimeLine officerId={officer.id} />
+			<div className="container flex w-4/5 flex-col gap-8">
+				<ProfileTabs />
 			</div>
 
 			<div className="absolute right-0 top-5">

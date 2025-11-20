@@ -1,7 +1,6 @@
 import { DirectoryProfileTabs } from "@/components/Directory/DirectoryProfileTabs";
 import { ACMErrorComponent } from "@/components/ErrorComponent";
 import { ProfileView } from "@/components/Profile/ProfileView";
-import { TimeLine } from "@/components/Profile/TimeLine";
 import { getOfficerByIdQuery, getOfficerQuery } from "@/queries/officer";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import z from "zod";
@@ -31,13 +30,22 @@ export const Route = createFileRoute("/_authed/directory/$userId")({
 function RouteComponent() {
 	const { userId } = Route.useParams();
 	return (
-		<div className="flex justify-around gap-8 px-2">
-			<div className="container flex w-2/3 flex-col gap-8 pb-24">
+		<div className="flex justify-around gap-8 px-6">
+			<div className="container w-1/5 flex-col">
 				<ProfileView officerId={userId} />
+			</div>
+			<div className="container flex w-4/5 flex-col gap-8">
 				<DirectoryProfileTabs officerId={userId} />
 			</div>
-			<div className="container w-1/3 flex-col">
-				<TimeLine officerId={userId} />
+
+			<div className="absolute right-0 top-5">
+				<img
+					src="/peechi.png"
+					alt="Peechi"
+					height={100}
+					width={100}
+					className="animate-bounce"
+				/>
 			</div>
 		</div>
 	);

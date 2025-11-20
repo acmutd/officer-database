@@ -228,7 +228,7 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 					<Button
 						type="button"
 						variant="ghost"
-						className="h-9 px-3 text-white/70 transition hover:text-white"
+						className="border-white/20 bg-white/10 px-6 text-white hover:bg-white/20"
 						onClick={handleCancel}
 						disabled={isPending}
 					>
@@ -237,7 +237,7 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 				)}
 				<Button
 					type="submit"
-					className="h-9 bg-acm-gradient px-4 text-white shadow-[0_10px_30px_-14px_rgba(59,130,246,0.65)] transition"
+					className="h-9 bg-acm-gradient px-4 text-white transition"
 					disabled={isPending || !isDirty}
 				>
 					{isPending ? (

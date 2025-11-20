@@ -40,13 +40,18 @@ export function ExternalLinks({ links, editable = false }: Props) {
 				{links.linkedin && <LinkedInLink url={links.linkedin} />}
 				{links.github && <GithubLink url={links.github} />}
 				{links.personalEmail && <EmailLink url={links.personalEmail} />}
+				{!hasLinks && (
+					<span className="text-sm text-white/60">
+						No social links yet. :'(
+					</span>
+				)}
 			</div>
 		);
 	}
 
 	return (
 		<div className="space-y-4">
-			<div className="flex flex-wrap items-center gap-2">
+			<div className="flex flex-col gap-2 items-start">
 				{hasLinks ? (
 					<>
 						{links.linkedin && <LinkedInLink url={links.linkedin} />}
@@ -64,7 +69,7 @@ export function ExternalLinks({ links, editable = false }: Props) {
 						type="button"
 						variant="outline"
 						size="sm"
-						className="border-white/20 bg-white/10 text-sm text-white hover:bg-white/15"
+						className="border-white/20 bg-white/10 text-sm text-white hover:bg-white/15 place-self-center w-full"
 						onClick={() => setIsEditing(true)}
 					>
 						{hasLinks ? "Edit Links" : "Add Links"}
