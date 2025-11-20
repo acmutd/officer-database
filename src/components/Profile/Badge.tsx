@@ -26,7 +26,7 @@ export function Badge({ role }: Props) {
 	return (
 		<HoverCard openDelay={100} closeDelay={100}>
 			<HoverCardTrigger>
-				<div className="group relative flex cursor-default items-center gap-2 rounded-full border border-white/10 bg-black/30 px-4 py-1.5 text-sm font-medium shadow-sm backdrop-blur-sm">
+				<div className="group relative flex cursor-default items-center gap-2 rounded-full border border-white/10 bg-black/80 px-4 py-1.5 text-sm font-medium shadow-sm backdrop-blur-sm">
 					<div
 						className={`${
 							divisions[role.division as keyof typeof divisions]
@@ -37,7 +37,7 @@ export function Badge({ role }: Props) {
 					</div>
 				</div>
 			</HoverCardTrigger>
-			<HoverCardContent side="left" className="bg-black/60">
+			<HoverCardContent side="right" className="bg-black/80">
 				<div className="space-y-2">
 					<div>
 						<h4 className="text-sm font-semibold text-white">{role.title}</h4>

@@ -43,10 +43,10 @@ function RouteComponent() {
 
 	return (
 		<div className="flex justify-around gap-8 px-6">
-			<div className="container w-1/5 flex-col">
+			<div className="container w-1/4 flex-col">
 				<ProfileView editable />
 			</div>
-			<div className="container flex w-4/5 flex-col gap-8">
+			<div className="container flex w-3/4 flex-col gap-8">
 				<ProfileTabs />
 			</div>
 
