@@ -1,5 +1,5 @@
 import { Pencil, Loader2 } from "lucide-react";
-import { Avatar, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
@@ -47,14 +47,17 @@ export function ImageUpdate({ officerId, firstName, lastName }: Props) {
 	};
 
 	return (
-		<div className="group relative">
-			<div className="bg-acm-gradient absolute -inset-0.5 rounded-full opacity-30 blur transition group-hover:opacity-50"></div>
+		<div className="group relative mx-auto flex flex-col items-center">
 			<Avatar className="relative h-36 w-36 ring-2 ring-white/10">
 				<AvatarImage
 					src={avatar}
 					alt="Profile"
 					className="rounded-full object-cover"
 				/>
+				<AvatarFallback className="bg-gradient-to-br from-purple-500 to-blue-500 text-white text-2xl font-bold">
+					{firstName?.[0] ?? ""}
+					{lastName?.[0] ?? ""}
+				</AvatarFallback>
 			</Avatar>
 			<input
 				type="file"

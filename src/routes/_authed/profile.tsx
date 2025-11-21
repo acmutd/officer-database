@@ -1,7 +1,6 @@
 import { ACMErrorComponent } from "@/components/ErrorComponent";
 import { ProfileTabs } from "@/components/Profile/ProfileTabs";
 import { ProfileView } from "@/components/Profile/ProfileView";
-import { TimeLine } from "@/components/Profile/TimeLine";
 import { Spinner } from "@/components/Spinner";
 import { ProfileWelcomeModal } from "@/components/Profile/ProfileWelcomeModal";
 import { useAuth } from "@/lib/auth";
@@ -12,7 +11,7 @@ import { z } from "zod";
 
 const searchSchema = z.object({
 	tab: z
-		.enum(["personal", "professional", "academics"])
+		.enum(["professional", "academics"])
 		.default("professional")
 		.catch("professional"),
 });
@@ -43,16 +42,15 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="flex justify-around gap-8 px-2">
-			<div className="container flex w-2/3 flex-col gap-8 pb-24">
+		<div className="flex justify-around gap-8 px-6">
+			<div className="container w-1/4 flex-col">
 				<ProfileView editable />
+			</div>
+			<div className="container flex w-3/4 flex-col gap-8">
 				<ProfileTabs />
 			</div>
-			<div className="container w-1/3 flex-col">
-				<TimeLine officerId={officer.id} />
-			</div>
 
-			<div className="absolute right-0 bottom-0">
+			<div className="absolute right-0 top-5">
 				<img
 					src="/peechi.png"
 					alt="Peechi"

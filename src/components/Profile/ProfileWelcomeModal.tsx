@@ -66,13 +66,15 @@ export function ProfileWelcomeModal({ isNewUser }: ProfileWelcomeModalProps) {
 				<div className="space-y-3 text-sm text-white/70">
 					<ul className="list-disc space-y-1 pl-5 text-left">
 						<li>
-							Personal: Fill out your linkedin, github, and personal email. All
-							of these are optional.
+							On the left: feel free to update your name, picture, and any links
+							you'd like to share.
 						</li>
-						<li>Professional: Add any internship and research experience.</li>
 						<li>
-							Academics: Update your net id, credit standing, year standing, and
-							expected graduation term and year.
+							Professional tab: Add any internship and research experience.
+						</li>
+						<li>
+							Academics tab: Update your net id, credit standing, year standing,
+							and expected graduation term and year.
 						</li>
 					</ul>
 				</div>

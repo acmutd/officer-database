@@ -57,15 +57,15 @@ export function UpdateName({ firstName, lastName }: Props) {
 
 	if (!isEditing) {
 		return (
-			<div className="group flex items-center gap-3">
-				<h1 className="text-5xl font-bold tracking-tight text-white md:text-6xl">
+			<div className="group flex items-center gap-3 text-center">
+				<h1 className="text-2xl font-bold text-white">
 					{firstName} {lastName}
 				</h1>
 				<Button
 					onClick={() => setIsEditing(true)}
 					variant="outline"
 					size="sm"
-					className="border-white/20 bg-white/10 text-sm text-white opacity-0 transition-opacity hover:bg-white/20 group-hover:opacity-100"
+					className="border-white/20 bg-white/10 px-6 text-sm text-white hover:bg-white/20"
 				>
 					Edit
 				</Button>
@@ -74,7 +74,10 @@ export function UpdateName({ firstName, lastName }: Props) {
 	}
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+		<form
+			onSubmit={handleSubmit(onSubmit)}
+			className="mx-auto flex w-full flex-col gap-6"
+		>
 			<div className="grid gap-4 md:grid-cols-2">
 				<div className="space-y-2">
 					<label className="text-sm font-medium text-white/70">
@@ -103,19 +106,19 @@ export function UpdateName({ firstName, lastName }: Props) {
 			</div>
 			<div className="flex gap-3">
 				<Button
-					type="submit"
-					disabled={isPending}
-					className="bg-acm-gradient px-6"
-				>
-					{isPending ? "Saving..." : "Save Changes"}
-				</Button>
-				<Button
 					type="button"
 					onClick={handleCancel}
 					variant="outline"
 					className="border-white/20 bg-white/10 px-6 text-white hover:bg-white/20"
 				>
 					Cancel
+				</Button>
+				<Button
+					type="submit"
+					disabled={isPending}
+					className="bg-acm-gradient px-6"
+				>
+					{isPending ? "Saving..." : "Save Changes"}
 				</Button>
 			</div>
 		</form>
