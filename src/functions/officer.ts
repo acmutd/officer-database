@@ -189,3 +189,19 @@ export async function uploadOfficerResume({
 		throw new Error(error.error || "Failed to upload resume");
 	}
 }
+
+export async function getOfficerResumeUrl(officerId: string): Promise<string> {
+	const res = await fetchWithAuth(`/getOfficerResume?id=${officerId}`, {
+		method: "GET",
+	});
+
+	if (!res.ok) {
+		throw new Error("Failed to fetch resume");
+	}
+
+	const data = await res.json();
+	if (!data.resumeUrl) {
+		throw new Error("Resume URL not found");
+	}
+	return data.resumeUrl;
+}

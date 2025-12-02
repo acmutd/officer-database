@@ -10,21 +10,25 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { FileText, Upload, Loader2, Eye } from "lucide-react";
-import { uploadResumeMutation } from "@/queries/resume";
+import { uploadResumeMutation, getResumeUrlQuery } from "@/queries/resume";
 import { getOfficerQuery } from "@/queries/officer";
-import { fetchWithAuth } from "@/functions/fetch";
 import { toast } from "sonner";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 export function ResumeSection() {
 	const { data: officer, isLoading: isOfficerLoading } =
 		useQuery(getOfficerQuery);
 	const fileInputRef = useRef<HTMLInputElement>(null);
-	const [isViewing, setIsViewing] = useState(false);
+
+	const { refetch: viewResume, isFetching: isViewing } = useQuery({
+		...getResumeUrlQuery(officer?.id ?? ""),
+		enabled: false,
+	});
 
 	const { mutate: uploadResume, isPending: isUploading } = useMutation({
 		...uploadResumeMutation,
-		onSuccess: () => {
+		onSuccess: (_, __, ___, context) => {
+			context.client.refetchQueries(getOfficerQuery);
 			toast.success("Resume uploaded successfully");
 		},
 		onError: (error) => {
@@ -54,29 +58,18 @@ export function ResumeSection() {
 		if (!officer?.id) return;
 
 		try {
-			setIsViewing(true);
-			const response = await fetchWithAuth(
-				`/getOfficerResume?id=${officer.id}`,
-				{
-					method: "GET",
-				}
-			);
+			const { data: resumeUrl, isError } = await viewResume();
 
-			if (!response.ok) {
+			if (isError) {
 				throw new Error("Failed to fetch resume");
 			}
 
-			const data = await response.json();
-			if (data.resumeUrl) {
-				window.open(data.resumeUrl, "_blank");
-			} else {
-				throw new Error("Resume URL not found");
+			if (resumeUrl) {
+				window.open(resumeUrl, "_blank");
 			}
 		} catch (error) {
 			console.error(error);
 			toast.error("Failed to load resume");
-		} finally {
-			setIsViewing(false);
 		}
 	};
 
