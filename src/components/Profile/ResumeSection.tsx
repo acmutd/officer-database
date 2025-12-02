@@ -66,9 +66,12 @@ export function ResumeSection() {
 				throw new Error("Failed to fetch resume");
 			}
 
-			const blob = await response.blob();
-			const url = window.URL.createObjectURL(blob);
-			window.open(url, "_blank");
+			const data = await response.json();
+			if (data.resumeUrl) {
+				window.open(data.resumeUrl, "_blank");
+			} else {
+				throw new Error("Resume URL not found");
+			}
 		} catch (error) {
 			console.error(error);
 			toast.error("Failed to load resume");
