@@ -3,6 +3,7 @@ import {
 	getCurrentOfficer,
 	getOfficerById,
 	updateAcademicInfo,
+	updateOfficerImage,
 	updateOfficerName,
 } from "@/functions/officer";
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
@@ -22,20 +23,13 @@ export const getAllOfficersQuery = queryOptions({
 	queryFn: getAllOfficers,
 });
 
-export const updateOfficerImageMutation = (officerId: string) =>
-	mutationOptions({
-		mutationFn: async (data: FormData) => {
-			const res = await fetch(`/api/image/${officerId}`, {
-				method: "POST",
-				body: data,
-			});
-			if (!res.ok) {
-				throw new Error("Failed to update image");
-			}
-			const json = await res.json();
-			return json.image ?? "/peechi.png";
-		},
-	});
+export const updateOfficerImageMutation = mutationOptions({
+	mutationFn: updateOfficerImage,
+	onSuccess: (_, __, ___, context) => {
+		context.client.refetchQueries(getOfficerQuery);
+		context.client.invalidateQueries(getAllOfficersQuery);
+	},
+});
 
 export const updateOfficerNameMutation = mutationOptions({
 	mutationFn: updateOfficerName,

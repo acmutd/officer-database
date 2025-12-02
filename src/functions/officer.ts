@@ -115,7 +115,6 @@ const createDefaultOfficer = (officerId: string, name: string): Officer => {
 		firstName: name.split(" ")[0],
 		lastName: name.split(" ")[1],
 		netId: "xxx123456",
-		resume: "",
 		socialLinks: {
 			linkedin: undefined,
 			github: undefined,
@@ -136,5 +135,57 @@ const createDefaultOfficer = (officerId: string, name: string): Officer => {
 		roles: [],
 		accessLevel: 1,
 		isActive: true,
+		photo: {},
 	};
 };
+
+export async function updateOfficerImage({
+	officerId,
+	file,
+}: {
+	officerId: string;
+	file: File;
+}) {
+	if (!file) {
+		console.error("No image provided");
+		throw new Error("No image provided");
+	}
+
+	const formData = new FormData();
+	formData.append("id", officerId);
+	formData.append("file", file);
+
+	const res = await fetchWithAuth("/uploadOfficerPhoto", {
+		method: "POST",
+		body: formData,
+	});
+	const imageUrl = await res.json();
+	return imageUrl;
+}
+
+export async function uploadOfficerResume({
+	officerId,
+	file,
+}: {
+	officerId: string;
+	file: File;
+}) {
+	if (!file) {
+		console.error("No file provided");
+		throw new Error("No file provided");
+	}
+
+	const formData = new FormData();
+	formData.append("id", officerId);
+	formData.append("file", file);
+
+	const res = await fetchWithAuth("/uploadOfficerResume", {
+		method: "POST",
+		body: formData,
+	});
+
+	if (!res.ok) {
+		const error = await res.json();
+		throw new Error(error.error || "Failed to upload resume");
+	}
+}

@@ -6,8 +6,10 @@ type Endpoint =
 	| "/createOfficer"
 	| `/getOfficer?id=${string}`
 	| "/getOfficers"
-	| `/updateOfficer?id=${string}`;
-
+	| `/updateOfficer?id=${string}`
+	| "/uploadOfficerPhoto"
+	| "/uploadOfficerResume"
+	| `/getOfficerResume?id=${string}`;
 export async function fetchWithAuth(endpoint: Endpoint, options: RequestInit) {
 	const idToken = await auth.currentUser?.getIdToken();
 	const userId = auth.currentUser?.uid;

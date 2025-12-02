@@ -46,7 +46,7 @@ function RouteComponent() {
 			<div className="container w-1/4 flex-col">
 				<ProfileView editable />
 			</div>
-			<div className="container flex w-3/4 flex-col gap-8">
+			<div className="container flex w-3/4 flex-col gap-8 pb-20">
 				<ProfileTabs />
 			</div>
 

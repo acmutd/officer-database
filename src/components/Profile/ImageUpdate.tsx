@@ -5,21 +5,22 @@ import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import { updateOfficerImageMutation } from "@/queries/officer";
 import { toast } from "sonner";
+import type { Photo } from "@/schemas/officer";
+import { getOfficerImageUrl } from "@/lib/image";
 
 type Props = {
+	photo: Photo;
 	officerId: string;
 	firstName: string;
 	lastName: string;
 };
 
-export function ImageUpdate({ officerId, firstName, lastName }: Props) {
-	const path = encodeURIComponent(`officers/${firstName}_${lastName}.webp`);
-	const avatar = `https://firebasestorage.googleapis.com/v0/b/${import.meta.env.VITE_PUBLIC_FIREBASE_STORAGE_BUCKET}/o/${path}?alt=media`;
+export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
+	const avatar = getOfficerImageUrl(photo);
 	const { mutate: updateUserImage, isPending } = useMutation({
-		...updateOfficerImageMutation(officerId),
+		...updateOfficerImageMutation,
 		onSuccess: () => {
 			toast.success("Image updated successfully", {
-				description: "refresh the page to see the new image",
 				action: {
 					label: "Refresh",
 					onClick: () => {
@@ -41,22 +42,26 @@ export function ImageUpdate({ officerId, firstName, lastName }: Props) {
 	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (!file) return;
-		const formData = new FormData();
-		formData.append("image", file);
-		updateUserImage(formData);
+		if (file.size > 10 * 1024 * 1024) {
+			toast.error("Image size must be less than 10MB");
+			return;
+		}
+		updateUserImage({ officerId, file });
 	};
 
 	return (
 		<div className="group relative mx-auto flex flex-col items-center">
 			<Avatar className="relative h-36 w-36 ring-2 ring-white/10">
-				<AvatarImage
-					src={avatar}
-					alt="Profile"
-					className="rounded-full object-cover"
-				/>
+				{photo.url && (
+					<AvatarImage
+						src={avatar}
+						alt="Profile"
+						className="rounded-full object-cover"
+					/>
+				)}
 				<AvatarFallback className="bg-gradient-to-br from-purple-500 to-blue-500 text-white text-2xl font-bold">
-					{firstName?.[0] ?? ""}
-					{lastName?.[0] ?? ""}
+					{firstName[0] ?? ""}
+					{lastName[0] ?? ""}
 				</AvatarFallback>
 			</Avatar>
 			<input

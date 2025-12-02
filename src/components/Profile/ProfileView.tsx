@@ -27,10 +27,11 @@ export function ProfileView({ officerId, editable = false }: Props) {
 						officerId={officer.id}
 						firstName={officer.firstName}
 						lastName={officer.lastName}
+						photo={officer.photo}
 					/>
 				) : (
 					<UserAvatar
-						officerId={officer.id}
+						photo={officer.photo}
 						firstName={officer.firstName}
 						lastName={officer.lastName}
 						className="shadow-2xl ring-4 ring-white/30"

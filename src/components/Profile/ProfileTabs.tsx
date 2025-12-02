@@ -2,6 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { InternshipList } from "./Internship/InternshipList";
 import { ResearchList } from "./Research/ResearchList";
 import { AcademicInfo } from "./AcademicInfo";
+import { ResumeSection } from "./ResumeSection";
 import { Link, useSearch } from "@tanstack/react-router";
 
 export function ProfileTabs() {
@@ -31,6 +32,7 @@ export function ProfileTabs() {
 			<TabsContent value="professional" className="mt-6 flex flex-col gap-y-6">
 				<InternshipList editable />
 				<ResearchList editable />
+				<ResumeSection />
 			</TabsContent>
 			<TabsContent value="academics" className="mt-6">
 				<AcademicInfo editable />

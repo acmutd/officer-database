@@ -57,12 +57,19 @@ export const RoleSchema = z.object({
 	endDate: TermSchema.nullable(),
 });
 
+export const PhotoSchema = z
+	.object({
+		url: z.string().optional(),
+		lastUpdatedAt: z.string().optional(),
+	})
+	.catchall(z.string());
+
 export const OfficerSchema = z.object({
 	id: z.string().min(1),
 	firstName: z.string().min(1),
 	lastName: z.string().min(1),
 	netId: z.string().min(1),
-	resume: z.string().optional(),
+	resumeUpdatedAt: z.string().optional(),
 	socialLinks: SocialLinksSchema,
 	creditStanding: StandingSchema,
 	yearStanding: StandingSchema,
@@ -73,6 +80,7 @@ export const OfficerSchema = z.object({
 	roles: z.array(RoleSchema),
 	accessLevel: z.number().int().min(1).max(3),
 	isActive: z.boolean(),
+	photo: PhotoSchema.catch({}),
 });
 
 export type SocialLinks = z.infer<typeof SocialLinksSchema>;
@@ -82,3 +90,4 @@ export type Research = z.infer<typeof ResearchSchema>;
 export type Role = z.infer<typeof RoleSchema>;
 export type Officer = z.infer<typeof OfficerSchema>;
 export type Division = z.infer<typeof divisions>;
+export type Photo = z.infer<typeof PhotoSchema>;
