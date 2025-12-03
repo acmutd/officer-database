@@ -5,7 +5,7 @@ export function GithubLink({ url }: { url: string }) {
 	return (
 		<Button
 			variant="ghost"
-			className="cursor-pointer text-white/70 hover:bg-white/10 hover:text-white"
+			className="cursor-pointer text-white/70 hover:bg-white/10 hover:text-white underline"
 			asChild
 		>
 			<a
