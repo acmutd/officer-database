@@ -9,3 +9,11 @@ export function isAdmin(account: GetAdminLevel) {
 		return account.level > 1;
 	}
 }
+
+export function isExecutive(account: GetAdminLevel) {
+	if ("accessLevel" in account) {
+		return account.accessLevel > 2;
+	} else {
+		return account.level > 2;
+	}
+}

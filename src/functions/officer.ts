@@ -1,6 +1,7 @@
 import { auth } from "@/lib/firebase";
 import { OfficerSchema, type Officer } from "@/schemas/officer";
 import { fetchWithAuth } from "./fetch";
+import { isExecutive } from "@/lib/admin";
 
 export async function getCurrentOfficer(): Promise<Officer | null> {
 	const idToken = await auth.currentUser?.getIdToken();
@@ -93,6 +94,28 @@ export async function updateAcademicInfo(
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify(data),
+	});
+	const res = await officer.json();
+	return OfficerSchema.parse(res);
+}
+
+export async function updateOfficerStatus({
+	officerId,
+	isActive,
+}: {
+	officerId: string;
+	isActive: boolean;
+}): Promise<Officer> {
+	const currentUser = await getCurrentOfficer();
+	if (!currentUser) throw new Error("Current user not found");
+	if (!isExecutive(currentUser)) throw new Error("Unauthorized");
+
+	const officer = await fetchWithAuth(`/updateOfficer?id=${officerId}`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({ isActive }),
 	});
 	const res = await officer.json();
 	return OfficerSchema.parse(res);

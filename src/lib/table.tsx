@@ -13,6 +13,7 @@ import {
 } from "@tanstack/match-sorter-utils";
 import { RoleList } from "@/components/Profile/RoleList";
 import { Link } from "@tanstack/react-router";
+import { cn } from "@/lib/utils";
 
 export const divisions = [
 	"All",
@@ -172,9 +173,24 @@ export const columns = [
 		header: () => <span className="text-white/70">Active</span>,
 		cell: ({ row }) => (
 			<div className="w-[160px] min-w-[160px]">
-				<span className="text-white">
-					{row.original.isActive ? "🟢" : "🔴"}
-				</span>
+				<div
+					className={cn(
+						"inline-flex items-center gap-2 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors",
+						row.original.isActive
+							? "border-green-500/20 bg-green-500/10 text-green-400"
+							: "border-red-500/20 bg-red-500/10 text-red-400"
+					)}
+				>
+					<div
+						className={cn(
+							"h-1.5 w-1.5 rounded-full shadow-[0_0_8px]",
+							row.original.isActive
+								? "bg-green-400 shadow-green-500/50"
+								: "bg-red-400 shadow-red-500/50"
+						)}
+					/>
+					{row.original.isActive ? "Active" : "Inactive"}
+				</div>
 			</div>
 		),
 	}),

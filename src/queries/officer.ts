@@ -5,6 +5,7 @@ import {
 	updateAcademicInfo,
 	updateOfficerImage,
 	updateOfficerName,
+	updateOfficerStatus,
 } from "@/functions/officer";
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 
@@ -44,5 +45,16 @@ export const updateAcademicInfoMutationOptions = mutationOptions({
 	onSuccess: (res, _, __, context) => {
 		context.client.setQueryData(getOfficerQuery.queryKey, res);
 		context.client.invalidateQueries(getAllOfficersQuery);
+	},
+});
+
+export const updateOfficerStatusMutation = mutationOptions({
+	mutationFn: updateOfficerStatus,
+	onSuccess: (res, variables, __, context) => {
+		context.client.setQueryData(
+			getOfficerByIdQuery(variables.officerId).queryKey,
+			res
+		);
+		context.client.refetchQueries(getAllOfficersQuery);
 	},
 });
