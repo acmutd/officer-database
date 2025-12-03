@@ -5,6 +5,7 @@ import { UserAvatar } from "./UserAvatar";
 import { UpdateName } from "./UpdateName";
 import { getOfficerQuery, getOfficerByIdQuery } from "@/queries/officer";
 import { useQuery } from "@tanstack/react-query";
+import { Spinner } from "../Spinner";
 
 type Props = {
 	officerId?: string;
@@ -12,9 +13,13 @@ type Props = {
 };
 
 export function ProfileView({ officerId, editable = false }: Props) {
-	const { data: officer } = useQuery(
+	const { data: officer, isLoading } = useQuery(
 		officerId ? getOfficerByIdQuery(officerId) : getOfficerQuery
 	);
+
+	if (isLoading) {
+		return <Spinner />;
+	}
 
 	if (!officer) {
 		return null;

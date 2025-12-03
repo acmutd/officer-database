@@ -10,6 +10,7 @@ import { routeTree } from "./routeTree.gen";
 import "./globals.css";
 import reportWebVitals from "./reportWebVitals.ts";
 import { AuthContextProvider, useAuth } from "./lib/auth.tsx";
+import { Spinner } from "./components/Spinner.tsx";
 
 // Create a new router instance
 
@@ -37,11 +38,7 @@ function InnerApp() {
 	const auth = useAuth();
 
 	if (auth.isInitialLoading) {
-		return (
-			<div className="flex h-screen w-full items-center justify-center p-4">
-				<div className="size-10 rounded-full border-4 border-gray-200 border-t-foreground animate-spin" />
-			</div>
-		);
+		return <Spinner />;
 	}
 
 	return <RouterProvider router={router} context={{ auth }} />;

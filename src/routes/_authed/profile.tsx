@@ -5,7 +5,7 @@ import { Spinner } from "@/components/Spinner";
 import { ProfileWelcomeModal } from "@/components/Profile/ProfileWelcomeModal";
 import { useAuth } from "@/lib/auth";
 import { getOfficerQuery } from "@/queries/officer";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { z } from "zod";
 
@@ -22,21 +22,19 @@ export const Route = createFileRoute("/_authed/profile")({
 	component: RouteComponent,
 	validateSearch: searchTab,
 	loader: async ({ context }) => {
-		await context.queryClient.prefetchQuery(getOfficerQuery);
+		context.queryClient.ensureQueryData(getOfficerQuery);
 	},
 	errorComponent: ACMErrorComponent,
+	pendingComponent: Spinner,
 });
 
 function RouteComponent() {
-	const { data: officer, isLoading } = useQuery(getOfficerQuery);
+	const { data: officer } = useSuspenseQuery(getOfficerQuery);
 	const { user } = useAuth();
 
 	const isNewUser =
 		user?.metadata.creationTime === user?.metadata.lastSignInTime;
 
-	if (isLoading) {
-		return <Spinner />;
-	}
 	if (!officer) {
 		return <Navigate to="/login" />;
 	}

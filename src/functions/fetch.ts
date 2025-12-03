@@ -11,6 +11,8 @@ type Endpoint =
 	| "/uploadOfficerResume"
 	| `/getOfficerResume?id=${string}`;
 export async function fetchWithAuth(endpoint: Endpoint, options: RequestInit) {
+	// FOR TESTING PURPOSES A DELAY OF 1 SECOND IS ADDED
+	await new Promise((resolve) => setTimeout(resolve, 1000));
 	const idToken = await auth.currentUser?.getIdToken();
 	const userId = auth.currentUser?.uid;
 

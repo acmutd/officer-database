@@ -1,8 +1,10 @@
 import { DirectoryProfileTabs } from "@/components/Directory/DirectoryProfileTabs";
 import { ACMErrorComponent } from "@/components/ErrorComponent";
 import { ProfileView } from "@/components/Profile/ProfileView";
+import { Spinner } from "@/components/Spinner";
 import { getOfficerByIdQuery, getOfficerQuery } from "@/queries/officer";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import z from "zod";
 
 const searchSchema = z.object({
@@ -18,17 +20,21 @@ export const Route = createFileRoute("/_authed/directory/$userId")({
 	validateSearch: searchTabSchema,
 	component: RouteComponent,
 	loader: async ({ context, params }) => {
-		const officer = await context.queryClient.ensureQueryData(
-			getOfficerByIdQuery(params.userId)
-		);
-		if (!officer) throw redirect({ to: "/directory" });
+		context.queryClient.prefetchQuery(getOfficerByIdQuery(params.userId));
 		context.queryClient.prefetchQuery(getOfficerQuery);
 	},
 	errorComponent: ACMErrorComponent,
+	pendingComponent: Spinner,
 });
 
 function RouteComponent() {
 	const { userId } = Route.useParams();
+	const { data: officer } = useSuspenseQuery(getOfficerByIdQuery(userId));
+
+	if (!officer) {
+		return <Navigate to="/directory" />;
+	}
+
 	return (
 		<div className="flex justify-around gap-8 px-6">
 			<div className="container w-1/4 flex-col">
