@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getAllOfficersQuery } from "@/queries/officer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -43,9 +43,10 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { Spinner } from "../Spinner";
 
 export default function Table() {
-	const { data } = useSuspenseQuery(getAllOfficersQuery);
+	const { data, isLoading } = useQuery(getAllOfficersQuery);
 
 	const [pagination, setPagination] = useState({
 		pageIndex: 0,
@@ -56,7 +57,7 @@ export default function Table() {
 	const [columnFilters, setColumnFilters] = useState<any[]>([]);
 
 	const table = useReactTable({
-		data,
+		data: data ?? [],
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
@@ -81,6 +82,10 @@ export default function Table() {
 	const divisionColumn = table.getColumn("roles");
 	const divisionFilterValue =
 		(divisionColumn?.getFilterValue() as string | undefined) ?? "all";
+
+	if (isLoading) {
+		return <Spinner />;
+	}
 
 	return (
 		<div className="w-full space-y-6">
