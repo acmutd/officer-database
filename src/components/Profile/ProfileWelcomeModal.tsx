@@ -42,48 +42,74 @@ export function ProfileWelcomeModal({ isNewUser }: ProfileWelcomeModalProps) {
 
 	return (
 		<Dialog open={isOpen} onOpenChange={handleChange}>
-			<DialogContent className="max-w-md border-white/10 bg-gradient-to-br from-white/5 to-white/10 text-white backdrop-blur-xl">
+			<DialogContent className="max-w-md border-white/10 bg-gradient-to-br from-white/5 to-white/10 text-white shadow-2xl backdrop-blur-xl sm:rounded-3xl">
 				<DialogHeader className="items-center text-center">
-					<div className="mb-2 flex items-center justify-center">
-						<div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10">
+					<div className="mb-4 flex items-center justify-center">
+						<div className="flex h-20 w-20 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/20 backdrop-blur-sm">
 							<img
 								src="/peechi.png"
 								alt="Peechi mascot"
-								height={48}
-								width={48}
-								className="animate-none"
+								height={56}
+								width={56}
+								className="animate-none drop-shadow-lg"
 							/>
 						</div>
 					</div>
-					<DialogTitle className="text-2xl font-semibold">
+					<DialogTitle className="text-2xl font-bold tracking-tight">
 						Welcome to the ACM Officer Database!
 					</DialogTitle>
 					<DialogDescription className="text-white/60">
-						Please fill out each tab with your information as we share this
-						information with our sponsors.
+						Please fill out your profile information. This data helps us connect
+						you with sponsors and opportunities.
 					</DialogDescription>
 				</DialogHeader>
-				<div className="space-y-3 text-sm text-white/70">
-					<ul className="list-disc space-y-1 pl-5 text-left">
-						<li>
-							On the left: feel free to update your name, picture, and any links
-							you'd like to share.
+				<div className="py-4 text-sm text-white/70">
+					<ul className="space-y-3 text-left">
+						<li className="flex gap-3">
+							<span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs font-bold text-white">
+								1
+							</span>
+							<span>
+								<strong className="text-white">Profile Section:</strong> Update
+								your name, picture, and social links. Other user will be able to
+								view your profile. The info will also be available to the{" "}
+								<a
+									href="https://www.acmutd.co/officers"
+									target="_blank"
+									className="text-blue-500 hover:underline"
+								>
+									ACM website's officers page
+								</a>
+								.
+							</span>
 						</li>
-						<li>
-							Professional tab: Add any internship and research experience.
+						<li className="flex gap-3">
+							<span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs font-bold text-white">
+								2
+							</span>
+							<span>
+								<strong className="text-white">Professional Tab:</strong> Add
+								your internship and research experiences. Your resume will be
+								private and only be visible to our sponsors.
+							</span>
 						</li>
-						<li>
-							Academics tab: Update your net id, credit standing, year standing,
-							and expected graduation term and year.
+						<li className="flex gap-3">
+							<span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs font-bold text-white">
+								3
+							</span>
+							<span>
+								<strong className="text-white">Academics Tab:</strong> Update
+								your NetID, standing, and graduation details.
+							</span>
 						</li>
 					</ul>
 				</div>
 				<DialogFooter className="sm:justify-center">
 					<Button
 						onClick={() => handleChange(false)}
-						className="bg-blue-500/10 text-blue-400 hover:bg-blue-500/20"
+						className="h-11 rounded-full bg-acm-gradient px-8 text-base font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-acm-gradient/25"
 					>
-						Explore the database
+						Explore
 					</Button>
 				</DialogFooter>
 			</DialogContent>
