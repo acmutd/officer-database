@@ -1,11 +1,18 @@
+import { cn } from "@/lib/utils";
 import { RoleList } from "./RoleList";
 import { ExternalLinks } from "../Socials/ExternalLinks";
 import { ImageUpdate } from "./ImageUpdate";
 import { UserAvatar } from "./UserAvatar";
 import { UpdateName } from "./UpdateName";
-import { getOfficerQuery, getOfficerByIdQuery } from "@/queries/officer";
-import { useQuery } from "@tanstack/react-query";
+import {
+	getOfficerQuery,
+	getOfficerByIdQuery,
+	updateOfficerStatusMutation,
+} from "@/queries/officer";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Spinner } from "../Spinner";
+import { isExecutive } from "@/lib/admin";
+import { Button } from "../ui/button";
 
 type Props = {
 	officerId?: string;
@@ -16,6 +23,11 @@ export function ProfileView({ officerId, editable = false }: Props) {
 	const { data: officer, isLoading } = useQuery(
 		officerId ? getOfficerByIdQuery(officerId) : getOfficerQuery
 	);
+
+	const { data: viewer } = useQuery(getOfficerQuery);
+	const isViewerExecutive = viewer ? isExecutive(viewer) : false;
+
+	const { mutate: updateStatus } = useMutation(updateOfficerStatusMutation);
 
 	if (isLoading) {
 		return <Spinner />;
@@ -56,6 +68,42 @@ export function ProfileView({ officerId, editable = false }: Props) {
 
 				<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70">
 					<RoleList roles={officer.roles} showAll />
+				</div>
+
+				<div className="flex items-center gap-3 pt-2">
+					<div
+						className={cn(
+							"flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+							officer.isActive
+								? "border-green-500/20 bg-green-500/10 text-green-400"
+								: "border-red-500/20 bg-red-500/10 text-red-400"
+						)}
+					>
+						<div
+							className={cn(
+								"h-1.5 w-1.5 rounded-full shadow-[0_0_8px]",
+								officer.isActive
+									? "bg-green-400 shadow-green-500/50"
+									: "bg-red-400 shadow-red-500/50"
+							)}
+						/>
+						{officer.isActive ? "Active" : "Inactive"}
+					</div>
+					{isViewerExecutive && officerId && (
+						<Button
+							variant="ghost"
+							size="sm"
+							className="h-7 rounded-full border border-white/10 px-3 text-xs text-white/60 hover:bg-white/10 hover:text-white"
+							onClick={() =>
+								updateStatus({
+									officerId: officer.id,
+									isActive: !officer.isActive,
+								})
+							}
+						>
+							{officer.isActive ? "Deactivate" : "Activate"}
+						</Button>
+					)}
 				</div>
 			</div>
 
