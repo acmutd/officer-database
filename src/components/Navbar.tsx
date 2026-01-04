@@ -14,7 +14,7 @@ export function Navbar() {
 
 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 py-2 bg-black">
+        <nav className="fixed top-0 left-0 right-0 z-50 py-2 bg-black/80">
             <div className="max-w-7xl mx-auto px-8 py-2 flex items-center justify-center">
            
             <div className="flex items-center gap-12">

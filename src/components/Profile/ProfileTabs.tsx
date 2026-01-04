@@ -9,10 +9,10 @@ export function ProfileTabs() {
 	const { tab } = useSearch({ from: "/_authed/profile" });
 	return (
 		<Tabs defaultValue={tab} className="w-full">
-			<TabsList className="w-full justify-start bg-white/5">
+			<TabsList className="w-full justify-start bg-black/40">
 				<TabsTrigger
 					value="professional"
-					className="text-white/70 data-[state=active]:bg-white/10 data-[state=active]:text-white"
+					className="text-white/70 data-[state=active]:bg-white/10  data-[state=active]:text-white"
 					asChild
 				>
 					<Link to="/profile" search={{ tab: "professional" }} replace>
@@ -21,7 +21,7 @@ export function ProfileTabs() {
 				</TabsTrigger>
 				<TabsTrigger
 					value="academics"
-					className="text-white/70 data-[state=active]:bg-white/10 data-[state=active]:text-white"
+					className="text-white/70 data-[state=active]:bg-white/10  data-[state=active]:text-white"
 					asChild
 				>
 					<Link to="/profile" search={{ tab: "academics" }} replace>
