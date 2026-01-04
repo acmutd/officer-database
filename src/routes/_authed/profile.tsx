@@ -48,6 +48,7 @@ function RouteComponent() {
 				<ProfileTabs />
 			</div>
 
+			{/*
 			<div className="absolute right-0 top-5">
 				<img
 					src="/peechi.png"
@@ -57,6 +58,7 @@ function RouteComponent() {
 					className="animate-bounce"
 				/>
 			</div>
+			*/}
 			<ProfileWelcomeModal isNewUser={isNewUser} />
 		</div>
 	);
