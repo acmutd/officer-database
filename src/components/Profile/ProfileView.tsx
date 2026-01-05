@@ -47,23 +47,7 @@ export function ProfileView({ officerId, editable = false }: Props) {
 		<div className="overflow-hidden rounded-3xl border border-white/10 bg-black/40 p-8 shadow-2xl backdrop-blur-xl">
 			<div className="flex flex-col items-center gap-6 text-center">
 				<div className="flex w-full items-start justify-between">
-					<div className="flex-1" />
-					{editable ? (
-						<ImageUpdate
-							officerId={officer.id}
-							firstName={officer.firstName}
-							lastName={officer.lastName}
-							photo={officer.photo}
-						/>
-					) : (
-						<UserAvatar
-							photo={officer.photo}
-							firstName={officer.firstName}
-							lastName={officer.lastName}
-							className="shadow-2xl ring-4 ring-white/30"
-						/>
-					)}
-					<div className="flex flex-1 justify-end">
+					<div className="flex flex-1 justify-start">
 						{isViewerExecutive && officerId && (
 							<Popover>
 								<PopoverTrigger asChild>
@@ -77,7 +61,7 @@ export function ProfileView({ officerId, editable = false }: Props) {
 									</Button>
 								</PopoverTrigger>
 								<PopoverContent
-									align="end"
+									align="start"
 									className="w-64 border-white/10 bg-black/90 text-white shadow-2xl backdrop-blur"
 								>
 									<div className="flex flex-col gap-3">
@@ -85,14 +69,11 @@ export function ProfileView({ officerId, editable = false }: Props) {
 											<p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60">
 												Profile actions
 											</p>
-											<p className="text-xs text-white/60">
-												Adjust visibility and status without removing this profile.
-											</p>
 										</div>
 										<Button
-											variant="secondary"
+											variant="ghost"
 											size="sm"
-											className="justify-start rounded-full border border-white/10 px-3 text-xs"
+											className="justify-start rounded-full border border-white/10 bg-white/10 px-3 text-xs text-white/80 hover:bg-white/15 hover:text-white"
 											disabled={isUpdatingStatus}
 											onClick={() =>
 												updateStatus({
@@ -124,6 +105,41 @@ export function ProfileView({ officerId, editable = false }: Props) {
 							</Popover>
 						)}
 					</div>
+					{editable ? (
+						<ImageUpdate
+							officerId={officer.id}
+							firstName={officer.firstName}
+							lastName={officer.lastName}
+							photo={officer.photo}
+						/>
+					) : (
+						<UserAvatar
+							photo={officer.photo}
+							firstName={officer.firstName}
+							lastName={officer.lastName}
+							className="shadow-2xl ring-4 ring-white/30"
+						/>
+					)}
+					<div className="flex flex-1 justify-end">
+						<div
+							className={cn(
+								"flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+								officer.isActive
+									? "border-green-500/20 bg-green-500/10 text-green-400"
+									: "border-red-500/20 bg-red-500/10 text-red-400"
+							)}
+						>
+							<div
+								className={cn(
+									"h-1.5 w-1.5 rounded-full shadow-[0_0_8px]",
+									officer.isActive
+										? "bg-green-400 shadow-green-500/50"
+										: "bg-red-400 shadow-red-500/50"
+								)}
+							/>
+							{officer.isActive ? "Active" : "Inactive"}
+						</div>
+					</div>
 				</div>
 
 
@@ -138,26 +154,6 @@ export function ProfileView({ officerId, editable = false }: Props) {
 						{officer.firstName} {officer.lastName}
 					</h1>
 				)}
-
-				<div
-					className={cn(
-						"flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
-						officer.isActive
-							? "border-green-500/20 bg-green-500/10 text-green-400"
-							: "border-red-500/20 bg-red-500/10 text-red-400"
-					)}
-				>
-					<div
-						className={cn(
-							"h-1.5 w-1.5 rounded-full shadow-[0_0_8px]",
-							officer.isActive
-								? "bg-green-400 shadow-green-500/50"
-								: "bg-red-400 shadow-red-500/50"
-						)}
-					/>
-					{officer.isActive ? "Active" : "Inactive"}
-				</div>
-
 
 				<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70 -mt-3">
 					<RoleList roles={officer.roles} showAll />
