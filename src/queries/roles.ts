@@ -1,7 +1,7 @@
 import { mutationOptions } from "@tanstack/react-query";
 import {
 	getCurrentOfficersQuery,
-	getArchivedOfficersQuery,
+	getPastOfficersQuery,
 	getOfficerByIdQuery,
 } from "./officer";
 import { addOfficerRole, updateOfficerRole } from "@/functions/roles";
@@ -12,7 +12,7 @@ export const updateOfficerRoleMutation = (officerId: string) =>
 		onSuccess: (res, _, __, ctx) => {
 			ctx.client.setQueryData(getOfficerByIdQuery(officerId).queryKey, res);
 			ctx.client.invalidateQueries(getCurrentOfficersQuery);
-			ctx.client.invalidateQueries(getArchivedOfficersQuery);
+			ctx.client.invalidateQueries(getPastOfficersQuery);
 		},
 	});
 
@@ -22,6 +22,6 @@ export const addOfficerRoleMutation = (officerId: string) =>
 		onSuccess: (res, _, __, ctx) => {
 			ctx.client.setQueryData(getOfficerByIdQuery(officerId).queryKey, res);
 			ctx.client.invalidateQueries(getCurrentOfficersQuery);
-			ctx.client.invalidateQueries(getArchivedOfficersQuery);
+			ctx.client.invalidateQueries(getPastOfficersQuery);
 		},
 	});
