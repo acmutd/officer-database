@@ -3,7 +3,7 @@ import { ACMErrorComponent } from "@/components/ErrorComponent";
 import { Spinner } from "@/components/Spinner";
 import {
 	getCurrentOfficersQuery,
-	getArchivedOfficersQuery,
+	getPastOfficersQuery,
 } from "@/queries/officer";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/_authed/directory/")({
 	loader: async ({ context }) => {
 		await Promise.all([
 			context.queryClient.ensureQueryData(getCurrentOfficersQuery),
-			context.queryClient.ensureQueryData(getArchivedOfficersQuery),
+			context.queryClient.ensureQueryData(getPastOfficersQuery),
 		]);
 	},
 	errorComponent: ACMErrorComponent,
