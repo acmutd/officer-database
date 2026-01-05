@@ -27,7 +27,7 @@ import { useEffect, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
 	getCurrentOfficersQuery,
-	getArchivedOfficersQuery,
+	getPastOfficersQuery,
 } from "@/queries/officer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -48,14 +48,14 @@ import {
 } from "@/components/ui/table";
 
 export default function Table() {
-	const [view, setView] = useState<"current" | "archived">("current");
+	const [view, setView] = useState<"current" | "past">("current");
 	const [pagination, setPagination] = useState({
 		pageIndex: 0,
 		pageSize: 20,
 	});
 
 	const currentQuery =
-		view === "archived" ? getArchivedOfficersQuery : getCurrentOfficersQuery;
+		view === "past" ? getPastOfficersQuery : getCurrentOfficersQuery;
 	const { data } = useSuspenseQuery(currentQuery);
 
 	useEffect(() => {
@@ -126,15 +126,15 @@ export default function Table() {
 							Current
 						</Button>
 						<Button
-							variant={view === "archived" ? "default" : "ghost"}
+							variant={view === "past" ? "default" : "ghost"}
 							size="sm"
 							className={cn(
 								"rounded-md px-3 py-2 text-xs font-medium",
-								view === "archived"
+								view === "past"
 									? "bg-white/20 text-white hover:bg-white/30"
 									: "text-white/70 hover:bg-white/10"
 							)}
-							onClick={() => setView("archived")}
+							onClick={() => setView("past")}
 						>
 							Past
 						</Button>

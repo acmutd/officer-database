@@ -29,14 +29,14 @@ const officersQuery = (archived: boolean) =>
 
 export const getAllOfficersQuery = officersQuery(false);
 export const getCurrentOfficersQuery = officersQuery(false);
-export const getArchivedOfficersQuery = officersQuery(true);
+export const getPastOfficersQuery = officersQuery(true);
 
 export const updateOfficerImageMutation = mutationOptions({
 	mutationFn: updateOfficerImage,
 	onSuccess: (_, __, ___, context) => {
 		context.client.refetchQueries(getOfficerQuery);
 		context.client.invalidateQueries(getCurrentOfficersQuery);
-		context.client.invalidateQueries(getArchivedOfficersQuery);
+		context.client.invalidateQueries(getPastOfficersQuery);
 	},
 });
 
@@ -45,7 +45,7 @@ export const updateOfficerNameMutation = mutationOptions({
 	onSuccess: (res, _, __, context) => {
 		context.client.setQueryData(getOfficerQuery.queryKey, res);
 		context.client.invalidateQueries(getCurrentOfficersQuery);
-		context.client.invalidateQueries(getArchivedOfficersQuery);
+		context.client.invalidateQueries(getPastOfficersQuery);
 	},
 });
 
@@ -54,7 +54,7 @@ export const updateAcademicInfoMutationOptions = mutationOptions({
 	onSuccess: (res, _, __, context) => {
 		context.client.setQueryData(getOfficerQuery.queryKey, res);
 		context.client.invalidateQueries(getCurrentOfficersQuery);
-		context.client.invalidateQueries(getArchivedOfficersQuery);
+		context.client.invalidateQueries(getPastOfficersQuery);
 	},
 });
 
@@ -66,7 +66,7 @@ export const updateOfficerStatusMutation = mutationOptions({
 			res
 		);
 		context.client.refetchQueries(getCurrentOfficersQuery);
-		context.client.refetchQueries(getArchivedOfficersQuery);
+		context.client.refetchQueries(getPastOfficersQuery);
 	},
 });
 
@@ -78,7 +78,7 @@ export const archiveOfficerMutation = mutationOptions({
 			res
 		);
 		context.client.invalidateQueries(getCurrentOfficersQuery);
-		context.client.invalidateQueries(getArchivedOfficersQuery);
+		context.client.invalidateQueries(getPastOfficersQuery);
 	},
 });
 
@@ -90,6 +90,6 @@ export const unarchiveOfficerMutation = mutationOptions({
 			res
 		);
 		context.client.invalidateQueries(getCurrentOfficersQuery);
-		context.client.invalidateQueries(getArchivedOfficersQuery);
+		context.client.invalidateQueries(getPastOfficersQuery);
 	},
 });
