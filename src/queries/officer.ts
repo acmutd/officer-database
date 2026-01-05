@@ -73,10 +73,17 @@ export const updateOfficerStatusMutation = mutationOptions({
 export const archiveOfficerMutation = mutationOptions({
 	mutationFn: archiveOfficer,
 	onSuccess: (res, officerId, __, context) => {
+		const updatedOfficer = { ...res, isArchived: true };
 		context.client.setQueryData(
 			getOfficerByIdQuery(officerId as string).queryKey,
-			res
+			updatedOfficer
 		);
+		// Also update the current officer query if it's the same officer
+		const currentOfficerKey = getOfficerQuery.queryKey;
+		const currentCachedOfficer = context.client.getQueryData<any>(currentOfficerKey);
+		if (currentCachedOfficer?.id === officerId) {
+			context.client.setQueryData(currentOfficerKey, updatedOfficer);
+		}
 		context.client.invalidateQueries(getCurrentOfficersQuery);
 		context.client.invalidateQueries(getPastOfficersQuery);
 	},
@@ -85,10 +92,17 @@ export const archiveOfficerMutation = mutationOptions({
 export const unarchiveOfficerMutation = mutationOptions({
 	mutationFn: unarchiveOfficer,
 	onSuccess: (res, officerId, __, context) => {
+		const updatedOfficer = { ...res, isArchived: false };
 		context.client.setQueryData(
 			getOfficerByIdQuery(officerId as string).queryKey,
-			res
+			updatedOfficer
 		);
+		// Also update the current officer query if it's the same officer
+		const currentOfficerKey = getOfficerQuery.queryKey;
+		const currentCachedOfficer = context.client.getQueryData<any>(currentOfficerKey);
+		if (currentCachedOfficer?.id === officerId) {
+			context.client.setQueryData(currentOfficerKey, updatedOfficer);
+		}
 		context.client.invalidateQueries(getCurrentOfficersQuery);
 		context.client.invalidateQueries(getPastOfficersQuery);
 	},

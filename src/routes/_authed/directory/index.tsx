@@ -11,8 +11,8 @@ export const Route = createFileRoute("/_authed/directory/")({
 	component: RouteComponent,
 	loader: async ({ context }) => {
 		await Promise.all([
-			context.queryClient.ensureQueryData(getCurrentOfficersQuery),
-			context.queryClient.ensureQueryData(getPastOfficersQuery),
+			context.queryClient.prefetchQuery(getCurrentOfficersQuery),
+			context.queryClient.prefetchQuery(getPastOfficersQuery),
 		]);
 	},
 	errorComponent: ACMErrorComponent,
