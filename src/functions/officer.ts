@@ -222,6 +222,7 @@ const createDefaultOfficer = (officerId: string, name: string): Officer => {
 		roles: [],
 		accessLevel: 1,
 		isActive: true,
+		isArchived: false,
 		photo: {},
 	};
 };
