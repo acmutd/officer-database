@@ -126,7 +126,7 @@ export const columns = [
 	columnHelper.accessor("joinDate", {
 		header: () => <span className="text-white/70">Join Date</span>,
 		cell: ({ row }) => (
-			<div className="w-[160px] min-w-[160px]">
+			<div className="w-40 min-w-40">
 				<div className="flex flex-col">
 					<span className="truncate text-xs text-white/50">
 						{row.original.joinDate.term} {row.original.joinDate.year}
@@ -172,7 +172,7 @@ export const columns = [
 	columnHelper.accessor("isActive", {
 		header: () => <span className="text-white/70">Active</span>,
 		cell: ({ row }) => (
-			<div className="w-[160px] min-w-[160px]">
+			<div className="w-40 min-w-40">
 				<div
 					className={cn(
 						"inline-flex items-center gap-2 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors",

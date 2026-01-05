@@ -8,6 +8,8 @@ import {
 	getOfficerQuery,
 	getOfficerByIdQuery,
 	updateOfficerStatusMutation,
+	archiveOfficerMutation,
+	unarchiveOfficerMutation,
 } from "@/queries/officer";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Spinner } from "../Spinner";
@@ -29,6 +31,8 @@ export function ProfileView({ officerId, editable = false }: Props) {
 	const isViewerExecutive = viewer ? isExecutive(viewer) : false;
 
 	const { mutate: updateStatus } = useMutation(updateOfficerStatusMutation);
+	const { mutate: archive } = useMutation(archiveOfficerMutation);
+	const { mutate: unarchive } = useMutation(unarchiveOfficerMutation);
 
 	if (isLoading) {
 		return <Spinner />;
@@ -61,19 +65,31 @@ export function ProfileView({ officerId, editable = false }: Props) {
 						{officer.isActive ? "Active" : "Inactive"}
 					</div>
 					{isViewerExecutive && officerId && (
-						<Button
-							variant="ghost"
-							size="sm"
-							className="h-7 rounded-full border border-white/10 px-3 text-xs text-white/60 hover:bg-white/10 hover:text-white"
-							onClick={() =>
-								updateStatus({
-									officerId: officer.id,
-									isActive: !officer.isActive,
-								})
-							}
-						>
-							{officer.isActive ? "Deactivate" : "Activate"}
-						</Button>
+						<div className="flex flex-col gap-2">
+							<Button
+								variant="ghost"
+								size="sm"
+								className="h-7 rounded-full border border-white/10 px-3 text-xs text-white/60 hover:bg-white/10 hover:text-white"
+								onClick={() =>
+									updateStatus({
+										officerId: officer.id,
+										isActive: !officer.isActive,
+									})
+								}
+							>
+								{officer.isActive ? "Deactivate" : "Activate"}
+							</Button>
+							<Button
+								variant="ghost"
+								size="sm"
+								className="h-7 rounded-full border border-white/10 px-3 text-xs text-white/60 hover:bg-white/10 hover:text-white"
+								onClick={() =>
+									officer.isArchived ? unarchive(officer.id) : archive(officer.id)
+								}
+							>
+								{officer.isArchived ? "Unarchive" : "Archive"}
+							</Button>
+						</div>
 					)}
 					</div>
 				</div>
@@ -107,7 +123,7 @@ export function ProfileView({ officerId, editable = false }: Props) {
 				)}
 
 
-				<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70 mt-[-12px]">
+				<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70 -mt-3">
 					<RoleList roles={officer.roles} showAll />
 				</div>
 

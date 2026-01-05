@@ -45,12 +45,23 @@ export async function getOrCreateOfficer(): Promise<Officer> {
 export async function getOfficerById(
 	officerId: string
 ): Promise<Officer | null> {
-	const res = await fetchWithAuth(`/getOfficer?id=${officerId}`, {
+	// First try to get the officer normally
+	let res = await fetchWithAuth(`/getOfficer?id=${officerId}` as const, {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
 		},
 	});
+
+	// If not found, try to get archived officer
+	if (!res.ok) {
+		res = await fetchWithAuth(`/getOfficer?id=${officerId}&archived=true` as const, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+	}
 
 	if (!res.ok) {
 		console.error(res.statusText);

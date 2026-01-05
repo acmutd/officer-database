@@ -5,6 +5,7 @@ const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
 type Endpoint =
 	| "/createOfficer"
 	| `/getOfficer?id=${string}`
+	| `/getOfficer?id=${string}&archived=true`
 	| "/getOfficers"
 	| "/getOfficers?archived=true"
 	| `/updateOfficer?id=${string}`
