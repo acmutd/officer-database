@@ -17,7 +17,7 @@ import { isExecutive } from "@/lib/admin";
 import { Button } from "../ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { EllipsisVertical } from "lucide-react";
+import { EllipsisVertical, Loader2 } from "lucide-react";
 
 type Props = {
 	officerId?: string;
@@ -32,9 +32,9 @@ export function ProfileView({ officerId, editable = false }: Props) {
 	const { data: viewer } = useQuery(getOfficerQuery);
 	const isViewerExecutive = viewer ? isExecutive(viewer) : false;
 
-	const { mutate: updateStatus } = useMutation(updateOfficerStatusMutation);
-	const { mutate: archive } = useMutation(archiveOfficerMutation);
-	const { mutate: unarchive } = useMutation(unarchiveOfficerMutation);
+	const { mutate: updateStatus, isPending: isUpdatingStatus } = useMutation(updateOfficerStatusMutation);
+	const { mutate: archive, isPending: isArchiving } = useMutation(archiveOfficerMutation);
+	const { mutate: unarchive, isPending: isUnarchiving } = useMutation(unarchiveOfficerMutation);
 
 	if (isLoading) {
 		return <Spinner />;
@@ -93,6 +93,7 @@ export function ProfileView({ officerId, editable = false }: Props) {
 											variant="secondary"
 											size="sm"
 											className="justify-start rounded-full border border-white/10 px-3 text-xs"
+											disabled={isUpdatingStatus}
 											onClick={() =>
 												updateStatus({
 													officerId: officer.id,
@@ -101,18 +102,21 @@ export function ProfileView({ officerId, editable = false }: Props) {
 												})
 											}
 										>
+											{isUpdatingStatus && <Loader2 className="h-3 w-3 animate-spin" />}
 											{officer.isActive ? "Deactivate" : "Activate"} profile
 										</Button>
 										<Button
 											variant={officer.isArchived ? "secondary" : "destructive"}
 											size="sm"
 											className="justify-start rounded-full border border-white/10 px-3 text-xs"
+											disabled={isArchiving || isUnarchiving}
 											onClick={() =>
 												officer.isArchived
 													? unarchive(officer.id)
 													: archive(officer.id)
 											}
 										>
+											{(isArchiving || isUnarchiving) && <Loader2 className="h-3 w-3 animate-spin" />}
 											{officer.isArchived ? "Unarchive" : "Archive"} profile
 										</Button>
 									</div>
