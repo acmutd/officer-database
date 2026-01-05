@@ -9,6 +9,7 @@ type Endpoint =
 	| "/getOfficers"
 	| "/getOfficers?archived=true"
 	| `/updateOfficer?id=${string}`
+	| `/updateOfficer?id=${string}&archived=true`
 	| `/archiveOfficer?id=${string}`
 	| `/unarchiveOfficer?id=${string}`
 	| "/uploadOfficerPhoto"
