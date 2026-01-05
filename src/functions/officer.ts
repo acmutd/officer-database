@@ -121,15 +121,68 @@ export async function updateOfficerStatus({
 	return OfficerSchema.parse(res);
 }
 
-export async function getAllOfficers(): Promise<Officer[]> {
-	const officers = await fetchWithAuth(`/getOfficers`, {
+export async function getAllOfficers({
+	archived = false,
+}: { archived?: boolean } = {}): Promise<Officer[]> {
+	const endpoint = archived ? "/getOfficers?archived=true" : "/getOfficers";
+	const officers = await fetchWithAuth(endpoint as any, {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
 		},
 	});
+
+	if (!officers.ok) {
+		const message = await officers.text();
+		throw new Error(message || "Failed to fetch officers");
+	}
+
 	const data = await officers.json();
 	return OfficerSchema.array().parse(data);
+}
+
+export async function archiveOfficer(officerId: string): Promise<Officer> {
+	const currentUser = await getCurrentOfficer();
+	if (!currentUser) throw new Error("Current user not found");
+	if (!isExecutive(currentUser)) throw new Error("Unauthorized");
+
+	const res = await fetchWithAuth(`/archiveOfficer?id=${officerId}`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({ id: officerId }),
+	});
+
+	if (!res.ok) {
+		const message = await res.text();
+		throw new Error(message || "Failed to archive officer");
+	}
+
+	const data = await res.json();
+	return OfficerSchema.parse(data);
+}
+
+export async function unarchiveOfficer(officerId: string): Promise<Officer> {
+	const currentUser = await getCurrentOfficer();
+	if (!currentUser) throw new Error("Current user not found");
+	if (!isExecutive(currentUser)) throw new Error("Unauthorized");
+
+	const res = await fetchWithAuth(`/unarchiveOfficer?id=${officerId}`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({ id: officerId }),
+	});
+
+	if (!res.ok) {
+		const message = await res.text();
+		throw new Error(message || "Failed to unarchive officer");
+	}
+
+	const data = await res.json();
+	return OfficerSchema.parse(data);
 }
 
 const createDefaultOfficer = (officerId: string, name: string): Officer => {

@@ -23,9 +23,12 @@ import {
 	SortDesc,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { getAllOfficersQuery } from "@/queries/officer";
+import {
+	getCurrentOfficersQuery,
+	getArchivedOfficersQuery,
+} from "@/queries/officer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,12 +48,19 @@ import {
 } from "@/components/ui/table";
 
 export default function Table() {
-	const { data } = useSuspenseQuery(getAllOfficersQuery);
-
+	const [view, setView] = useState<"current" | "archived">("current");
 	const [pagination, setPagination] = useState({
 		pageIndex: 0,
 		pageSize: 20,
 	});
+
+	const currentQuery =
+		view === "archived" ? getArchivedOfficersQuery : getCurrentOfficersQuery;
+	const { data } = useSuspenseQuery(currentQuery);
+
+	useEffect(() => {
+		setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+	}, [view]);
 
 	const [search, setSearch] = useState("");
 	const [columnFilters, setColumnFilters] = useState<any[]>([]);
@@ -84,7 +94,7 @@ export default function Table() {
 
 	return (
 		<div className="w-full space-y-6">
-			<div className="flex items-center justify-between">
+			<div className="flex items-center justify-between gap-4">
 				<div className="relative max-w-2xl flex-1">
 					<Input
 						type="search"
@@ -100,32 +110,63 @@ export default function Table() {
 					/>
 					<Search className="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-white/50" />
 				</div>
-				<Select
-					value={divisionFilterValue}
-					onValueChange={(value) =>
-						divisionColumn?.setFilterValue(value === "all" ? undefined : value)
-					}
-				>
-					<SelectTrigger
-						className={cn(
-							"w-[200px] rounded-lg bg-black/30 text-sm text-white",
-							"border border-white/10 transition-colors hover:border-white/20",
-							"focus-visible:ring-white/20 focus-visible:border-white/30"
-						)}
+				<div className="flex items-center gap-3">
+					<div className="inline-flex rounded-lg border space-x-1 border-white/10 bg-black/30 p-1 text-sm text-white/70">
+						<Button
+							variant={view === "current" ? "default" : "ghost"}
+							size="sm"
+							className={cn(
+								"rounded-md px-3 py-2 text-xs font-medium",
+								view === "current"
+									? "bg-white/20 text-white hover:bg-white/30"
+									: "text-white/70 hover:bg-white/10"
+							)}
+							onClick={() => setView("current")}
+						>
+							Current
+						</Button>
+						<Button
+							variant={view === "archived" ? "default" : "ghost"}
+							size="sm"
+							className={cn(
+								"rounded-md px-3 py-2 text-xs font-medium",
+								view === "archived"
+									? "bg-white/20 text-white hover:bg-white/30"
+									: "text-white/70 hover:bg-white/10"
+							)}
+							onClick={() => setView("archived")}
+						>
+							Past
+						</Button>
+					</div>
+
+					<Select
+						value={divisionFilterValue}
+						onValueChange={(value) =>
+							divisionColumn?.setFilterValue(value === "all" ? undefined : value)
+						}
 					>
-						<SelectValue placeholder="All Divisions" />
-					</SelectTrigger>
-					<SelectContent className="bg-black/90 text-white border border-white/10">
-						<SelectItem value="all">All Divisions</SelectItem>
-						{divisions
-							.filter((division) => division !== "All")
-							.map((division) => (
-								<SelectItem key={division} value={division}>
-									{division}
-								</SelectItem>
-							))}
-					</SelectContent>
-				</Select>
+						<SelectTrigger
+							className={cn(
+								"w-[200px] rounded-lg bg-black/30 text-sm text-white",
+								"border border-white/10 transition-colors hover:border-white/20",
+								"focus-visible:ring-white/20 focus-visible:border-white/30"
+							)}
+						>
+							<SelectValue placeholder="All Divisions" />
+						</SelectTrigger>
+						<SelectContent className="bg-black/90 text-white border border-white/10">
+							<SelectItem value="all">All Divisions</SelectItem>
+							{divisions
+								.filter((division) => division !== "All")
+								.map((division) => (
+									<SelectItem key={division} value={division}>
+										{division}
+									</SelectItem>
+								))}
+						</SelectContent>
+					</Select>
+				</div>
 			</div>
 
 			<div className="rounded-lg border border-white/10 bg-black/30">

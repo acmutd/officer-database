@@ -93,24 +93,24 @@ export function ProfileView({ officerId, editable = false }: Props) {
 					/>
 				)}
 
-			
+
 				{editable ? (
 					<UpdateName
 						firstName={officer.firstName}
 						lastName={officer.lastName}
 					/>
-					
+
 				) : (
 					<h1 className="text-2xl font-semibold tracking-tight text-white">
 						{officer.firstName} {officer.lastName}
 					</h1>
-				)} 
+				)}
 
-			
+
 				<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70 mt-[-12px]">
 					<RoleList roles={officer.roles} showAll />
 				</div>
-		
+
 
 			</div>
 
@@ -123,6 +123,6 @@ export function ProfileView({ officerId, editable = false }: Props) {
 				<ExternalLinks links={officer.socialLinks} editable={editable} />
 			</div>
 		</div>
-		
+
 	);
 }

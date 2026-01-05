@@ -2,6 +2,8 @@ import {
 	getAllOfficers,
 	getCurrentOfficer,
 	getOfficerById,
+	archiveOfficer,
+	unarchiveOfficer,
 	updateAcademicInfo,
 	updateOfficerImage,
 	updateOfficerName,
@@ -19,16 +21,22 @@ export const getOfficerByIdQuery = (officerId: string) =>
 		queryKey: ["officer", officerId],
 		queryFn: () => getOfficerById(officerId),
 	});
-export const getAllOfficersQuery = queryOptions({
-	queryKey: ["officers"],
-	queryFn: getAllOfficers,
-});
+const officersQuery = (archived: boolean) =>
+	queryOptions({
+		queryKey: ["officers", archived ? "archived" : "current"],
+		queryFn: () => getAllOfficers({ archived }),
+	});
+
+export const getAllOfficersQuery = officersQuery(false);
+export const getCurrentOfficersQuery = officersQuery(false);
+export const getArchivedOfficersQuery = officersQuery(true);
 
 export const updateOfficerImageMutation = mutationOptions({
 	mutationFn: updateOfficerImage,
 	onSuccess: (_, __, ___, context) => {
 		context.client.refetchQueries(getOfficerQuery);
-		context.client.invalidateQueries(getAllOfficersQuery);
+		context.client.invalidateQueries(getCurrentOfficersQuery);
+		context.client.invalidateQueries(getArchivedOfficersQuery);
 	},
 });
 
@@ -36,7 +44,8 @@ export const updateOfficerNameMutation = mutationOptions({
 	mutationFn: updateOfficerName,
 	onSuccess: (res, _, __, context) => {
 		context.client.setQueryData(getOfficerQuery.queryKey, res);
-		context.client.invalidateQueries(getAllOfficersQuery);
+		context.client.invalidateQueries(getCurrentOfficersQuery);
+		context.client.invalidateQueries(getArchivedOfficersQuery);
 	},
 });
 
@@ -44,7 +53,8 @@ export const updateAcademicInfoMutationOptions = mutationOptions({
 	mutationFn: updateAcademicInfo,
 	onSuccess: (res, _, __, context) => {
 		context.client.setQueryData(getOfficerQuery.queryKey, res);
-		context.client.invalidateQueries(getAllOfficersQuery);
+		context.client.invalidateQueries(getCurrentOfficersQuery);
+		context.client.invalidateQueries(getArchivedOfficersQuery);
 	},
 });
 
@@ -55,6 +65,31 @@ export const updateOfficerStatusMutation = mutationOptions({
 			getOfficerByIdQuery(variables.officerId).queryKey,
 			res
 		);
-		context.client.refetchQueries(getAllOfficersQuery);
+		context.client.refetchQueries(getCurrentOfficersQuery);
+		context.client.refetchQueries(getArchivedOfficersQuery);
+	},
+});
+
+export const archiveOfficerMutation = mutationOptions({
+	mutationFn: archiveOfficer,
+	onSuccess: (res, officerId, __, context) => {
+		context.client.setQueryData(
+			getOfficerByIdQuery(officerId as string).queryKey,
+			res
+		);
+		context.client.invalidateQueries(getCurrentOfficersQuery);
+		context.client.invalidateQueries(getArchivedOfficersQuery);
+	},
+});
+
+export const unarchiveOfficerMutation = mutationOptions({
+	mutationFn: unarchiveOfficer,
+	onSuccess: (res, officerId, __, context) => {
+		context.client.setQueryData(
+			getOfficerByIdQuery(officerId as string).queryKey,
+			res
+		);
+		context.client.invalidateQueries(getCurrentOfficersQuery);
+		context.client.invalidateQueries(getArchivedOfficersQuery);
 	},
 });
