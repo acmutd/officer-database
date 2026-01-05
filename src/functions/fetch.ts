@@ -6,7 +6,10 @@ type Endpoint =
 	| "/createOfficer"
 	| `/getOfficer?id=${string}`
 	| "/getOfficers"
+	| "/getOfficers?archived=true"
 	| `/updateOfficer?id=${string}`
+	| `/archiveOfficer?id=${string}`
+	| `/unarchiveOfficer?id=${string}`
 	| "/uploadOfficerPhoto"
 	| "/uploadOfficerResume"
 	| `/getOfficerResume?id=${string}`;
