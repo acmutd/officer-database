@@ -74,6 +74,7 @@ export function ProfileView({ officerId, editable = false }: Props) {
 									updateStatus({
 										officerId: officer.id,
 										isActive: !officer.isActive,
+										isArchived: officer.isArchived,
 									})
 								}
 							>

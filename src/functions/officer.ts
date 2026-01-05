@@ -113,15 +113,21 @@ export async function updateAcademicInfo(
 export async function updateOfficerStatus({
 	officerId,
 	isActive,
+	isArchived,
 }: {
 	officerId: string;
 	isActive: boolean;
+	isArchived?: boolean;
 }): Promise<Officer> {
 	const currentUser = await getCurrentOfficer();
 	if (!currentUser) throw new Error("Current user not found");
 	if (!isExecutive(currentUser)) throw new Error("Unauthorized");
 
-	const officer = await fetchWithAuth(`/updateOfficer?id=${officerId}`, {
+	const endpoint = isArchived
+		? `/updateOfficer?id=${officerId}&archived=true`
+		: `/updateOfficer?id=${officerId}`;
+
+	const officer = await fetchWithAuth(endpoint as any, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
