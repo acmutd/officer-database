@@ -13,6 +13,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Spinner } from "../Spinner";
 import { isExecutive } from "@/lib/admin";
 import { Button } from "../ui/button";
+import { Separator } from "@/components/ui/separator";
 
 type Props = {
 	officerId?: string;
@@ -39,7 +40,7 @@ export function ProfileView({ officerId, editable = false }: Props) {
 	return (
 		<div className="overflow-hidden rounded-3xl border border-white/10 bg-black/40 p-8 shadow-2xl backdrop-blur-xl">
 			<div className="flex flex-col items-center gap-6 text-center">
-				<div className="absolute right-8 top-5">
+				<div className="absolute lg:right-6 top-5 right-2">
 					<div className="flex flex-col items-center gap-2">
 					<div
 						className={cn(
@@ -106,14 +107,16 @@ export function ProfileView({ officerId, editable = false }: Props) {
 				)} 
 
 			
-				<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70">
+				<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70 mt-[-12px]">
 					<RoleList roles={officer.roles} showAll />
 				</div>
 		
 
 			</div>
 
-			<div className="flex flex-col gap-4 pt-10">
+			<Separator className="mt-6 bg-white/10" />
+
+			<div className="flex flex-col gap-4 pt-8">
 				<span className="text-xs font-semibold uppercase text-white/60">
 					Socials
 				</span>

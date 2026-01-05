@@ -8,6 +8,7 @@ import { getOfficerQuery } from "@/queries/officer";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { z } from "zod";
+import {FeedbackButton} from "@/components/Feedback"
 
 const searchSchema = z.object({
 	tab: z
@@ -60,6 +61,8 @@ function RouteComponent() {
 			</div>
 			*/}
 			<ProfileWelcomeModal isNewUser={isNewUser} />
+			<FeedbackButton/>
+			
 		</div>
 	);
 }
