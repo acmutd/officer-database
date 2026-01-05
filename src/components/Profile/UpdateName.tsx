@@ -57,7 +57,7 @@ export function UpdateName({ firstName, lastName }: Props) {
 
 	if (!isEditing) {
 		return (
-			<div className="group flex items-center gap-3 text-center">
+			<div className="flex flex-col items-stretch gap-2 text-center">
 				<h1 className="text-2xl font-bold text-white">
 					{firstName} {lastName}
 				</h1>
@@ -65,7 +65,7 @@ export function UpdateName({ firstName, lastName }: Props) {
 					onClick={() => setIsEditing(true)}
 					variant="outline"
 					size="sm"
-					className="border-white/20 bg-white/10 px-6 text-sm text-white hover:bg-white/20"
+					className="border-white/20 bg-white/10 text-sm text-white hover:bg-white/20 hover:text-white/20"
 				>
 					Edit
 				</Button>

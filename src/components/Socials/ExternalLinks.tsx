@@ -69,7 +69,7 @@ export function ExternalLinks({ links, editable = false }: Props) {
 						type="button"
 						variant="outline"
 						size="sm"
-						className="border-white/20 bg-white/10 text-sm text-white hover:bg-white/15 place-self-center w-full"
+						className="border-white/20 bg-white/10 text-sm text-white hover:bg-white/15 hover:text-white/40 place-self-center w-full"
 						onClick={() => setIsEditing(true)}
 					>
 						{hasLinks ? "Edit Links" : "Add Links"}

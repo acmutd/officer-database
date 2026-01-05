@@ -77,7 +77,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 	};
 
 	return (
-		<div className="group relative space-y-4 rounded-lg border border-white/10 bg-white/5 p-6 transition-all hover:border-white/20 hover:bg-white/10">
+		<div className="group relative space-y-4 rounded-lg border border-white/10 bg-white/5 p-6 transition-all">
 			{canEdit && (
 				<div className="absolute top-4 right-4 space-x-2">
 					{isEditing ? (

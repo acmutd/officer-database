@@ -74,7 +74,7 @@ export function ResumeSection() {
 	};
 
 	return (
-		<Card className="rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10 shadow-xl backdrop-blur-xl">
+		<Card className="rounded-xl border border-white/10 bg-black/40 shadow-xl backdrop-blur-xl">
 			<CardHeader className="flex flex-row items-center justify-between space-y-0">
 				<div>
 					<CardTitle className="text-xl font-semibold text-white">
@@ -140,7 +140,7 @@ export function ResumeSection() {
 						/>
 						<Button
 							variant="secondary"
-							className="w-full gap-2"
+							className="w-full border border-white/15 bg-white/10 text-sm text-white hover:bg-white/15 hover:text-white/40 gap-2"
 							onClick={() => fileInputRef.current?.click()}
 							disabled={isUploading}
 						>

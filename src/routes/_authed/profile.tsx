@@ -8,6 +8,7 @@ import { getOfficerQuery } from "@/queries/officer";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { z } from "zod";
+import {FeedbackButton} from "@/components/Feedback"
 
 const searchSchema = z.object({
 	tab: z
@@ -48,6 +49,7 @@ function RouteComponent() {
 				<ProfileTabs />
 			</div>
 
+			{/*
 			<div className="absolute right-0 top-5">
 				<img
 					src="/peechi.png"
@@ -57,7 +59,10 @@ function RouteComponent() {
 					className="animate-bounce"
 				/>
 			</div>
+			*/}
 			<ProfileWelcomeModal isNewUser={isNewUser} />
+			<FeedbackButton/>
+			
 		</div>
 	);
 }

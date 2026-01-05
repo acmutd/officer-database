@@ -13,6 +13,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Spinner } from "../Spinner";
 import { isExecutive } from "@/lib/admin";
 import { Button } from "../ui/button";
+import { Separator } from "@/components/ui/separator";
 
 type Props = {
 	officerId?: string;
@@ -37,40 +38,10 @@ export function ProfileView({ officerId, editable = false }: Props) {
 		return null;
 	}
 	return (
-		<div className="overflow-hidden rounded-3xl border border-white/10 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
+		<div className="overflow-hidden rounded-3xl border border-white/10 bg-black/40 p-8 shadow-2xl backdrop-blur-xl">
 			<div className="flex flex-col items-center gap-6 text-center">
-				{editable ? (
-					<ImageUpdate
-						officerId={officer.id}
-						firstName={officer.firstName}
-						lastName={officer.lastName}
-						photo={officer.photo}
-					/>
-				) : (
-					<UserAvatar
-						photo={officer.photo}
-						firstName={officer.firstName}
-						lastName={officer.lastName}
-						className="shadow-2xl ring-4 ring-white/30"
-					/>
-				)}
-
-				{editable ? (
-					<UpdateName
-						firstName={officer.firstName}
-						lastName={officer.lastName}
-					/>
-				) : (
-					<h1 className="text-2xl font-semibold tracking-tight text-white">
-						{officer.firstName} {officer.lastName}
-					</h1>
-				)}
-
-				<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70">
-					<RoleList roles={officer.roles} showAll />
-				</div>
-
-				<div className="flex items-center gap-3 pt-2">
+				<div className="absolute lg:right-6 top-5 right-2">
+					<div className="flex flex-col items-center gap-2">
 					<div
 						className={cn(
 							"flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
@@ -104,15 +75,54 @@ export function ProfileView({ officerId, editable = false }: Props) {
 							{officer.isActive ? "Deactivate" : "Activate"}
 						</Button>
 					)}
+					</div>
 				</div>
+				{editable ? (
+					<ImageUpdate
+						officerId={officer.id}
+						firstName={officer.firstName}
+						lastName={officer.lastName}
+						photo={officer.photo}
+					/>
+				) : (
+					<UserAvatar
+						photo={officer.photo}
+						firstName={officer.firstName}
+						lastName={officer.lastName}
+						className="shadow-2xl ring-4 ring-white/30"
+					/>
+				)}
+
+			
+				{editable ? (
+					<UpdateName
+						firstName={officer.firstName}
+						lastName={officer.lastName}
+					/>
+					
+				) : (
+					<h1 className="text-2xl font-semibold tracking-tight text-white">
+						{officer.firstName} {officer.lastName}
+					</h1>
+				)} 
+
+			
+				<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70 mt-[-12px]">
+					<RoleList roles={officer.roles} showAll />
+				</div>
+		
+
 			</div>
 
-			<div className="flex flex-col gap-4 pt-6">
+			<Separator className="mt-6 bg-white/10" />
+
+			<div className="flex flex-col gap-4 pt-8">
 				<span className="text-xs font-semibold uppercase text-white/60">
 					Socials
 				</span>
 				<ExternalLinks links={officer.socialLinks} editable={editable} />
 			</div>
 		</div>
+		
 	);
 }
