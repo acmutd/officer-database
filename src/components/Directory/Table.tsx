@@ -119,7 +119,7 @@ export default function Table() {
 								"rounded-md px-3 py-2 text-xs font-medium",
 								view === "current"
 									? "bg-white/20 text-white hover:bg-white/30"
-									: "text-white/70 hover:bg-white/10"
+									: "text-white/70 hover:bg-white/10 hover:text-white"
 							)}
 							onClick={() => setView("current")}
 						>
@@ -132,7 +132,7 @@ export default function Table() {
 								"rounded-md px-3 py-2 text-xs font-medium",
 								view === "past"
 									? "bg-white/20 text-white hover:bg-white/30"
-									: "text-white/70 hover:bg-white/10"
+									: "text-white/70 hover:bg-white/10 hover:text-white"
 							)}
 							onClick={() => setView("past")}
 						>
