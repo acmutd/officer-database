@@ -61,7 +61,11 @@ export const updateOfficerStatusMutation = mutationOptions({
 	mutationFn: updateOfficerStatus,
 	onSuccess: (res, variables, __, context) => {
 		context.client.setQueryData(
-			getOfficerByIdQuery(variables.officerId).queryKey,
+			getOfficerByIdQuery(variables.officerId, false).queryKey,
+			res
+		);
+		context.client.setQueryData(
+			getOfficerByIdQuery(variables.officerId, true).queryKey,
 			res
 		);
 		context.client.refetchQueries(getCurrentOfficersQuery);
@@ -74,7 +78,11 @@ export const archiveOfficerMutation = mutationOptions({
 	onSuccess: (res, officerId: string, __, context) => {
 		const updatedOfficer = { ...res, isArchived: true };
 		context.client.setQueryData(
-			getOfficerByIdQuery(officerId).queryKey,
+			getOfficerByIdQuery(officerId, false).queryKey,
+			updatedOfficer
+		);
+		context.client.setQueryData(
+			getOfficerByIdQuery(officerId, true).queryKey,
 			updatedOfficer
 		);
 		// Also update the current officer query if it's the same officer
@@ -93,7 +101,11 @@ export const unarchiveOfficerMutation = mutationOptions({
 	onSuccess: (res, officerId, __, context) => {
 		const updatedOfficer = { ...res, isArchived: false };
 		context.client.setQueryData(
-			getOfficerByIdQuery(officerId as string).queryKey,
+			getOfficerByIdQuery(officerId as string, false).queryKey,
+			updatedOfficer
+		);
+		context.client.setQueryData(
+			getOfficerByIdQuery(officerId as string, true).queryKey,
 			updatedOfficer
 		);
 		// Also update the current officer query if it's the same officer
