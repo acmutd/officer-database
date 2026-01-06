@@ -90,7 +90,7 @@ const termSort: SortingFn<Officer> = (a, b) => {
 
 const columnHelper = createColumnHelper<Officer>();
 
-export const columns = [
+export const createColumns = (isArchived: boolean) => [
 	columnHelper.accessor(
 		(row) => `${row.firstName} ${row.lastName} ${row.netId}`,
 		{
@@ -103,6 +103,7 @@ export const columns = [
 						className="flex w-[280px] min-w-[280px] items-center gap-4"
 						to="/directory/$userId"
 						params={{ userId: officer.id }}
+						search={{ archived: isArchived }}
 					>
 						<UserAvatar
 							firstName={officer.firstName}
@@ -195,6 +196,8 @@ export const columns = [
 		),
 	}),
 ];
+
+export const columns = createColumns(false);
 
 declare module "@tanstack/react-table" {
 	interface FilterFns {

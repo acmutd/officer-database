@@ -1,5 +1,5 @@
 import {
-	columns,
+	createColumns,
 	currentDivisionFilter,
 	divisions,
 	fuzzyFilter,
@@ -64,6 +64,8 @@ export default function Table() {
 
 	const [search, setSearch] = useState("");
 	const [columnFilters, setColumnFilters] = useState<any[]>([]);
+
+	const columns = createColumns(view === "past");
 
 	const table = useReactTable({
 		data: data ?? [],

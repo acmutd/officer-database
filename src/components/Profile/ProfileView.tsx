@@ -21,12 +21,13 @@ import { EllipsisVertical, Loader2 } from "lucide-react";
 
 type Props = {
 	officerId?: string;
+	archived?: boolean;
 	editable?: boolean;
 };
 
-export function ProfileView({ officerId, editable = false }: Props) {
+export function ProfileView({ officerId, archived = false, editable = false }: Props) {
 	const { data: officer, isLoading } = useQuery(
-		officerId ? getOfficerByIdQuery(officerId) : getOfficerQuery
+		officerId ? getOfficerByIdQuery(officerId, archived) : getOfficerQuery
 	);
 
 	const { data: viewer } = useQuery(getOfficerQuery);

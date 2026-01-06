@@ -43,25 +43,19 @@ export async function getOrCreateOfficer(): Promise<Officer> {
 }
 
 export async function getOfficerById(
-	officerId: string
+	officerId: string,
+	archived = false
 ): Promise<Officer | null> {
-	// First try to get the officer normally
-	let res = await fetchWithAuth(`/getOfficer?id=${officerId}` as const, {
+	const endpoint = archived
+		? (`/getOfficer?id=${officerId}&archived=true` as const)
+		: (`/getOfficer?id=${officerId}` as const);
+
+	const res = await fetchWithAuth(endpoint, {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
 		},
 	});
-
-	// If not found, try to get archived officer
-	if (!res.ok) {
-		res = await fetchWithAuth(`/getOfficer?id=${officerId}&archived=true` as const, {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
-	}
 
 	if (!res.ok) {
 		console.error(res.statusText);

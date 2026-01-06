@@ -2,8 +2,8 @@ import { DirectoryProfileTabs } from "@/components/Directory/DirectoryProfileTab
 import { ACMErrorComponent } from "@/components/ErrorComponent";
 import { ProfileView } from "@/components/Profile/ProfileView";
 import { Spinner } from "@/components/Spinner";
-import { getOfficerByIdQuery, getOfficerQuery } from "@/queries/officer";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { getOfficerByIdQuery, getPastOfficersQuery } from "@/queries/officer";
+import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import z from "zod";
 
@@ -12,6 +12,7 @@ const searchSchema = z.object({
 		.enum(["professional", "academics", "roles"])
 		.default("professional")
 		.catch("professional"),
+	archived: z.boolean().optional(),
 });
 
 const searchTabSchema = searchSchema.optional().default(searchSchema.parse({}));
@@ -20,8 +21,8 @@ export const Route = createFileRoute("/_authed/directory/$userId")({
 	validateSearch: searchTabSchema,
 	component: RouteComponent,
 	loader: async ({ context, params }) => {
-		context.queryClient.prefetchQuery(getOfficerByIdQuery(params.userId));
-		context.queryClient.prefetchQuery(getOfficerQuery);
+		// Warm the past officers list to help determine archived status without 404s
+		await context.queryClient.prefetchQuery(getPastOfficersQuery);
 	},
 	errorComponent: ACMErrorComponent,
 	pendingComponent: Spinner,
@@ -29,7 +30,10 @@ export const Route = createFileRoute("/_authed/directory/$userId")({
 
 function RouteComponent() {
 	const { userId } = Route.useParams();
-	const { data: officer } = useSuspenseQuery(getOfficerByIdQuery(userId));
+	const { archived } = Route.useSearch();
+	const { data: pastOfficers } = useQuery(getPastOfficersQuery);
+	const effectiveArchived = archived ?? Boolean(pastOfficers?.some((o) => o.id === userId));
+	const { data: officer } = useSuspenseQuery(getOfficerByIdQuery(userId, effectiveArchived));
 
 	if (!officer) {
 		return <Navigate to="/directory" />;
@@ -38,10 +42,10 @@ function RouteComponent() {
 	return (
 		<div className="flex justify-around gap-8 px-6">
 			<div className="container w-1/4 flex-col">
-				<ProfileView officerId={userId} />
+				<ProfileView officerId={userId} archived={effectiveArchived} />
 			</div>
 			<div className="container flex w-3/4 flex-col gap-8">
-				<DirectoryProfileTabs officerId={userId} />
+				<DirectoryProfileTabs officerId={userId} archived={effectiveArchived} />
 			</div>
 
 			{/*

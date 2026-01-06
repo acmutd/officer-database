@@ -16,10 +16,10 @@ export const getOfficerQuery = queryOptions({
 	queryFn: getCurrentOfficer,
 });
 
-export const getOfficerByIdQuery = (officerId: string) =>
+export const getOfficerByIdQuery = (officerId: string, archived = false) =>
 	queryOptions({
-		queryKey: ["officer", officerId],
-		queryFn: () => getOfficerById(officerId),
+		queryKey: ["officer", officerId, archived ? "archived" : "current"],
+		queryFn: () => getOfficerById(officerId, archived),
 	});
 const officersQuery = (archived: boolean) =>
 	queryOptions({

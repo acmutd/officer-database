@@ -5,12 +5,13 @@ import { getOfficerByIdQuery, getOfficerQuery } from "@/queries/officer";
 
 type Props = {
 	officerId?: string;
+	archived?: boolean;
 	editable?: boolean;
 };
 
-export function AcademicInfo({ officerId, editable = false }: Props) {
+export function AcademicInfo({ officerId, archived = false, editable = false }: Props) {
 	const { data: officer } = useQuery(
-		officerId ? getOfficerByIdQuery(officerId) : getOfficerQuery
+		officerId ? getOfficerByIdQuery(officerId, archived) : getOfficerQuery
 	);
 
 	if (!officer) {
