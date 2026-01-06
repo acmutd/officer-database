@@ -98,14 +98,14 @@ export const archiveOfficerMutation = mutationOptions({
 
 export const unarchiveOfficerMutation = mutationOptions({
 	mutationFn: unarchiveOfficer,
-	onSuccess: (res, officerId, __, context) => {
+	onSuccess: (res, officerId: string, __, context) => {
 		const updatedOfficer = res;
 		context.client.setQueryData(
-			getOfficerByIdQuery(officerId as string, false).queryKey,
+			getOfficerByIdQuery(officerId, false).queryKey,
 			updatedOfficer
 		);
 		context.client.setQueryData(
-			getOfficerByIdQuery(officerId as string, true).queryKey,
+			getOfficerByIdQuery(officerId, true).queryKey,
 			updatedOfficer
 		);
 		// Also update the current officer query if it's the same officer
