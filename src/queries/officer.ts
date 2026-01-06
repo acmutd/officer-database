@@ -27,7 +27,6 @@ const officersQuery = (archived: boolean) =>
 		queryFn: () => getAllOfficers({ archived }),
 	});
 
-export const getAllOfficersQuery = officersQuery(false);
 export const getCurrentOfficersQuery = officersQuery(false);
 export const getPastOfficersQuery = officersQuery(true);
 
