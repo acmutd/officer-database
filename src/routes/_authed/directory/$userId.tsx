@@ -20,7 +20,7 @@ const searchTabSchema = searchSchema.optional().default(searchSchema.parse({}));
 export const Route = createFileRoute("/_authed/directory/$userId")({
 	validateSearch: searchTabSchema,
 	component: RouteComponent,
-	loader: async ({ context, params }) => {
+	loader: async ({ context }) => {
 		// Warm the past officers list to help determine archived status without 404s
 		await context.queryClient.prefetchQuery(getPastOfficersQuery);
 	},
