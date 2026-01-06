@@ -76,7 +76,7 @@ export const updateOfficerStatusMutation = mutationOptions({
 export const archiveOfficerMutation = mutationOptions({
 	mutationFn: archiveOfficer,
 	onSuccess: (res, officerId: string, __, context) => {
-		const updatedOfficer = { ...res, isArchived: true };
+		const updatedOfficer = res;
 		context.client.setQueryData(
 			getOfficerByIdQuery(officerId, false).queryKey,
 			updatedOfficer
@@ -99,7 +99,7 @@ export const archiveOfficerMutation = mutationOptions({
 export const unarchiveOfficerMutation = mutationOptions({
 	mutationFn: unarchiveOfficer,
 	onSuccess: (res, officerId, __, context) => {
-		const updatedOfficer = { ...res, isArchived: false };
+		const updatedOfficer = res;
 		context.client.setQueryData(
 			getOfficerByIdQuery(officerId as string, false).queryKey,
 			updatedOfficer
