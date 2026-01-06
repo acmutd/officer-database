@@ -19,11 +19,11 @@ export function TimeLine({ officerId }: Props) {
 		: [];
 
 	return (
-		<div className="space-y-8 rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10 p-8 shadow-xl backdrop-blur-xl">
+		<div className="space-y-8 rounded-xl border border-white/10 bg-linear-to-br from-white/5 to-white/10 p-8 shadow-xl backdrop-blur-xl">
 			<h2 className="text-2xl font-bold tracking-tight text-white">
 				Role History
 			</h2>
-			<div className="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:-translate-x-1/2 before:bg-gradient-to-b before:from-purple-500/50 before:via-purple-500/25 before:to-transparent">
+			<div className="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:-translate-x-1/2 before:bg-linear-to-b before:from-purple-500/50 before:via-purple-500/25 before:to-transparent">
 				{sortedRoles.map((role, index) => (
 					<div key={index} className="relative pl-8">
 						<div className="absolute top-1/2 -left-2 h-3 w-3 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)] ring-2 ring-purple-500/20" />
