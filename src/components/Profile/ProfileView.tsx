@@ -83,8 +83,8 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 													isArchived: officer.isArchived,
 												})
 											}
-										>
-											{isUpdatingStatus && <Loader2 className="h-3 w-3 animate-spin" />}
+											>
+												{isUpdatingStatus && <Loader2 className="h-3 w-3 animate-spin mr-2" />}
 											{officer.isActive ? "Deactivate" : "Activate"} profile
 										</Button>
 										<Button
@@ -96,10 +96,10 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 												officer.isArchived
 													? unarchive(officer.id)
 													: archive(officer.id)
-											}
-										>
-											{(isArchiving || isUnarchiving) && <Loader2 className="h-3 w-3 animate-spin" />}
-											{officer.isArchived ? "Unarchive" : "Archive"} profile
+										}
+									>
+										{(isArchiving || isUnarchiving) && <Loader2 className="h-3 w-3 animate-spin mr-2" />}
+										{officer.isArchived ? "Unarchive" : "Archive"} profile
 										</Button>
 									</div>
 								</PopoverContent>
