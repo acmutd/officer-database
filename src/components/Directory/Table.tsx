@@ -13,6 +13,7 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
+import type { ColumnFiltersState } from "@tanstack/react-table";
 import {
 	ChevronLeft,
 	ChevronRight,
@@ -63,7 +64,7 @@ export default function Table() {
 	}, [view]);
 
 	const [search, setSearch] = useState("");
-	const [columnFilters, setColumnFilters] = useState<any[]>([]);
+	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
 	const columns = createColumns(view === "past");
 
