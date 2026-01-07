@@ -1,6 +1,7 @@
 import { auth } from "@/lib/firebase";
 import { OfficerSchema, type Officer } from "@/schemas/officer";
 import { fetchWithAuth } from "./fetch";
+import type { Endpoint } from "./fetch";
 import { isExecutive } from "@/lib/admin";
 
 export async function getCurrentOfficer(): Promise<Officer | null> {
@@ -121,7 +122,7 @@ export async function updateOfficerStatus({
 		? `/updateOfficer?id=${officerId}&archived=true`
 		: `/updateOfficer?id=${officerId}`;
 
-	const officer = await fetchWithAuth(endpoint as any, {
+	const officer = await fetchWithAuth(endpoint as Endpoint, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -136,7 +137,7 @@ export async function getAllOfficers({
 	archived = false,
 }: { archived?: boolean } = {}): Promise<Officer[]> {
 	const endpoint = archived ? "/getOfficers?archived=true" : "/getOfficers";
-	const officers = await fetchWithAuth(endpoint as any, {
+	const officers = await fetchWithAuth(endpoint as Endpoint, {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",

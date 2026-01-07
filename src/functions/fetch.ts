@@ -2,7 +2,7 @@ import { auth } from "@/lib/firebase";
 
 const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
 
-type Endpoint =
+export type Endpoint =
 	| "/createOfficer"
 	| `/getOfficer?id=${string}`
 	| `/getOfficer?id=${string}&archived=true`

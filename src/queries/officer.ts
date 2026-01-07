@@ -10,6 +10,7 @@ import {
 	updateOfficerStatus,
 } from "@/functions/officer";
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
+import type { Officer } from "@/schemas/officer";
 
 export const getOfficerQuery = queryOptions({
 	queryKey: ["officer", "current"],
@@ -87,7 +88,7 @@ export const archiveOfficerMutation = mutationOptions({
 		);
 		// Also update the current officer query if it's the same officer
 		const currentOfficerKey = getOfficerQuery.queryKey;
-		const currentCachedOfficer = context.client.getQueryData<any>(currentOfficerKey);
+		const currentCachedOfficer = context.client.getQueryData<Officer | null>(currentOfficerKey);
 		if (currentCachedOfficer?.id === officerId) {
 			context.client.setQueryData(currentOfficerKey, updatedOfficer);
 		}
@@ -110,7 +111,7 @@ export const unarchiveOfficerMutation = mutationOptions({
 		);
 		// Also update the current officer query if it's the same officer
 		const currentOfficerKey = getOfficerQuery.queryKey;
-		const currentCachedOfficer = context.client.getQueryData<any>(currentOfficerKey);
+		const currentCachedOfficer = context.client.getQueryData<Officer | null>(currentOfficerKey);
 		if (currentCachedOfficer?.id === officerId) {
 			context.client.setQueryData(currentOfficerKey, updatedOfficer);
 		}
