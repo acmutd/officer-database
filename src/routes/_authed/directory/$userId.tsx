@@ -3,7 +3,7 @@ import { ACMErrorComponent } from "@/components/ErrorComponent";
 import { ProfileView } from "@/components/Profile/ProfileView";
 import { Spinner } from "@/components/Spinner";
 import { getOfficerByIdQuery, getPastOfficersQuery } from "@/queries/officer";
-import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import z from "zod";
 
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/_authed/directory/$userId")({
 function RouteComponent() {
 	const { userId } = Route.useParams();
 	const { archived } = Route.useSearch();
-	const { data: pastOfficers } = useQuery(getPastOfficersQuery);
+	const { data: pastOfficers } = useSuspenseQuery(getPastOfficersQuery);
 	const effectiveArchived = archived ?? Boolean(pastOfficers?.some((o) => o.id === userId));
 	const { data: officer } = useSuspenseQuery(getOfficerByIdQuery(userId, effectiveArchived));
 
