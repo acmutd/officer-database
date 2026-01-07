@@ -13,10 +13,11 @@ import { getOfficerQuery, getOfficerByIdQuery } from "@/queries/officer";
 
 type Props = {
 	officerId: string;
+	archived?: boolean;
 };
 
-export function RoleInfo({ officerId }: Props) {
-	const { data: officer } = useQuery(getOfficerByIdQuery(officerId));
+export function RoleInfo({ officerId, archived = false }: Props) {
+	const { data: officer } = useQuery(getOfficerByIdQuery(officerId, archived));
 	const { data: currentUser } = useQuery(getOfficerQuery);
 
 	const canEdit = currentUser && isAdmin(currentUser);

@@ -90,7 +90,7 @@ const termSort: SortingFn<Officer> = (a, b) => {
 
 const columnHelper = createColumnHelper<Officer>();
 
-export const columns = [
+export const createColumns = (isArchived: boolean) => [
 	columnHelper.accessor(
 		(row) => `${row.firstName} ${row.lastName} ${row.netId}`,
 		{
@@ -103,6 +103,7 @@ export const columns = [
 						className="flex w-[280px] min-w-[280px] items-center gap-4"
 						to="/directory/$userId"
 						params={{ userId: officer.id }}
+						search={{ archived: isArchived }}
 					>
 						<UserAvatar
 							firstName={officer.firstName}
@@ -126,7 +127,7 @@ export const columns = [
 	columnHelper.accessor("joinDate", {
 		header: () => <span className="text-white/70">Join Date</span>,
 		cell: ({ row }) => (
-			<div className="w-[160px] min-w-[160px]">
+			<div className="w-40 min-w-40">
 				<div className="flex flex-col">
 					<span className="truncate text-xs text-white/50">
 						{row.original.joinDate.term} {row.original.joinDate.year}
@@ -172,7 +173,7 @@ export const columns = [
 	columnHelper.accessor("isActive", {
 		header: () => <span className="text-white/70">Active</span>,
 		cell: ({ row }) => (
-			<div className="w-[160px] min-w-[160px]">
+			<div className="w-40 min-w-40">
 				<div
 					className={cn(
 						"inline-flex items-center gap-2 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors",
@@ -195,6 +196,8 @@ export const columns = [
 		),
 	}),
 ];
+
+export const columns = createColumns(false);
 
 declare module "@tanstack/react-table" {
 	interface FilterFns {

@@ -8,27 +8,34 @@ import {
 	getOfficerQuery,
 	getOfficerByIdQuery,
 	updateOfficerStatusMutation,
+	archiveOfficerMutation,
+	unarchiveOfficerMutation,
 } from "@/queries/officer";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Spinner } from "../Spinner";
 import { isExecutive } from "@/lib/admin";
 import { Button } from "../ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { EllipsisVertical, Loader2 } from "lucide-react";
 
 type Props = {
 	officerId?: string;
+	archived?: boolean;
 	editable?: boolean;
 };
 
-export function ProfileView({ officerId, editable = false }: Props) {
+export function ProfileView({ officerId, archived = false, editable = false }: Props) {
 	const { data: officer, isLoading } = useQuery(
-		officerId ? getOfficerByIdQuery(officerId) : getOfficerQuery
+		officerId ? getOfficerByIdQuery(officerId, archived) : getOfficerQuery
 	);
 
 	const { data: viewer } = useQuery(getOfficerQuery);
 	const isViewerExecutive = viewer ? isExecutive(viewer) : false;
 
-	const { mutate: updateStatus } = useMutation(updateOfficerStatusMutation);
+	const { mutate: updateStatus, isPending: isUpdatingStatus } = useMutation(updateOfficerStatusMutation);
+	const { mutate: archive, isPending: isArchiving } = useMutation(archiveOfficerMutation);
+	const { mutate: unarchive, isPending: isUnarchiving } = useMutation(unarchiveOfficerMutation);
 
 	if (isLoading) {
 		return <Spinner />;
@@ -40,77 +47,119 @@ export function ProfileView({ officerId, editable = false }: Props) {
 	return (
 		<div className="overflow-hidden rounded-3xl border border-white/10 bg-black/40 p-8 shadow-2xl backdrop-blur-xl">
 			<div className="flex flex-col items-center gap-6 text-center">
-				<div className="absolute lg:right-6 top-5 right-2">
-					<div className="flex flex-col items-center gap-2">
-					<div
-						className={cn(
-							"flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
-							officer.isActive
-								? "border-green-500/20 bg-green-500/10 text-green-400"
-								: "border-red-500/20 bg-red-500/10 text-red-400"
+				<div className="flex w-full items-start justify-between">
+					<div className="flex flex-1 justify-start">
+						{isViewerExecutive && officerId && (
+							<Popover>
+								<PopoverTrigger asChild>
+									<Button
+										variant="ghost"
+										size="icon-sm"
+										className="rounded-full border border-white/10 bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
+										aria-label="More profile actions"
+									>
+										<EllipsisVertical className="h-4 w-4" />
+									</Button>
+								</PopoverTrigger>
+								<PopoverContent
+									align="start"
+									className="w-64 border-white/10 bg-black/90 text-white shadow-2xl backdrop-blur"
+								>
+									<div className="flex flex-col gap-3">
+										<div className="text-left">
+											<p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60">
+												Profile actions
+											</p>
+										</div>
+										<Button
+											variant="ghost"
+											size="sm"
+											className="justify-start rounded-full border border-white/10 bg-white/10 px-3 text-xs text-white/80 hover:bg-white/15 hover:text-white"
+											disabled={isUpdatingStatus}
+											onClick={() =>
+												updateStatus({
+													officerId: officer.id,
+													isActive: !officer.isActive,
+													isArchived: officer.isArchived,
+												})
+											}
+											>
+												{isUpdatingStatus && <Loader2 className="h-3 w-3 animate-spin mr-2" />}
+											{officer.isActive ? "Deactivate" : "Activate"} profile
+										</Button>
+										<Button
+											variant={officer.isArchived ? "secondary" : "destructive"}
+											size="sm"
+											className="justify-start rounded-full border border-white/10 px-3 text-xs"
+											disabled={isArchiving || isUnarchiving}
+											onClick={() =>
+												officer.isArchived
+													? unarchive(officer.id)
+													: archive(officer.id)
+										}
+									>
+										{(isArchiving || isUnarchiving) && <Loader2 className="h-3 w-3 animate-spin mr-2" />}
+										{officer.isArchived ? "Unarchive" : "Archive"} profile
+										</Button>
+									</div>
+								</PopoverContent>
+							</Popover>
 						)}
-					>
+					</div>
+					{editable ? (
+						<ImageUpdate
+							officerId={officer.id}
+							firstName={officer.firstName}
+							lastName={officer.lastName}
+							photo={officer.photo}
+						/>
+					) : (
+						<UserAvatar
+							photo={officer.photo}
+							firstName={officer.firstName}
+							lastName={officer.lastName}
+							className="shadow-2xl ring-4 ring-white/30"
+						/>
+					)}
+					<div className="flex flex-1 justify-end">
 						<div
 							className={cn(
-								"h-1.5 w-1.5 rounded-full shadow-[0_0_8px]",
+								"flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
 								officer.isActive
-									? "bg-green-400 shadow-green-500/50"
-									: "bg-red-400 shadow-red-500/50"
+									? "border-green-500/20 bg-green-500/10 text-green-400"
+									: "border-red-500/20 bg-red-500/10 text-red-400"
 							)}
-						/>
-						{officer.isActive ? "Active" : "Inactive"}
-					</div>
-					{isViewerExecutive && officerId && (
-						<Button
-							variant="ghost"
-							size="sm"
-							className="h-7 rounded-full border border-white/10 px-3 text-xs text-white/60 hover:bg-white/10 hover:text-white"
-							onClick={() =>
-								updateStatus({
-									officerId: officer.id,
-									isActive: !officer.isActive,
-								})
-							}
 						>
-							{officer.isActive ? "Deactivate" : "Activate"}
-						</Button>
-					)}
+							<div
+								className={cn(
+									"h-1.5 w-1.5 rounded-full shadow-[0_0_8px]",
+									officer.isActive
+										? "bg-green-400 shadow-green-500/50"
+										: "bg-red-400 shadow-red-500/50"
+								)}
+							/>
+							{officer.isActive ? "Active" : "Inactive"}
+						</div>
 					</div>
 				</div>
-				{editable ? (
-					<ImageUpdate
-						officerId={officer.id}
-						firstName={officer.firstName}
-						lastName={officer.lastName}
-						photo={officer.photo}
-					/>
-				) : (
-					<UserAvatar
-						photo={officer.photo}
-						firstName={officer.firstName}
-						lastName={officer.lastName}
-						className="shadow-2xl ring-4 ring-white/30"
-					/>
-				)}
 
-			
+
 				{editable ? (
 					<UpdateName
 						firstName={officer.firstName}
 						lastName={officer.lastName}
 					/>
-					
+
 				) : (
 					<h1 className="text-2xl font-semibold tracking-tight text-white">
 						{officer.firstName} {officer.lastName}
 					</h1>
-				)} 
+				)}
 
-			
-				<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70 mt-[-12px]">
+				<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70 -mt-3">
 					<RoleList roles={officer.roles} showAll />
 				</div>
-		
+
 
 			</div>
 
@@ -123,6 +172,6 @@ export function ProfileView({ officerId, editable = false }: Props) {
 				<ExternalLinks links={officer.socialLinks} editable={editable} />
 			</div>
 		</div>
-		
+
 	);
 }

@@ -7,9 +7,10 @@ import { Link, useSearch } from "@tanstack/react-router";
 
 type Props = {
 	officerId: string;
+	archived?: boolean;
 };
 
-export function DirectoryProfileTabs({ officerId }: Props) {
+export function DirectoryProfileTabs({ officerId, archived = false }: Props) {
 	const { tab } = useSearch({ from: "/_authed/directory/$userId" });
 
 	return (
@@ -22,7 +23,7 @@ export function DirectoryProfileTabs({ officerId }: Props) {
 				>
 					<Link
 						to="/directory/$userId"
-						search={{ tab: "professional" }}
+						search={{ tab: "professional", archived }}
 						params={{ userId: officerId }}
 					>
 						Professional
@@ -35,7 +36,7 @@ export function DirectoryProfileTabs({ officerId }: Props) {
 				>
 					<Link
 						to="/directory/$userId"
-						search={{ tab: "academics" }}
+						search={{ tab: "academics", archived }}
 						params={{ userId: officerId }}
 					>
 						Academic
@@ -48,7 +49,7 @@ export function DirectoryProfileTabs({ officerId }: Props) {
 				>
 					<Link
 						to="/directory/$userId"
-						search={{ tab: "roles" }}
+						search={{ tab: "roles", archived }}
 						params={{ userId: officerId }}
 					>
 						Roles
@@ -56,14 +57,14 @@ export function DirectoryProfileTabs({ officerId }: Props) {
 				</TabsTrigger>
 			</TabsList>
 			<TabsContent value="professional" className="mt-6 flex flex-col gap-y-6">
-				<InternshipList officerId={officerId} />
-				<ResearchList officerId={officerId} />
+				<InternshipList officerId={officerId} archived={archived} />
+				<ResearchList officerId={officerId} archived={archived} />
 			</TabsContent>
 			<TabsContent value="academics" className="mt-6">
-				<AcademicInfo officerId={officerId} />
+				<AcademicInfo officerId={officerId} archived={archived} />
 			</TabsContent>
 			<TabsContent value="roles" className="mt-6">
-				<RoleInfo officerId={officerId} />
+				<RoleInfo officerId={officerId} archived={archived} />
 			</TabsContent>
 		</Tabs>
 	);

@@ -1,6 +1,7 @@
 import { auth } from "@/lib/firebase";
 import { OfficerSchema, type Officer } from "@/schemas/officer";
 import { fetchWithAuth } from "./fetch";
+import type { Endpoint } from "./fetch";
 import { isExecutive } from "@/lib/admin";
 
 export async function getCurrentOfficer(): Promise<Officer | null> {
@@ -43,9 +44,14 @@ export async function getOrCreateOfficer(): Promise<Officer> {
 }
 
 export async function getOfficerById(
-	officerId: string
+	officerId: string,
+	archived = false
 ): Promise<Officer | null> {
-	const res = await fetchWithAuth(`/getOfficer?id=${officerId}`, {
+	const endpoint = archived
+		? (`/getOfficer?id=${officerId}&archived=true` as const)
+		: (`/getOfficer?id=${officerId}` as const);
+
+	const res = await fetchWithAuth(endpoint, {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
@@ -102,15 +108,21 @@ export async function updateAcademicInfo(
 export async function updateOfficerStatus({
 	officerId,
 	isActive,
+	isArchived,
 }: {
 	officerId: string;
 	isActive: boolean;
+	isArchived?: boolean;
 }): Promise<Officer> {
 	const currentUser = await getCurrentOfficer();
 	if (!currentUser) throw new Error("Current user not found");
 	if (!isExecutive(currentUser)) throw new Error("Unauthorized");
 
-	const officer = await fetchWithAuth(`/updateOfficer?id=${officerId}`, {
+	const endpoint = isArchived
+		? `/updateOfficer?id=${officerId}&archived=true`
+		: `/updateOfficer?id=${officerId}`;
+
+	const officer = await fetchWithAuth(endpoint as Endpoint, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -121,15 +133,66 @@ export async function updateOfficerStatus({
 	return OfficerSchema.parse(res);
 }
 
-export async function getAllOfficers(): Promise<Officer[]> {
-	const officers = await fetchWithAuth(`/getOfficers`, {
+export async function getAllOfficers({
+	archived = false,
+}: { archived?: boolean } = {}): Promise<Officer[]> {
+	const endpoint = archived ? "/getOfficers?archived=true" : "/getOfficers";
+	const officers = await fetchWithAuth(endpoint as Endpoint, {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
 		},
 	});
+
+	if (!officers.ok) {
+		const message = await officers.text();
+		throw new Error(message || "Failed to fetch officers");
+	}
+
 	const data = await officers.json();
 	return OfficerSchema.array().parse(data);
+}
+
+export async function archiveOfficer(officerId: string): Promise<Officer> {
+	const currentUser = await getCurrentOfficer();
+	if (!currentUser) throw new Error("Current user not found");
+	if (!isExecutive(currentUser)) throw new Error("Unauthorized");
+
+	const res = await fetchWithAuth(`/archiveOfficer?id=${officerId}`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+
+	if (!res.ok) {
+		const message = await res.text();
+		throw new Error(message || "Failed to archive officer");
+	}
+
+	const data = await res.json();
+	return OfficerSchema.parse(data);
+}
+
+export async function unarchiveOfficer(officerId: string): Promise<Officer> {
+	const currentUser = await getCurrentOfficer();
+	if (!currentUser) throw new Error("Current user not found");
+	if (!isExecutive(currentUser)) throw new Error("Unauthorized");
+
+	const res = await fetchWithAuth(`/unarchiveOfficer?id=${officerId}`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+
+	if (!res.ok) {
+		const message = await res.text();
+		throw new Error(message || "Failed to unarchive officer");
+	}
+
+	const data = await res.json();
+	return OfficerSchema.parse(data);
 }
 
 const createDefaultOfficer = (officerId: string, name: string): Officer => {
@@ -158,6 +221,7 @@ const createDefaultOfficer = (officerId: string, name: string): Officer => {
 		roles: [],
 		accessLevel: 1,
 		isActive: true,
+		isArchived: false,
 		photo: {},
 	};
 };

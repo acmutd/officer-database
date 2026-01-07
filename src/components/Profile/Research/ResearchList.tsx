@@ -12,12 +12,13 @@ import { useQuery } from "@tanstack/react-query";
 
 type Props = {
 	officerId?: string;
+	archived?: boolean;
 	editable?: boolean;
 };
 
-export function ResearchList({ officerId, editable = false }: Props) {
+export function ResearchList({ officerId, archived = false, editable = false }: Props) {
 	const { data: officer } = useQuery(
-		officerId ? getOfficerByIdQuery(officerId) : getOfficerQuery
+		officerId ? getOfficerByIdQuery(officerId, archived) : getOfficerQuery
 	);
 
 	return (
