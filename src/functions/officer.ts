@@ -163,7 +163,6 @@ export async function archiveOfficer(officerId: string): Promise<Officer> {
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify({ id: officerId }),
 	});
 
 	if (!res.ok) {
@@ -185,7 +184,6 @@ export async function unarchiveOfficer(officerId: string): Promise<Officer> {
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify({ id: officerId }),
 	});
 
 	if (!res.ok) {
