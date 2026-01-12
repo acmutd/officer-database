@@ -244,13 +244,13 @@ export default function Table() {
 					</UiTable>
 				</div>
 
-				<div className="border-t border-white/10 bg-black/30 px-6 py-4">
-					<div className="flex items-center justify-between">
+				<div className="border-t border-white/10 bg-black/30 px-4 md:px-6 py-3 md:py-4">
+					<div className="flex flex-col md:flex-row items-center md:justify-between gap-3">
 						<div className="flex items-center gap-4">
 							<span className="text-sm text-white/70">
 								{table.getRowModel().rows.length} officers
 							</span>
-							<div className="flex items-center gap-2">
+							<div className="hidden md:flex items-center gap-2">
 								<span className="text-sm text-white/50">Show</span>
 								<Select
 									value={String(pagination.pageSize)}
@@ -277,34 +277,32 @@ export default function Table() {
 								</Select>
 							</div>
 						</div>
-						<div className="flex items-center gap-3">
-							<div className="flex items-center gap-1.5">
-								<Button
-									onClick={() => table.firstPage()}
-									disabled={!table.getCanPreviousPage()}
-									variant="outline"
-									size="icon-sm"
-									className={cn(
-										"bg-white/5 text-white hover:bg-white/10",
-										"border-white/10 disabled:hover:bg-white/5"
-									)}
-								>
-									<ChevronsLeft className="h-4 w-4" />
-								</Button>
-								<Button
-									onClick={() => table.previousPage()}
-									disabled={!table.getCanPreviousPage()}
-									variant="outline"
-									size="icon-sm"
-									className={cn(
-										"bg-white/5 text-white hover:bg-white/10",
-										"border-white/10 disabled:hover:bg-white/5"
-									)}
-								>
-									<ChevronLeft className="h-4 w-4" />
-								</Button>
-							</div>
-							<div className="flex min-w-[100px] items-center justify-center gap-2">
+						<div className="flex items-center gap-1.5 md:gap-3">
+							<Button
+								onClick={() => table.firstPage()}
+								disabled={!table.getCanPreviousPage()}
+								variant="outline"
+								size="icon-sm"
+								className={cn(
+									"bg-white/5 text-white hover:bg-white/10",
+									"border-white/10 disabled:hover:bg-white/5"
+								)}
+							>
+								<ChevronsLeft className="h-4 w-4" />
+							</Button>
+							<Button
+								onClick={() => table.previousPage()}
+								disabled={!table.getCanPreviousPage()}
+								variant="outline"
+								size="icon-sm"
+								className={cn(
+									"bg-white/5 text-white hover:bg-white/10",
+									"border-white/10 disabled:hover:bg-white/5"
+								)}
+							>
+								<ChevronLeft className="h-4 w-4" />
+							</Button>
+							<div className="flex min-w-20 md:min-w-[100px] items-center justify-center gap-2">
 								<span className="text-sm font-medium text-white">
 									{pagination.pageIndex + 1}
 								</span>
@@ -313,32 +311,30 @@ export default function Table() {
 									{table.getPageCount()}
 								</span>
 							</div>
-							<div className="flex items-center gap-1.5">
-								<Button
-									onClick={() => table.nextPage()}
-									disabled={!table.getCanNextPage()}
-									variant="outline"
-									size="icon-sm"
-									className={cn(
-										"bg-white/5 text-white hover:bg-white/10",
-										"border-white/10 disabled:hover:bg-white/5"
-									)}
-								>
-									<ChevronRight className="h-4 w-4" />
-								</Button>
-								<Button
-									onClick={() => table.lastPage()}
-									disabled={!table.getCanNextPage()}
-									variant="outline"
-									size="icon-sm"
-									className={cn(
-										"bg-white/5 text-white hover:bg-white/10",
-										"border-white/10 disabled:hover:bg-white/5"
-									)}
-								>
-									<ChevronsRight className="h-4 w-4" />
-								</Button>
-							</div>
+							<Button
+								onClick={() => table.nextPage()}
+								disabled={!table.getCanNextPage()}
+								variant="outline"
+								size="icon-sm"
+								className={cn(
+									"bg-white/5 text-white hover:bg-white/10",
+									"border-white/10 disabled:hover:bg-white/5"
+								)}
+							>
+								<ChevronRight className="h-4 w-4" />
+							</Button>
+							<Button
+								onClick={() => table.lastPage()}
+								disabled={!table.getCanNextPage()}
+								variant="outline"
+								size="icon-sm"
+								className={cn(
+									"bg-white/5 text-white hover:bg-white/10",
+									"border-white/10 disabled:hover:bg-white/5"
+								)}
+							>
+								<ChevronsRight className="h-4 w-4" />
+							</Button>
 						</div>
 					</div>
 				</div>
