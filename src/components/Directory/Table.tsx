@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/select";
 import { Link } from "@tanstack/react-router";
 import { UserAvatar } from "@/components/Profile/UserAvatar";
+import { RoleList } from "@/components/Profile/RoleList";
 import {
 	Table as UiTable,
 	TableBody,
@@ -185,17 +186,20 @@ export default function Table() {
 							params={{ userId: officer.id }}
 							className="block rounded-lg border border-white/10 bg-black/30 p-3 transition-colors hover:bg-white/5"
 						>
-							<div className="flex gap-3">
+							<div className="flex gap-3 items-center">
 								<UserAvatar
 									firstName={officer.firstName}
 									lastName={officer.lastName}
 									photo={officer.photo}
 									className="h-12 w-12 shrink-0 bg-white/10"
 								/>
-								<div className="flex-1 min-w-0 flex items-center">
-									<h3 className="text-base font-semibold text-white truncate">
+								<div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
+									<h3 className="text-base font-semibold text-white truncate leading-tight">
 										{officer.firstName} {officer.lastName}
 									</h3>
+									<div className="text-xs scale-90 origin-left">
+										<RoleList roles={officer.roles} />
+									</div>
 								</div>
 								<div className="flex items-center gap-2 shrink-0">
 									<div
