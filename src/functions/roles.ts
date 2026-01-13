@@ -58,6 +58,32 @@ export const addOfficerRole = async ({
 	return OfficerSchema.parse(newData);
 };
 
+export const removeOfficerRole = async ({
+	officerId,
+	index,
+}: {
+	officerId: string;
+	index: number;
+}) => {
+	const currentUser = await getCurrentOfficer();
+	if (!currentUser) throw new Error("Current user not found");
+	if (!isAdmin(currentUser)) throw new Error("Unauthorized");
+
+	const officer = await getOfficerById(officerId);
+	if (!officer) throw new Error("Officer not found");
+	const newRoles = officer.roles.filter((_, i) => i !== index);
+	const newLevel = newRoles.length > 0 ? updateLevel(newRoles) : 0;
+	const res = await fetchWithAuth(`/updateOfficer?id=${officerId}`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({ roles: newRoles, accessLevel: newLevel }),
+	});
+	const newData = await res.json();
+	return OfficerSchema.parse(newData);
+};
+
 // Whenever we update/add a role, we update the root level access of the Officer
 // This access level should be the highest active role's level
 function updateLevel(roles: Role[]): number {

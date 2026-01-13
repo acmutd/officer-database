@@ -4,7 +4,7 @@ import {
 	getPastOfficersQuery,
 	getOfficerByIdQuery,
 } from "./officer";
-import { addOfficerRole, updateOfficerRole } from "@/functions/roles";
+import { addOfficerRole, updateOfficerRole, removeOfficerRole } from "@/functions/roles";
 
 export const updateOfficerRoleMutation = (officerId: string) =>
 	mutationOptions({
@@ -19,6 +19,16 @@ export const updateOfficerRoleMutation = (officerId: string) =>
 export const addOfficerRoleMutation = (officerId: string) =>
 	mutationOptions({
 		mutationFn: addOfficerRole,
+		onSuccess: (res, _, __, ctx) => {
+			ctx.client.setQueryData(getOfficerByIdQuery(officerId).queryKey, res);
+			ctx.client.invalidateQueries(getCurrentOfficersQuery);
+			ctx.client.invalidateQueries(getPastOfficersQuery);
+		},
+	});
+
+export const removeOfficerRoleMutation = (officerId: string) =>
+	mutationOptions({
+		mutationFn: removeOfficerRole,
 		onSuccess: (res, _, __, ctx) => {
 			ctx.client.setQueryData(getOfficerByIdQuery(officerId).queryKey, res);
 			ctx.client.invalidateQueries(getCurrentOfficersQuery);
