@@ -40,11 +40,11 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="flex justify-around gap-8 px-6">
-			<div className="container w-1/4 flex-col">
+		<div className="flex flex-col md:flex-row justify-around gap-6 md:gap-8 px-4 md:px-6">
+			<div className="container w-full md:w-1/4 flex-col">
 				<ProfileView officerId={userId} archived={effectiveArchived} />
 			</div>
-			<div className="container flex w-3/4 flex-col gap-8">
+			<div className="container flex w-full md:w-3/4 flex-col gap-8">
 				<DirectoryProfileTabs officerId={userId} archived={effectiveArchived} />
 			</div>
 

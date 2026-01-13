@@ -29,7 +29,7 @@ export function AcademicInfo({ officerId, archived = false, editable = false }: 
 				{editable ? (
 					<UpdateAcademics officer={officer} />
 				) : (
-					<div className="space-y-8">
+					<div className="space-y-4">
 						<div className="group rounded-lg border border-white/10 bg-white/5 p-4 transition-colors hover:bg-white/10">
 							<div className="text-sm font-medium tracking-wider text-white/50 uppercase">
 								Net ID
@@ -39,7 +39,7 @@ export function AcademicInfo({ officerId, archived = false, editable = false }: 
 							</div>
 						</div>
 
-						<div className="grid grid-cols-2 gap-4">
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<div className="group rounded-lg border border-white/10 bg-white/5 p-4 transition-colors hover:bg-white/10">
 								<div className="text-sm font-medium tracking-wider text-white/50 uppercase">
 									Year Standing
