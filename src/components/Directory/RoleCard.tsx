@@ -50,7 +50,6 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 
 	const {
 		register,
-		handleSubmit,
 		formState: { errors },
 		control,
 		reset,
@@ -71,6 +70,11 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 		removeOfficerRoleMutation(officerId)
 	);
 
+	const handleCancel = () => {
+		reset(role);
+		setIsEditing(false);
+	};
+
 	const onSubmit = async (data: RoleFormData) => {
 		try {
 			await updateRoles({
@@ -83,11 +87,6 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 		} catch (error) {
 			toast.error("Failed to update role");
 		}
-	};
-
-	const handleCancel = () => {
-		reset(role);
-		setIsEditing(false);
 	};
 
 	const handleDeleteRole = async () => {
@@ -108,69 +107,50 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 	return (
 		<>
 			<div className="group relative space-y-4 rounded-lg border border-white/10 bg-white/5 p-6 transition-all">
-				{canEdit && (
+				{canEdit && !isEditing && (
 					<div className="absolute top-4 right-4 space-x-2">
-						{isEditing ? (
-							<>
-								<Button
-									onClick={handleSubmit(onSubmit)}
-									disabled={isPending}
-									variant="default"
-									size="sm"
-									className="bg-green-500/20 text-green-200 hover:bg-green-500/30"
-								>
-									{isPending ? "Saving..." : "Save"}
-								</Button>
-								<Button
-									onClick={handleCancel}
-									variant="secondary"
-									size="sm"
-									className="bg-white/10 text-white hover:bg-white/20"
-								>
-									Cancel
-								</Button>
-							</>
-						) : (
-							<>
-								<Button
-									onClick={() => setIsEditing(true)}
-									variant="secondary"
-									size="sm"
-									className="bg-white/10 text-white hover:bg-white/20"
-								>
-									Edit
-								</Button>
-								<Button
-									onClick={() => setIsDeleteDialogOpen(true)}
-									variant="destructive"
-									size="sm"
-									className="bg-red-500/20 text-red-200 hover:bg-red-500/30"
-								>
-									<Trash2 className="h-4 w-4 mr-1" />
-									Remove
-								</Button>
-							</>
-						)}
+						<Button
+							onClick={() => setIsEditing(true)}
+							variant="secondary"
+							size="sm"
+							className="bg-white/10 text-white hover:bg-white/20"
+						>
+							Edit
+						</Button>
 					</div>
 				)}
 
-				<div className="absolute top-4 left-4">
-					<span
-						className={`rounded-full px-3 py-1 text-xs font-medium ${
-							currentLevel === 1
-								? "bg-blue-500/20 text-blue-200"
-								: currentLevel === 2
-									? "bg-purple-500/20 text-purple-200"
-									: "bg-yellow-500/20 text-yellow-200"
-						}`}
+			{canEdit && isEditing && (
+				<div className="absolute top-4 right-4 space-x-2">
+					<Button
+						onClick={() => setIsDeleteDialogOpen(true)}
+						variant="destructive"
+						size="sm"
+						className="bg-red-500/20 text-red-200 hover:bg-red-500/30"
 					>
-						{currentLevel === 1
-							? "Officer"
-							: currentLevel === 2
-								? "Director"
-								: "Executive"}
-					</span>
+						<Trash2 className="h-4 w-4 mr-1" />
+						Remove
+					</Button>
 				</div>
+			)}
+
+			<div className="absolute top-4 left-4">
+				<span
+					className={`rounded-full px-3 py-1 text-xs font-medium ${
+						currentLevel === 1
+							? "bg-blue-500/20 text-blue-200"
+							: currentLevel === 2
+								? "bg-purple-500/20 text-purple-200"
+								: "bg-yellow-500/20 text-yellow-200"
+					}`}
+				>
+					{currentLevel === 1
+						? "Officer"
+						: currentLevel === 2
+							? "Director"
+							: "Executive"}
+				</span>
+			</div>
 
 				<div className="mt-8 mb-6 border-b border-white/10 pb-4">
 					<h3 className="text-lg font-semibold text-white/90">{role.title}</h3>
@@ -394,14 +374,35 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 							)
 						) : (
 							<p className="mt-1 text-base font-medium text-white/90">
-								{role.endDate
-									? `${role.endDate.term} ${role.endDate.year}`
+								{currentEndDate
+									? `${currentEndDate.term} ${currentEndDate.year}`
 									: "Current"}
 							</p>
 						)}
 					</div>
 				</div>
-			</div>
+
+				{isEditing && (
+					<div className="absolute bottom-4 right-4 space-x-2 flex justify-end">
+						<Button
+							onClick={() => onSubmit(watch())}
+							disabled={isPending}
+							variant="default"
+							size="sm"
+							className="bg-green-500/20 text-green-200 hover:bg-green-500/30"
+						>
+							{isPending ? "Saving..." : "Save"}
+						</Button>
+						<Button
+							onClick={handleCancel}
+							variant="secondary"
+							size="sm"
+							className="bg-white/10 text-white hover:bg-white/20"
+						>
+							Cancel
+						</Button>
+					</div>
+				)}
 
 			<Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
 				<DialogContent className="border-white/10 bg-black/40 backdrop-blur-xl max-w-sm">
@@ -430,6 +431,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
+		</div>
 		</>
 	);
 }
