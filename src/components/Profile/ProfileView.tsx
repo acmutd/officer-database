@@ -45,10 +45,10 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 		return null;
 	}
 	return (
-		<div className="overflow-hidden rounded-3xl border border-white/10 bg-black/40 p-8 shadow-2xl backdrop-blur-xl">
+		<div className="overflow-hidden rounded-3xl border border-white/10 bg-black/40 p-6 md:p-8 shadow-2xl backdrop-blur-xl">
 			<div className="flex flex-col items-center gap-6 text-center">
-				<div className="flex w-full items-start justify-between">
-					<div className="flex flex-1 justify-start">
+				<div className="flex w-full flex-col md:flex-row items-center md:items-start justify-between gap-4 md:gap-0">
+					<div className="hidden md:flex md:flex-1 justify-start">
 						{isViewerExecutive && officerId && (
 							<Popover>
 								<PopoverTrigger asChild>
@@ -121,7 +121,7 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 							className="shadow-2xl ring-4 ring-white/30"
 						/>
 					)}
-					<div className="flex flex-1 justify-end">
+					<div className="flex md:flex-1 justify-center md:justify-end">
 						<div
 							className={cn(
 								"flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
