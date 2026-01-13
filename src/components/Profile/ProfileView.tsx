@@ -48,7 +48,7 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 		<div className="overflow-hidden rounded-3xl border border-white/10 bg-black/40 p-6 md:p-8 shadow-2xl backdrop-blur-xl">
 			<div className="flex flex-col items-center gap-6 text-center">
 				<div className="flex w-full flex-col md:flex-row items-center md:items-start justify-between gap-4 md:gap-0">
-					<div className="hidden md:flex md:flex-1 justify-start">
+					<div className="flex md:flex-1 justify-start">
 						{isViewerExecutive && officerId && (
 							<Popover>
 								<PopoverTrigger asChild>
