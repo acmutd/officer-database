@@ -12,8 +12,10 @@ function HoverCard({
 function HoverCardTrigger({
   ...props
 }: React.ComponentProps<typeof HoverCardPrimitive.Trigger>) {
+  // Use asChild so the consumer-provided element is used (div/span/button),
+  // preventing default anchor rendering inside parent Links.
   return (
-    <HoverCardPrimitive.Trigger data-slot="hover-card-trigger" {...props} />
+    <HoverCardPrimitive.Trigger asChild data-slot="hover-card-trigger" {...props} />
   )
 }
 
