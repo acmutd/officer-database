@@ -92,13 +92,15 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 
 	const handleDeleteRole = async () => {
 		try {
+			console.log("Attempting to remove role:", { officerId, index, roleTitle: role.title });
 			await removeRole({
 				officerId,
-				index,
+				roleTitle: role.title,
 			});
 			setIsDeleteDialogOpen(false);
 			toast.success("Role removed successfully");
 		} catch (error) {
+			console.error("Failed to remove role:", error);
 			toast.error("Failed to remove role");
 		}
 	};
