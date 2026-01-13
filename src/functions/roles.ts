@@ -27,7 +27,6 @@ export const updateOfficerRole = async ({
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({
-			...officer,
 			roles: newRoles,
 			accessLevel: newLevel,
 		}),
@@ -57,7 +56,6 @@ export const addOfficerRole = async ({
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({
-			...officer,
 			roles: newRoles,
 			accessLevel: newLevel,
 		}),
@@ -94,7 +92,6 @@ export const removeOfficerRole = async ({
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({
-			...officer,
 			roles: newRoles,
 			accessLevel: newLevel,
 		}),
