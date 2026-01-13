@@ -54,6 +54,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 		control,
 		reset,
 		watch,
+		handleSubmit,
 	} = useForm<RoleFormData>({
 		resolver: zodResolver(RoleSchema),
 		defaultValues: role,
@@ -91,7 +92,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 
 	const handleDeleteRole = async () => {
 		try {
-			console.log("Attempting to remove role:", { officerId, index, roleTitle: role.title });
+			// console.log("Attempting to remove role:", { officerId, index, roleTitle: role.title });
 			await removeRole({
 				officerId,
 				roleTitle: role.title,
@@ -385,7 +386,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 				{isEditing && (
 					<div className="absolute bottom-4 right-4 space-x-2 flex justify-end">
 						<Button
-							onClick={() => onSubmit(watch())}
+							onClick={handleSubmit(onSubmit)}
 							disabled={isPending}
 							variant="default"
 							size="sm"
@@ -403,8 +404,9 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 						</Button>
 					</div>
 				)}
+		</div>
 
-			<Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+		<Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
 				<DialogContent className="border-white/10 bg-black/40 backdrop-blur-xl max-w-sm">
 					<DialogHeader>
 						<DialogTitle className="text-white">Remove Role</DialogTitle>
@@ -431,7 +433,6 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
-		</div>
 		</>
 	);
 }

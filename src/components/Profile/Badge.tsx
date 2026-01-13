@@ -25,7 +25,7 @@ type Props = {
 export function Badge({ role }: Props) {
 	return (
 		<HoverCard openDelay={100} closeDelay={100}>
-			<HoverCardTrigger>
+			<HoverCardTrigger onClick={(e) => e.stopPropagation()}>
 				<div className="group relative flex cursor-default items-center gap-2 rounded-full border border-white/10 bg-black/55 px-4 py-1.5 text-sm font-medium shadow-sm backdrop-blur-sm">
 					<div
 						className={`${

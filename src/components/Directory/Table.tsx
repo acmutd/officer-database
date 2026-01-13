@@ -197,7 +197,7 @@ export default function Table() {
 									<h3 className="text-base font-semibold text-white truncate leading-tight">
 										{officer.firstName} {officer.lastName}
 									</h3>
-									<div className="text-xs scale-90 origin-left">
+									<div className="text-xs scale-90 origin-left" onClick={(e) => e.stopPropagation()}>
 										<RoleList roles={officer.roles} />
 									</div>
 								</div>
