@@ -39,6 +39,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Link } from "@tanstack/react-router";
+import { UserAvatar } from "@/components/Profile/UserAvatar";
 import {
 	Table as UiTable,
 	TableBody,
@@ -50,9 +52,10 @@ import {
 
 export default function Table() {
 	const [view, setView] = useState<"current" | "past">("current");
+	const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 	const [pagination, setPagination] = useState({
 		pageIndex: 0,
-		pageSize: 20,
+		pageSize: isMobile ? 10 : 20,
 	});
 
 	const currentQuery =
@@ -97,8 +100,8 @@ export default function Table() {
 
 	return (
 		<div className="w-full space-y-6">
-			<div className="flex items-center justify-between gap-4">
-				<div className="relative max-w-2xl flex-1">
+			<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+				<div className="relative w-full md:max-w-2xl md:flex-1">
 					<Input
 						type="search"
 						placeholder="Search by name or netID "
@@ -113,7 +116,7 @@ export default function Table() {
 					/>
 					<Search className="absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-white/50" />
 				</div>
-				<div className="flex items-center gap-3">
+				<div className="flex items-center gap-3 w-full md:w-auto">
 					<div className="inline-flex rounded-lg border space-x-1 border-white/10 bg-black/30 p-1 text-sm text-white/70">
 						<Button
 							variant={view === "current" ? "default" : "ghost"}
@@ -151,7 +154,7 @@ export default function Table() {
 					>
 						<SelectTrigger
 							className={cn(
-								"w-[200px] rounded-lg bg-black/30 text-sm text-white",
+								"w-full sm:w-[200px] rounded-lg bg-black/30 text-sm text-white",
 								"border border-white/10 transition-colors hover:border-white/20",
 								"focus-visible:ring-white/20 focus-visible:border-white/30"
 							)}
@@ -172,7 +175,44 @@ export default function Table() {
 				</div>
 			</div>
 
-			<div className="rounded-lg border border-white/10 bg-black/30">
+			<div className="flex md:hidden flex-col gap-3">
+				{table.getRowModel().rows.map((row) => {
+					const officer = row.original;
+					return (
+						<Link
+							key={row.id}
+							to="/directory/$userId"
+							params={{ userId: officer.id }}
+							className="block rounded-lg border border-white/10 bg-black/30 p-3 transition-colors hover:bg-white/5"
+						>
+							<div className="flex gap-3">
+								<UserAvatar
+									firstName={officer.firstName}
+									lastName={officer.lastName}
+									photo={officer.photo}
+									className="h-12 w-12 shrink-0 bg-white/10"
+								/>
+								<div className="flex-1 min-w-0 flex items-center">
+									<h3 className="text-base font-semibold text-white truncate">
+										{officer.firstName} {officer.lastName}
+									</h3>
+								</div>
+								<div className="flex items-center gap-2 shrink-0">
+									<div
+										className={cn(
+											"h-2 w-2 rounded-full",
+											officer.isActive ? "bg-green-400" : "bg-red-400"
+										)}
+									/>
+									<ChevronRight className="h-4 w-4 text-white/50" />
+								</div>
+							</div>
+						</Link>
+					);
+				})}
+			</div>
+
+			<div className="hidden md:block rounded-lg border border-white/10 bg-black/30">
 				<div className="max-h-[calc(100vh-280px)] overflow-y-auto">
 					<UiTable className="min-w-[940px] border-collapse">
 						<TableHeader>
@@ -243,99 +283,99 @@ export default function Table() {
 						</TableBody>
 					</UiTable>
 				</div>
+			</div>
 
-				<div className="border-t border-white/10 bg-black/30 px-4 md:px-6 py-3 md:py-4">
-					<div className="flex flex-col md:flex-row items-center md:justify-between gap-3">
-						<div className="flex items-center gap-4">
-							<span className="text-sm text-white/70">
-								{table.getRowModel().rows.length} officers
-							</span>
-							<div className="hidden md:flex items-center gap-2">
-								<span className="text-sm text-white/50">Show</span>
-								<Select
-									value={String(pagination.pageSize)}
-									onValueChange={(value) => {
-										table.setPageSize(Number(value));
-									}}
+			<div className="rounded-lg border border-white/10 bg-black/30 px-4 md:px-6 py-3 md:py-4">
+				<div className="flex flex-col md:flex-row items-center md:justify-between gap-3">
+					<div className="flex items-center gap-4">
+						<span className="text-sm text-white/70">
+							{table.getRowModel().rows.length} officers
+						</span>
+						<div className="hidden md:flex items-center gap-2">
+							<span className="text-sm text-white/50">Show</span>
+							<Select
+								value={String(pagination.pageSize)}
+								onValueChange={(value) => {
+									table.setPageSize(Number(value));
+								}}
+							>
+								<SelectTrigger
+									className={cn(
+										"w-[110px] bg-black/30 text-sm text-white",
+										"border border-white/10 transition-colors hover:border-white/20",
+										"focus-visible:ring-white/20 focus-visible:border-white/30"
+									)}
 								>
-									<SelectTrigger
-										className={cn(
-											"w-[110px] bg-black/30 text-sm text-white",
-											"border border-white/10 transition-colors hover:border-white/20",
-											"focus-visible:ring-white/20 focus-visible:border-white/30"
-										)}
-									>
-										<SelectValue />
-									</SelectTrigger>
-									<SelectContent className="bg-black/90 text-white border border-white/10">
-										{[20, 30, 40, 50].map((pageSize) => (
-											<SelectItem key={pageSize} value={String(pageSize)}>
-												{pageSize} rows
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							</div>
+									<SelectValue />
+								</SelectTrigger>
+								<SelectContent className="bg-black/90 text-white border border-white/10">
+									{[20, 30, 40, 50].map((pageSize) => (
+										<SelectItem key={pageSize} value={String(pageSize)}>
+											{pageSize} rows
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
 						</div>
-						<div className="flex items-center gap-1.5 md:gap-3">
-							<Button
-								onClick={() => table.firstPage()}
-								disabled={!table.getCanPreviousPage()}
-								variant="outline"
-								size="icon-sm"
-								className={cn(
-									"bg-white/5 text-white hover:bg-white/10",
-									"border-white/10 disabled:hover:bg-white/5"
-								)}
-							>
-								<ChevronsLeft className="h-4 w-4" />
-							</Button>
-							<Button
-								onClick={() => table.previousPage()}
-								disabled={!table.getCanPreviousPage()}
-								variant="outline"
-								size="icon-sm"
-								className={cn(
-									"bg-white/5 text-white hover:bg-white/10",
-									"border-white/10 disabled:hover:bg-white/5"
-								)}
-							>
-								<ChevronLeft className="h-4 w-4" />
-							</Button>
-							<div className="flex min-w-20 md:min-w-[100px] items-center justify-center gap-2">
-								<span className="text-sm font-medium text-white">
-									{pagination.pageIndex + 1}
-								</span>
-								<span className="text-sm text-white/50">of</span>
-								<span className="text-sm font-medium text-white">
-									{table.getPageCount()}
-								</span>
-							</div>
-							<Button
-								onClick={() => table.nextPage()}
-								disabled={!table.getCanNextPage()}
-								variant="outline"
-								size="icon-sm"
-								className={cn(
-									"bg-white/5 text-white hover:bg-white/10",
-									"border-white/10 disabled:hover:bg-white/5"
-								)}
-							>
-								<ChevronRight className="h-4 w-4" />
-							</Button>
-							<Button
-								onClick={() => table.lastPage()}
-								disabled={!table.getCanNextPage()}
-								variant="outline"
-								size="icon-sm"
-								className={cn(
-									"bg-white/5 text-white hover:bg-white/10",
-									"border-white/10 disabled:hover:bg-white/5"
-								)}
-							>
-								<ChevronsRight className="h-4 w-4" />
-							</Button>
+					</div>
+					<div className="flex items-center gap-1.5 md:gap-3">
+						<Button
+							onClick={() => table.firstPage()}
+							disabled={!table.getCanPreviousPage()}
+							variant="outline"
+							size="icon-sm"
+							className={cn(
+								"bg-white/5 text-white hover:bg-white/10",
+								"border-white/10 disabled:hover:bg-white/5"
+							)}
+						>
+							<ChevronsLeft className="h-4 w-4" />
+						</Button>
+						<Button
+							onClick={() => table.previousPage()}
+							disabled={!table.getCanPreviousPage()}
+							variant="outline"
+							size="icon-sm"
+							className={cn(
+								"bg-white/5 text-white hover:bg-white/10",
+								"border-white/10 disabled:hover:bg-white/5"
+							)}
+						>
+							<ChevronLeft className="h-4 w-4" />
+						</Button>
+						<div className="flex min-w-20 md:min-w-[100px] items-center justify-center gap-2">
+							<span className="text-sm font-medium text-white">
+								{pagination.pageIndex + 1}
+							</span>
+							<span className="text-sm text-white/50">of</span>
+							<span className="text-sm font-medium text-white">
+								{table.getPageCount()}
+							</span>
 						</div>
+						<Button
+							onClick={() => table.nextPage()}
+							disabled={!table.getCanNextPage()}
+							variant="outline"
+							size="icon-sm"
+							className={cn(
+								"bg-white/5 text-white hover:bg-white/10",
+								"border-white/10 disabled:hover:bg-white/5"
+							)}
+						>
+							<ChevronRight className="h-4 w-4" />
+						</Button>
+						<Button
+							onClick={() => table.lastPage()}
+							disabled={!table.getCanNextPage()}
+							variant="outline"
+							size="icon-sm"
+							className={cn(
+								"bg-white/5 text-white hover:bg-white/10",
+								"border-white/10 disabled:hover:bg-white/5"
+							)}
+						>
+							<ChevronsRight className="h-4 w-4" />
+						</Button>
 					</div>
 				</div>
 			</div>
