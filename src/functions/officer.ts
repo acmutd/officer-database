@@ -36,10 +36,17 @@ export async function getOrCreateOfficer(): Promise<Officer> {
 	if (!id) {
 		throw new Error("Unauthorized");
 	}
-	const officer = await getOfficerById(id);
+
+	let officer = await getOfficerById(id);
+
+	if (!officer) {
+		officer = await getOfficerById(id, true);
+	}
+
 	if (!officer) {
 		return createOfficer();
 	}
+
 	return officer;
 }
 
