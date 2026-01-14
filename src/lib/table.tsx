@@ -71,7 +71,13 @@ export const fuzzySort: SortingFn<Officer> = (rowA, rowB, columnId) => {
 	return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
 };
 
-const termSort: SortingFn<Officer> = (a, b) => {
+const nameSort: SortingFn<Officer> = (a, b) => {
+	const aName = `${a.original.firstName} ${a.original.lastName}`;
+	const bName = `${b.original.firstName} ${b.original.lastName}`;
+	return aName.localeCompare(bName, undefined, { sensitivity: "base" });
+};
+
+const joinDateSort: SortingFn<Officer> = (a, b) => {
 	const aYear = a.original.joinDate.year;
 	const bYear = b.original.joinDate.year;
 	if (aYear > bYear) return 1;
@@ -86,6 +92,85 @@ const termSort: SortingFn<Officer> = (a, b) => {
 	if (aTermIndex < bTermIndex) return -1;
 
 	return 0;
+};
+
+const expectedGradSort: SortingFn<Officer> = (a, b) => {
+	const standingOrder = [
+		"Graduate",
+		"Senior",
+		"Junior",
+		"Sophomore",
+		"Freshman",
+		"Alumni",
+	] as const;
+
+	const aStandingIndex = standingOrder.indexOf(a.original.yearStanding);
+	const bStandingIndex = standingOrder.indexOf(b.original.yearStanding);
+
+	if (aStandingIndex !== bStandingIndex) {
+		return aStandingIndex - bStandingIndex;
+	}
+
+	const aYear = a.original.expectedGrad.year;
+	const bYear = b.original.expectedGrad.year;
+	if (aYear !== bYear) return aYear - bYear;
+
+	const aTerm = a.original.expectedGrad.term;
+	const bTerm = b.original.expectedGrad.term;
+	const termOrder = ["Spring", "Summer", "Fall"] as const;
+	const aTermIndex = termOrder.indexOf(aTerm);
+	const bTermIndex = termOrder.indexOf(bTerm);
+
+	return aTermIndex - bTermIndex;
+};
+
+const rolesSort: SortingFn<Officer> = (a, b) => {
+	const aRoles = a.original.roles.filter((role) => role.endDate === null);
+	const bRoles = b.original.roles.filter((role) => role.endDate === null);
+
+	const getHighestRole = (roles: typeof aRoles) => {
+		if (roles.length === 0) return { division: "zzz", level: 99 };
+
+		const execRole = roles.find((role) => role.division === "Executive");
+		if (execRole) return { division: "Executive", level: execRole.level };
+
+		const highestLevelRole = roles.reduce((highest, role) =>
+			role.level < highest.level ? role : highest
+		);
+		return {
+			division: highestLevelRole.division,
+			level: highestLevelRole.level,
+		};
+	};
+
+	const aHighest = getHighestRole(aRoles);
+	const bHighest = getHighestRole(bRoles);
+
+	if (
+		aHighest.division === "Executive" &&
+		bHighest.division !== "Executive"
+	)
+		return -1;
+	if (
+		bHighest.division === "Executive" &&
+		aHighest.division !== "Executive"
+	)
+		return 1;
+
+	if (aHighest.division !== bHighest.division) {
+		return aHighest.division.localeCompare(bHighest.division);
+	}
+
+	if (aHighest.level !== bHighest.level) {
+		return aHighest.level - bHighest.level;
+	}
+
+	return bRoles.length - aRoles.length;
+};
+
+const activitySort: SortingFn<Officer> = (a, b) => {
+	if (a.original.isActive === b.original.isActive) return 0;
+	return a.original.isActive ? -1 : 1;
 };
 
 const columnHelper = createColumnHelper<Officer>();
@@ -122,6 +207,7 @@ export const createColumns = (isArchived: boolean) => [
 					</Link>
 				);
 			},
+			sortingFn: nameSort,
 		}
 	),
 	columnHelper.accessor("joinDate", {
@@ -135,7 +221,7 @@ export const createColumns = (isArchived: boolean) => [
 				</div>
 			</div>
 		),
-		sortingFn: termSort,
+		sortingFn: joinDateSort,
 	}),
 	columnHelper.accessor("expectedGrad", {
 		header: () => <span className="text-white/70">Expected Graduation</span>,
@@ -151,7 +237,7 @@ export const createColumns = (isArchived: boolean) => [
 				</div>
 			</div>
 		),
-		sortingFn: termSort,
+		sortingFn: expectedGradSort,
 	}),
 	columnHelper.accessor("roles", {
 		header: () => <span className="text-white/70">Current Roles</span>,
@@ -163,12 +249,7 @@ export const createColumns = (isArchived: boolean) => [
 				</div>
 			</div>
 		),
-		sortingFn: (a, b) => {
-			const aRoles = a.original.roles.filter((role) => role.endDate === null);
-			const bRoles = b.original.roles.filter((role) => role.endDate === null);
-			if (aRoles.length === bRoles.length) return 0;
-			return aRoles.length > bRoles.length ? 1 : -1;
-		},
+		sortingFn: rolesSort,
 	}),
 	columnHelper.accessor("isActive", {
 		header: () => <span className="text-white/70">Active</span>,
@@ -194,6 +275,7 @@ export const createColumns = (isArchived: boolean) => [
 				</div>
 			</div>
 		),
+		sortingFn: activitySort,
 	}),
 ];
 
