@@ -23,6 +23,16 @@ type Props = {
 };
 
 export function Badge({ role }: Props) {
+	let displayTitle: string;
+	if (role.level === 3) {
+		// For executives, use the original role title
+		displayTitle = role.title;
+	} else {
+		// For officers and directors, use division + role type
+		const roleType = role.level === 2 ? "Director" : "Officer";
+		displayTitle = `${role.division} ${roleType}`;
+	}
+
 	return (
 		<HoverCard openDelay={100} closeDelay={100}>
 			<HoverCardTrigger onClick={(e) => e.stopPropagation()}>
@@ -32,7 +42,7 @@ export function Badge({ role }: Props) {
 							divisions[role.division as keyof typeof divisions]
 						} relative z-10 flex items-center gap-2 bg-clip-text font-semibold text-transparent [-webkit-background-clip:text]`}
 					>
-						{role.title}
+						{displayTitle}
 						{role.level === 2 && <Star className="h-4 w-4 text-white" />}
 					</div>
 				</div>
