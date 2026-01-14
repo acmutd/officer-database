@@ -66,6 +66,11 @@ export async function getOfficerById(
 	});
 
 	if (!res.ok) {
+		// If officer not found in officers collection and we haven't checked archived yet,
+		// try checking the archived collection
+		if (res.status === 404 && !archived) {
+			return getOfficerById(officerId, true);
+		}
 		console.error(res.statusText);
 		return null;
 	}
