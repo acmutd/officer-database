@@ -129,13 +129,13 @@ const rolesSort: SortingFn<Officer> = (a, b) => {
 	const bRoles = b.original.roles.filter((role) => role.endDate === null);
 
 	const getHighestRole = (roles: typeof aRoles) => {
-		if (roles.length === 0) return { division: "zzz", level: 99 };
+		if (roles.length === 0) return { division: "zzz", level: 0 };
 
 		const execRole = roles.find((role) => role.division === "Executive");
 		if (execRole) return { division: "Executive", level: execRole.level };
 
 		const highestLevelRole = roles.reduce((highest, role) =>
-			role.level < highest.level ? role : highest
+			role.level > highest.level ? role : highest
 		);
 		return {
 			division: highestLevelRole.division,
@@ -162,7 +162,7 @@ const rolesSort: SortingFn<Officer> = (a, b) => {
 	}
 
 	if (aHighest.level !== bHighest.level) {
-		return aHighest.level - bHighest.level;
+		return bHighest.level - aHighest.level;
 	}
 
 	return bRoles.length - aRoles.length;
