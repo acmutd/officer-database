@@ -17,6 +17,12 @@ export function RoleList({ roles, showAll = false }: Props) {
 			if (a.division === "Executive" && b.division !== "Executive") return -1;
 			if (b.division === "Executive" && a.division !== "Executive") return 1;
 			if (a.level !== b.level) return b.level - a.level;
+			if (a.division === "Executive" && b.division === "Executive") {
+				const aIsPresident = a.title.includes("President") && !a.title.includes("Vice");
+				const bIsPresident = b.title.includes("President") && !b.title.includes("Vice");
+				if (aIsPresident && !bIsPresident) return -1;
+				if (!aIsPresident && bIsPresident) return 1;
+			}
 			return a.division.localeCompare(b.division);
 		});
 	if (filteredRoles.length === 0) return null;

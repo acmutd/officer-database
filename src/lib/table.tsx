@@ -129,10 +129,10 @@ const rolesSort: SortingFn<Officer> = (a, b) => {
 	const bRoles = b.original.roles.filter((role) => role.endDate === null);
 
 	const getHighestRole = (roles: typeof aRoles) => {
-		if (roles.length === 0) return { division: "zzz", level: 0 };
+		if (roles.length === 0) return { division: "zzz", level: 0, title: "" };
 
 		const execRole = roles.find((role) => role.division === "Executive");
-		if (execRole) return { division: "Executive", level: execRole.level };
+		if (execRole) return { division: "Executive", level: execRole.level, title: execRole.title };
 
 		const highestLevelRole = roles.reduce((highest, role) =>
 			role.level > highest.level ? role : highest
@@ -140,6 +140,7 @@ const rolesSort: SortingFn<Officer> = (a, b) => {
 		return {
 			division: highestLevelRole.division,
 			level: highestLevelRole.level,
+			title: highestLevelRole.title,
 		};
 	};
 
@@ -163,6 +164,13 @@ const rolesSort: SortingFn<Officer> = (a, b) => {
 
 	if (aHighest.level !== bHighest.level) {
 		return bHighest.level - aHighest.level;
+	}
+
+	if (aHighest.division === "Executive" && bHighest.division === "Executive") {
+		const aIsPresident = aHighest.title.includes("President") && !aHighest.title.includes("Vice");
+		const bIsPresident = bHighest.title.includes("President") && !bHighest.title.includes("Vice");
+		if (aIsPresident && !bIsPresident) return -1;
+		if (!aIsPresident && bIsPresident) return 1;
 	}
 
 	return bRoles.length - aRoles.length;
