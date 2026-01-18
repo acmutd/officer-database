@@ -17,29 +17,16 @@ export function DirectoryProfileTabs({ officerId, archived = false }: Props) {
 		<Tabs defaultValue={tab} className="w-full">
 			<TabsList className="w-full justify-start bg-black/40">
 				<TabsTrigger
-					value="professional"
+					value="background"
 					className="text-white/70 data-[state=active]:bg-white/10 data-[state=active]:text-white"
 					asChild
 				>
 					<Link
 						to="/directory/$userId"
-						search={{ tab: "professional", archived }}
+						search={{ tab: "background", archived }}
 						params={{ userId: officerId }}
 					>
-						Professional
-					</Link>
-				</TabsTrigger>
-				<TabsTrigger
-					value="academics"
-					className="text-white/70 data-[state=active]:bg-white/10 data-[state=active]:text-white"
-					asChild
-				>
-					<Link
-						to="/directory/$userId"
-						search={{ tab: "academics", archived }}
-						params={{ userId: officerId }}
-					>
-						Academic
+						Background
 					</Link>
 				</TabsTrigger>
 				<TabsTrigger
@@ -56,11 +43,9 @@ export function DirectoryProfileTabs({ officerId, archived = false }: Props) {
 					</Link>
 				</TabsTrigger>
 			</TabsList>
-			<TabsContent value="professional" className="mt-6 flex flex-col gap-y-6">
+			<TabsContent value="background" className="mt-6 flex flex-col gap-y-6">
 				<InternshipList officerId={officerId} archived={archived} />
 				<ResearchList officerId={officerId} archived={archived} />
-			</TabsContent>
-			<TabsContent value="academics" className="mt-6">
 				<AcademicInfo officerId={officerId} archived={archived} />
 			</TabsContent>
 			<TabsContent value="roles" className="mt-6">
