@@ -4,7 +4,7 @@ import {
 	HoverCardContent,
 	HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { Star } from "lucide-react";
+import { Crown, ShieldCheck } from "lucide-react";
 
 const divisions = {
 	Media: "bg-media-gradient",
@@ -22,16 +22,19 @@ type Props = {
 	role: Role;
 };
 
-export function Badge({ role }: Props) {
-	let displayTitle: string;
-	if (role.level === 3) {
-		// For executives, use the original role title
-		displayTitle = role.title;
-	} else {
-		// For officers and directors, use division + role type
-		const roleType = role.level === 2 ? "Director" : "Officer";
-		displayTitle = `${role.division} ${roleType}`;
+function getAuthorityIcon(level: number) {
+	switch (level) {
+		case 3:
+			return <Crown className="h-4 w-4 text-yellow-400" />;
+		case 2:
+			return <ShieldCheck className="h-4 w-4 text-purple-400" />;
+		default:
+			return null;
 	}
+}
+
+export function Badge({ role }: Props) {
+	const icon = getAuthorityIcon(role.level);
 
 	return (
 		<HoverCard openDelay={100} closeDelay={100}>
@@ -42,15 +45,17 @@ export function Badge({ role }: Props) {
 							divisions[role.division as keyof typeof divisions]
 						} relative z-10 flex items-center gap-2 bg-clip-text font-semibold text-transparent [-webkit-background-clip:text]`}
 					>
-						{displayTitle}
-						{role.level === 2 && <Star className="h-4 w-4 text-white" />}
+						{role.division}
 					</div>
+					{icon && <div className="relative z-10">{icon}</div>}
 				</div>
 			</HoverCardTrigger>
 			<HoverCardContent side="right" className="bg-black/80">
 				<div className="space-y-2">
 					<div>
-						<h4 className="text-sm font-semibold text-white">{role.title}</h4>
+						<h4 className="text-sm font-semibold text-white">
+							{role.title}
+						</h4>
 						<p className="text-muted-foreground text-sm">
 							{role.division} Division
 						</p>
