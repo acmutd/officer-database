@@ -100,8 +100,8 @@ export default function Table() {
 		(divisionColumn?.getFilterValue() as string | undefined) ?? "all";
 
 	return (
-		<div className="w-full space-y-6">
-			<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+		<div className="w-full flex flex-col space-y-6 h-full min-h-0">
+			<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 shrink-0">
 				<div className="relative w-full md:max-w-2xl md:flex-1">
 					<Input
 						type="search"
@@ -216,8 +216,8 @@ export default function Table() {
 				})}
 			</div>
 
-			<div className="hidden md:block rounded-lg border border-white/10 bg-black/30">
-				<div className="max-h-[calc(100vh-280px)] overflow-y-auto">
+			<div className="hidden md:flex flex-col rounded-lg border border-white/10 bg-black/30 min-h-0 flex-1">
+				<div className="overflow-y-auto flex-1">
 					<UiTable className="min-w-[940px] border-collapse">
 						<TableHeader>
 							{table.getHeaderGroups().map((headerGroup) => (
@@ -289,7 +289,7 @@ export default function Table() {
 				</div>
 			</div>
 
-			<div className="rounded-lg border border-white/10 bg-black/30 px-4 md:px-6 py-3 md:py-4">
+			<div className="rounded-lg border border-white/10 bg-black/30 px-4 md:px-6 py-3 md:py-4 shrink-0">
 				<div className="flex flex-col md:flex-row items-center md:justify-between gap-3">
 					<div className="flex items-center gap-4">
 						<span className="text-sm text-white/70">

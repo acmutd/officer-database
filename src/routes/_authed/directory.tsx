@@ -6,7 +6,7 @@ export const Route = createFileRoute("/_authed/directory")({
 
 function RouteComponent() {
 	return (
-		<div className="flex flex-col gap-8">
+		<div className="flex flex-col gap-8 h-full">
 			<Outlet />
 		</div>
 	);
