@@ -16,7 +16,7 @@ export function ProfileSettings() {
 	}
 	return (
 		<div className="space-y-6">
-			<Card className="rounded-xl border border-white/10 bg-linear-to-br from-white/5 to-white/10 shadow-xl backdrop-blur-xl">
+			<Card className="rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10 shadow-xl backdrop-blur-xl">
 				<CardHeader>
 					<CardTitle className="text-xl font-semibold text-white">
 						Social Links

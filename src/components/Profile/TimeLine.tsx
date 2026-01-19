@@ -19,7 +19,7 @@ export function TimeLine({ officerId }: Props) {
 		: [];
 
 	return (
-		<div className="space-y-8 rounded-xl border border-white/10 bg-linear-to-br from-white/5 to-white/10 p-8 shadow-xl backdrop-blur-xl">
+		<div className="space-y-8 rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10 p-8 shadow-xl backdrop-blur-xl">
 			<h2 className="text-2xl font-bold tracking-tight text-white">
 				Role History
 			</h2>

@@ -59,7 +59,7 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 						className="rounded-full object-cover"
 					/>
 				)}
-				<AvatarFallback className="bg-linear-to-br from-purple-500 to-blue-500 text-white text-2xl font-bold">
+				<AvatarFallback className="bg-gradient-to-br from-purple-500 to-blue-500 text-white text-2xl font-bold">
 					{firstName[0] ?? ""}
 					{lastName[0] ?? ""}
 				</AvatarFallback>
