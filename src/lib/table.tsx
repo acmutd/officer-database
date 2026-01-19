@@ -127,7 +127,7 @@ export const createColumns = (isArchived: boolean) => [
 	columnHelper.accessor("joinDate", {
 		header: () => <span className="text-white/70">Join Date</span>,
 		cell: ({ row }) => (
-			<div className="w-40 min-w-40">
+			<div className="w-40 min-w-40 flex items-center">
 				<div className="flex flex-col">
 					<span className="truncate text-xs text-white/50">
 						{row.original.joinDate.term} {row.original.joinDate.year}
@@ -140,7 +140,7 @@ export const createColumns = (isArchived: boolean) => [
 	columnHelper.accessor("expectedGrad", {
 		header: () => <span className="text-white/70">Expected Graduation</span>,
 		cell: ({ row }) => (
-			<div className="w-[180px] min-w-[180px]">
+			<div className="w-[180px] min-w-[180px] flex items-center">
 				<div className="flex flex-col">
 					<span className="truncate text-white">
 						{row.original.expectedGrad.term} {row.original.expectedGrad.year}
@@ -157,7 +157,7 @@ export const createColumns = (isArchived: boolean) => [
 		header: () => <span className="text-white/70">Current Roles</span>,
 		filterFn: "currentDivision",
 		cell: ({ row }) => (
-			<div className="w-[320px] min-w-[320px]">
+			<div className="w-[320px] min-w-[320px] flex items-center">
 				<div className="flex flex-wrap gap-1.5">
 					<RoleList roles={row.original.roles} />
 				</div>
@@ -173,7 +173,7 @@ export const createColumns = (isArchived: boolean) => [
 	columnHelper.accessor("isActive", {
 		header: () => <span className="text-white/70">Active</span>,
 		cell: ({ row }) => (
-			<div className="w-40 min-w-40">
+			<div className="w-40 min-w-40 flex items-center">
 				<div
 					className={cn(
 						"inline-flex items-center gap-2 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors",

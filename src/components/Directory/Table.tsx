@@ -217,57 +217,55 @@ export default function Table() {
 			</div>
 
 			<div className="hidden md:flex flex-col rounded-lg border border-white/10 bg-black/30 min-h-0 flex-1">
-				<UiTable className="min-w-[940px] border-collapse shrink-0">
-					<TableHeader>
-						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id}>
-								{headerGroup.headers.map((header) => {
-									const isSorted = header.column.getIsSorted();
-									return (
-										<TableHead
-											key={header.id}
-											className={cn(
-												"bg-black/80 backdrop-blur-md",
-												"px-6 py-3 text-xs font-medium tracking-wider uppercase",
-												"border-b border-white/10",
-												"group cursor-pointer select-none",
-												isSorted ? "text-white" : "text-white/70"
-											)}
-											onClick={() => header.column.toggleSorting()}
-										>
-											<div className="flex items-center gap-2">
-												<span className="transition-colors group-hover:text-white">
-													{header.isPlaceholder
-														? null
-														: flexRender(
-																header.column.columnDef.header,
-																header.getContext()
-															)}
-												</span>
-												{!header.isPlaceholder && (
-													<div
-														className={cn(
-															"opacity-0 transition-opacity group-hover:opacity-100",
-															isSorted && "opacity-100"
-														)}
-													>
-														{isSorted === "asc" ? (
-															<SortAsc className="h-3.5 w-3.5 text-white/50" />
-														) : isSorted === "desc" ? (
-															<SortDesc className="h-3.5 w-3.5 text-white/50" />
-														) : null}
-													</div>
-												)}
-											</div>
-										</TableHead>
-									);
-								})}
-							</TableRow>
-						))}
-					</TableHeader>
-				</UiTable>
 				<div className="overflow-y-auto flex-1">
 					<UiTable className="min-w-[940px] border-collapse">
+						<TableHeader>
+							{table.getHeaderGroups().map((headerGroup) => (
+								<TableRow key={headerGroup.id}>
+									{headerGroup.headers.map((header) => {
+										const isSorted = header.column.getIsSorted();
+										return (
+											<TableHead
+												key={header.id}
+												className={cn(
+													"bg-black/80 backdrop-blur-md sticky top-0 z-10",
+													"px-6 py-3 text-xs font-medium tracking-wider uppercase",
+													"border-b border-white/10",
+													"group cursor-pointer select-none align-middle",
+													isSorted ? "text-white" : "text-white/70"
+												)}
+												onClick={() => header.column.toggleSorting()}
+											>
+												<div className="flex items-center gap-2">
+													<span className="transition-colors group-hover:text-white">
+														{header.isPlaceholder
+															? null
+															: flexRender(
+																	header.column.columnDef.header,
+																	header.getContext()
+																)}
+													</span>
+													{!header.isPlaceholder && (
+														<div
+															className={cn(
+																"opacity-0 transition-opacity group-hover:opacity-100",
+																isSorted && "opacity-100"
+															)}
+														>
+															{isSorted === "asc" ? (
+																<SortAsc className="h-3.5 w-3.5 text-white/50" />
+															) : isSorted === "desc" ? (
+																<SortDesc className="h-3.5 w-3.5 text-white/50" />
+															) : null}
+														</div>
+													)}
+												</div>
+											</TableHead>
+										);
+									})}
+								</TableRow>
+							))}
+						</TableHeader>
 						<TableBody>
 							{table.getRowModel().rows.map((row) => (
 								<TableRow
@@ -277,7 +275,7 @@ export default function Table() {
 									)}
 								>
 									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id} className="px-6 py-2 text-sm">
+										<TableCell key={cell.id} className="px-6 py-2 text-sm align-middle">
 											{flexRender(
 												cell.column.columnDef.cell,
 												cell.getContext()
