@@ -69,7 +69,7 @@ export function AddInternship() {
 					<Plus className="h-4 w-4 text-white" />
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="border-white/10 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl">
+			<DialogContent className="border-white/10 bg-linear-to-br from-white/5 to-white/10 backdrop-blur-xl">
 				<DialogHeader>
 					<DialogTitle className="text-white">Add New Internship</DialogTitle>
 				</DialogHeader>

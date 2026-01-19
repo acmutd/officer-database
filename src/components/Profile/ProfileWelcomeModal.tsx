@@ -45,7 +45,7 @@ export function ProfileWelcomeModal({ isNewUser }: ProfileWelcomeModalProps) {
 
 			<DialogContent
 			onInteractOutside={(e) => e.preventDefault()}
-			className="max-w-md border-white/10 bg-gradient-to-br from-white/5 to-white/10 text-white shadow-2xl backdrop-blur-xl sm:rounded-3xl">
+			className="max-w-md border-white/10 bg-linear-to-br from-white/5 to-white/10 text-white shadow-2xl backdrop-blur-xl sm:rounded-3xl">
 				<DialogHeader className="items-center text-center">
 					<div className="mb-4 flex items-center justify-center">
 						<div className="flex h-20 w-20 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/20 backdrop-blur-sm">

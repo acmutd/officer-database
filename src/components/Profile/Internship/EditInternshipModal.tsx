@@ -86,7 +86,7 @@ export function EditInternshipModal({ internship, index }: Props) {
 					</svg>
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="border-white/10 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl">
+			<DialogContent className="border-white/10 bg-linear-to-br from-white/5 to-white/10 backdrop-blur-xl">
 				<DialogHeader>
 					<DialogTitle className="text-white">Edit Internship</DialogTitle>
 					<DialogDescription className="text-white/50">

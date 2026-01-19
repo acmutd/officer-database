@@ -15,7 +15,7 @@ export function InternshipCard({ internship, index, editable = false }: Props) {
 		<Card
 			className={`${
 				editable ? "group relative" : ""
-			} border-white/10 bg-gradient-to-br from-white/5 to-white/10 transition-colors hover:border-white/20`}
+			} border-white/10 bg-linear-to-br from-white/5 to-white/10 transition-colors hover:border-white/20`}
 		>
 			<CardContent className="flex items-start justify-between p-6">
 				<div className="space-y-3">
