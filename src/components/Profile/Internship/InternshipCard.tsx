@@ -4,6 +4,13 @@ import { DeleteInternshipModal } from "./DeleteInternshipModal";
 import { EditInternshipModal } from "./EditInternshipModal";
 import { Briefcase, Calendar } from "lucide-react";
 
+const formatDate = (value: string) =>
+	new Date(value).toLocaleDateString("en-US", {
+		month: "long",
+		day: "numeric",
+		year: "numeric",
+	});
+
 type Props = {
 	internship: Internships;
 	index?: number;
@@ -30,14 +37,14 @@ export function InternshipCard({ internship, index, editable = false }: Props) {
 					<div className="flex items-center gap-3">
 						<Calendar className="h-4 w-4 text-white/30" />
 						<p className="text-sm text-white/50">
-							{internship.startDate}
+							{formatDate(internship.startDate)}
 							<span className="mx-2">→</span>
 							<span
 								className={
 									internship.endDate ? "text-white/50" : "text-emerald-400"
 								}
 							>
-								{internship.endDate || "Present"}
+								{internship.endDate ? formatDate(internship.endDate) : "Present"}
 							</span>
 						</p>
 					</div>
