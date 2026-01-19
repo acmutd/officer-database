@@ -11,12 +11,12 @@ export function ProfileTabs() {
 		<Tabs defaultValue={tab} className="w-full">
 			<TabsList className="w-full justify-start bg-black/40">
 				<TabsTrigger
-					value="professional"
+					value="background"
 					className="text-white/70 data-[state=active]:bg-white/10  data-[state=active]:text-white"
 					asChild
 				>
-					<Link to="/profile" search={{ tab: "professional" }} replace>
-						Professional
+					<Link to="/profile" search={{ tab: "background" }} replace>
+						Background
 					</Link>
 				</TabsTrigger>
 				<TabsTrigger
@@ -25,11 +25,11 @@ export function ProfileTabs() {
 					asChild
 				>
 					<Link to="/profile" search={{ tab: "academics" }} replace>
-						Academic
+						Academics
 					</Link>
 				</TabsTrigger>
 			</TabsList>
-			<TabsContent value="professional" className="mt-6 flex flex-col gap-y-6">
+			<TabsContent value="background" className="mt-6 flex flex-col gap-y-6">
 				<InternshipList editable />
 				<ResearchList editable />
 				<ResumeSection />

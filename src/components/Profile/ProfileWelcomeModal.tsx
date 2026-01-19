@@ -42,8 +42,8 @@ export function ProfileWelcomeModal({ isNewUser }: ProfileWelcomeModalProps) {
 
 	return (
 		<Dialog open={isOpen} onOpenChange={handleChange}>
-			
-			<DialogContent 
+
+			<DialogContent
 			onInteractOutside={(e) => e.preventDefault()}
 			className="max-w-md border-white/10 bg-gradient-to-br from-white/5 to-white/10 text-white shadow-2xl backdrop-blur-xl sm:rounded-3xl">
 				<DialogHeader className="items-center text-center">
@@ -91,7 +91,7 @@ export function ProfileWelcomeModal({ isNewUser }: ProfileWelcomeModalProps) {
 								2
 							</span>
 							<span>
-								<strong className="text-white">Professional Tab:</strong> Add
+								<strong className="text-white">Background Tab:</strong> Add
 								your internship and research experiences. Your resume will be
 								private and only be visible to our sponsors.
 							</span>

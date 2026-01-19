@@ -12,9 +12,9 @@ import {FeedbackButton} from "@/components/Feedback"
 
 const searchSchema = z.object({
 	tab: z
-		.enum(["professional", "academics"])
-		.default("professional")
-		.catch("professional"),
+		.enum(["background", "academics"])
+		.default("background")
+		.catch("background"),
 });
 
 const searchTab = searchSchema.optional().default(searchSchema.parse({}));
@@ -62,7 +62,7 @@ function RouteComponent() {
 			*/}
 			<ProfileWelcomeModal isNewUser={isNewUser} />
 			<FeedbackButton/>
-			
+
 		</div>
 	);
 }
