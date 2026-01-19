@@ -95,7 +95,7 @@ export const createColumns = (isArchived: boolean) => [
 		(row) => `${row.firstName} ${row.lastName} ${row.netId}`,
 		{
 			id: "name",
-			header: () => <span className="text-white/70">Name</span>,
+			header: () => <span className="text-white/70 hover:cursor-pointer">Name</span>,
 			cell: ({ row }) => {
 				const officer = row.original;
 				return (
@@ -125,7 +125,7 @@ export const createColumns = (isArchived: boolean) => [
 		}
 	),
 	columnHelper.accessor("joinDate", {
-		header: () => <span className="text-white/70">Join Date</span>,
+		header: () => <span className="text-white/70 hover:cursor-pointer">Join Date</span>,
 		cell: ({ row }) => (
 			<div className="w-40 min-w-40 flex items-center">
 				<div className="flex flex-col">
@@ -138,7 +138,7 @@ export const createColumns = (isArchived: boolean) => [
 		sortingFn: termSort,
 	}),
 	columnHelper.accessor("expectedGrad", {
-		header: () => <span className="text-white/70">Expected Graduation</span>,
+		header: () => <span className="text-white/70 hover:cursor-pointer">Expected Graduation</span>,
 		cell: ({ row }) => (
 			<div className="w-[180px] min-w-[180px] flex items-center">
 				<div className="flex flex-col">
@@ -154,7 +154,7 @@ export const createColumns = (isArchived: boolean) => [
 		sortingFn: termSort,
 	}),
 	columnHelper.accessor("roles", {
-		header: () => <span className="text-white/70">Current Roles</span>,
+		header: () => <span className="text-white/70 hover:cursor-pointer">Current Roles</span>,
 		filterFn: "currentDivision",
 		cell: ({ row }) => (
 			<div className="w-[320px] min-w-[320px] flex items-center">
@@ -171,7 +171,7 @@ export const createColumns = (isArchived: boolean) => [
 		},
 	}),
 	columnHelper.accessor("isActive", {
-		header: () => <span className="text-white/70">Active</span>,
+		header: () => <span className="text-white/70 hover:cursor-pointer">Active</span>,
 		cell: ({ row }) => (
 			<div className="w-40 min-w-40 flex items-center">
 				<div

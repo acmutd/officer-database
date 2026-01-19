@@ -229,15 +229,15 @@ export default function Table() {
 											className={cn(
 												"bg-black/80 backdrop-blur-md",
 												"px-6 py-3 text-xs font-medium tracking-wider uppercase",
-												"border-b border-white/10",
-												"group cursor-pointer select-none align-middle",
+												"border-b border-white/10 first:rounded-tl-lg last:rounded-tr-lg",
+												"group select-none align-middle",
 												isSorted ? "text-white" : "text-white/70"
 											)}
 											onClick={() => header.column.toggleSorting()}
 											style={{ width: header.getSize() }}
 										>
 											<div className="flex items-center gap-2">
-												<span className="transition-colors group-hover:text-white">
+												<span className="transition-colors">
 													{header.isPlaceholder
 														? null
 														: flexRender(
