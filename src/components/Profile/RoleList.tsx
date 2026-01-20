@@ -14,8 +14,10 @@ export function RoleList({ roles, showAll = false }: Props) {
 	const filteredRoles = roles.filter(
 		(role) => role.endDate === null || showAll
 	);
-	if (filteredRoles.length === 0) return null;
-	const [firstRole, ...rest] = filteredRoles;
+	// Sort by permission level (highest to lowest)
+	const sortedRoles = [...filteredRoles].sort((a, b) => b.level - a.level);
+	if (sortedRoles.length === 0) return null;
+	const [firstRole, ...rest] = sortedRoles;
 	return (
 		<div className="flex flex-wrap items-center gap-2">
 			<Badge role={firstRole} />

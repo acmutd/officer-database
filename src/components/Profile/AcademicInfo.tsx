@@ -19,7 +19,7 @@ export function AcademicInfo({ officerId, archived = false, editable = false }: 
 	}
 
 	return (
-		<Card className="rounded-xl border border-white/10 bg-black/40 shadow-xl backdrop-blur-xl">
+		<Card className="rounded-xl border border-white/10 bg-black/40 shadow-xl">
 			<CardHeader>
 				<CardTitle className="text-2xl font-semibold text-white">
 					Academic Information

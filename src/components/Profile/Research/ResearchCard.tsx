@@ -4,6 +4,13 @@ import { Calendar, FlaskConical, Users } from "lucide-react";
 import { DeleteResearchModal } from "./DeleteResearchModal";
 import { EditResearchModal } from "./EditResearchModal";
 
+const formatDate = (value: string) =>
+	new Date(value).toLocaleDateString("en-US", {
+		month: "long",
+		day: "numeric",
+		year: "numeric",
+	});
+
 type Props = {
 	research: Research;
 	index?: number;
@@ -36,16 +43,14 @@ export function ResearchCard({ research, index, editable = false }: Props) {
 					<div className="flex items-center gap-3">
 						<Calendar className="h-4 w-4 text-white/30" />
 						<p className="text-sm text-white/50">
-							{new Date(research.startDate).toLocaleDateString()}
+							{formatDate(research.startDate)}
 							<span className="mx-2">→</span>
 							<span
 								className={
 									research.endDate ? "text-white/50" : "text-emerald-400"
 								}
 							>
-								{research.endDate
-									? new Date(research.endDate).toLocaleDateString()
-									: "Present"}
+								{research.endDate ? formatDate(research.endDate) : "Present"}
 							</span>
 						</p>
 					</div>
