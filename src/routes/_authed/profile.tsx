@@ -12,7 +12,7 @@ import {FeedbackButton} from "@/components/Feedback"
 
 const searchSchema = z.object({
 	tab: z
-		.enum(["background", "academics"])
+		.enum(["background", "dashboard"])
 		.default("background")
 		.catch("background"),
 });

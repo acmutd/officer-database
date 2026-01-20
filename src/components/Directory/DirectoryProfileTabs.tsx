@@ -44,9 +44,9 @@ export function DirectoryProfileTabs({ officerId, archived = false }: Props) {
 				</TabsTrigger>
 			</TabsList>
 			<TabsContent value="background" className="mt-6 flex flex-col gap-y-6">
+				<AcademicInfo officerId={officerId} archived={archived} />
 				<InternshipList officerId={officerId} archived={archived} />
 				<ResearchList officerId={officerId} archived={archived} />
-				<AcademicInfo officerId={officerId} archived={archived} />
 			</TabsContent>
 			<TabsContent value="roles" className="mt-6">
 				<RoleInfo officerId={officerId} archived={archived} />
