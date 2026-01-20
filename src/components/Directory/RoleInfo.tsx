@@ -23,7 +23,7 @@ export function RoleInfo({ officerId, archived = false }: Props) {
 	const canEdit = currentUser && isAdmin(currentUser);
 
 	return (
-		<Card className="rounded-xl border border-white/10 bg-black/40 shadow-xl backdrop-blur-xl">
+		<Card className="rounded-xl border border-white/10 bg-black/40 shadow-xl mb-8">
 			<CardHeader className="flex flex-row items-center justify-between space-y-0">
 				<div>
 					<CardTitle className="text-xl font-semibold text-white">

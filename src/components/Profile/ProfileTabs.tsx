@@ -3,6 +3,7 @@ import { InternshipList } from "./Internship/InternshipList";
 import { ResearchList } from "./Research/ResearchList";
 import { AcademicInfo } from "./AcademicInfo";
 import { ResumeSection } from "./ResumeSection";
+import { DashboardPlaceholder } from "./DashboardPlaceholder";
 import { Link, useSearch } from "@tanstack/react-router";
 
 export function ProfileTabs() {
@@ -11,31 +12,32 @@ export function ProfileTabs() {
 		<Tabs defaultValue={tab} className="w-full">
 			<TabsList className="w-full justify-start bg-black/40">
 				<TabsTrigger
-					value="professional"
+					value="background"
 					className="text-white/70 data-[state=active]:bg-white/10  data-[state=active]:text-white"
 					asChild
 				>
-					<Link to="/profile" search={{ tab: "professional" }} replace>
-						Professional
+					<Link to="/profile" search={{ tab: "background" }} replace>
+						Background
 					</Link>
 				</TabsTrigger>
 				<TabsTrigger
-					value="academics"
+					value="dashboard"
 					className="text-white/70 data-[state=active]:bg-white/10  data-[state=active]:text-white"
 					asChild
 				>
-					<Link to="/profile" search={{ tab: "academics" }} replace>
-						Academic
+					<Link to="/profile" search={{ tab: "dashboard" }} replace>
+						Dashboard
 					</Link>
 				</TabsTrigger>
 			</TabsList>
-			<TabsContent value="professional" className="mt-6 flex flex-col gap-y-6">
+			<TabsContent value="background" className="mt-6 flex flex-col gap-y-6">
+				<AcademicInfo editable />
 				<InternshipList editable />
 				<ResearchList editable />
 				<ResumeSection />
 			</TabsContent>
-			<TabsContent value="academics" className="mt-6">
-				<AcademicInfo editable />
+			<TabsContent value="dashboard" className="mt-6">
+				<DashboardPlaceholder />
 			</TabsContent>
 		</Tabs>
 	);

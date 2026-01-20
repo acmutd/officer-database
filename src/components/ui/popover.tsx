@@ -12,7 +12,8 @@ function Popover({
 function PopoverTrigger({
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Trigger>) {
-  return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />
+  // Use asChild so the consumer element is used and not a default anchor.
+  return <PopoverPrimitive.Trigger asChild data-slot="popover-trigger" {...props} />
 }
 
 function PopoverContent({

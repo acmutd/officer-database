@@ -24,11 +24,11 @@ function RouteComponent() {
 		return <Navigate to="/login" />;
 	}
 	return (
-		<div className="min-h-screen">
+		<div className="h-screen flex flex-col">
 			<div className="flex w-full justify-center">
 				<Navbar />
 			</div>
-			<main className="px-4 pt-32">
+			<main className="flex-1 px-4 pt-32 pb-4 min-h-0">
 				<Outlet />
 			</main>
 		</div>

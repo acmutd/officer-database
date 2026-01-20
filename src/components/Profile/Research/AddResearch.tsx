@@ -7,6 +7,7 @@ import {
 import { Button } from "../../ui/button";
 import { DialogHeader } from "../../ui/dialog";
 import { Input } from "../../ui/input";
+import { DatePicker } from "../../ui/date-picker";
 import {
 	Field,
 	FieldContent,
@@ -40,6 +41,8 @@ export function AddResearch() {
 		formState: { errors },
 		control,
 		reset,
+		watch,
+		setValue,
 	} = useForm<ResearchFormData>({
 		resolver: zodResolver(ResearchFormSchema),
 		defaultValues: {
@@ -175,11 +178,11 @@ export function AddResearch() {
 								<FieldLabel htmlFor="startDate" className="text-white/70">
 									Start Date
 								</FieldLabel>
-								<Input
-									id="startDate"
-									type="date"
-									{...register("startDate")}
-									className="border-white/10 bg-white/5 text-white"
+								<DatePicker
+									value={watch("startDate")}
+									onChange={(date) => setValue("startDate", date)}
+									placeholder="Select start date"
+									maxDate={new Date()}
 								/>
 								<FieldError errors={[errors.startDate]} />
 							</FieldContent>
@@ -190,11 +193,11 @@ export function AddResearch() {
 								<FieldLabel htmlFor="endDate" className="text-white/70">
 									End Date (Optional)
 								</FieldLabel>
-								<Input
-									id="endDate"
-									type="date"
-									{...register("endDate")}
-									className="border-white/10 bg-white/5 text-white"
+								<DatePicker
+									value={watch("endDate")}
+									onChange={(date) => setValue("endDate", date)}
+									placeholder="Select end date"
+								maxDate={new Date()}
 								/>
 								<FieldError errors={[errors.endDate]} />
 							</FieldContent>

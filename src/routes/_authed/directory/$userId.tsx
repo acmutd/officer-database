@@ -9,9 +9,9 @@ import z from "zod";
 
 const searchSchema = z.object({
 	tab: z
-		.enum(["professional", "academics", "roles"])
-		.default("professional")
-		.catch("professional"),
+		.enum(["background", "roles"])
+		.default("background")
+		.catch("background"),
 	archived: z.boolean().optional(),
 });
 

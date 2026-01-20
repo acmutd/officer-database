@@ -33,7 +33,8 @@ type UpdateAcademicsFormData = z.infer<typeof UpdateAcademicsSchema>;
 
 export default function UpdateAcademics({ officer }: { officer: Officer }) {
 	const currentYear = new Date().getFullYear();
-	const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
+	const startYear = 2020; // matches TermSchema minimum
+	const years = Array.from({ length: currentYear + 6 - startYear + 1 }, (_, i) => startYear + i);
 
 	const {
 		register,

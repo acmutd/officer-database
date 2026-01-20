@@ -53,10 +53,10 @@ const AuthedDirectoryUserIdRoute = AuthedDirectoryUserIdRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof AuthedIndexRoute
   '/login': typeof LoginRoute
   '/directory': typeof AuthedDirectoryRouteWithChildren
   '/profile': typeof AuthedProfileRoute
-  '/': typeof AuthedIndexRoute
   '/directory/$userId': typeof AuthedDirectoryUserIdRoute
   '/directory/': typeof AuthedDirectoryIndexRoute
 }
@@ -80,10 +80,10 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/login'
     | '/directory'
     | '/profile'
-    | '/'
     | '/directory/$userId'
     | '/directory/'
   fileRoutesByTo: FileRoutesByTo
@@ -116,7 +116,7 @@ declare module '@tanstack/react-router' {
     '/_authed': {
       id: '/_authed'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof AuthedRouteImport
       parentRoute: typeof rootRouteImport
     }
