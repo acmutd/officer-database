@@ -11,13 +11,16 @@ type Props = {
 	showAll?: boolean;
 };
 export function RoleList({ roles, showAll = false }: Props) {
-	const filteredRoles = roles.filter(
-		(role) => role.endDate === null || showAll
-	);
-	// Sort by permission level (highest to lowest)
-	const sortedRoles = [...filteredRoles].sort((a, b) => b.level - a.level);
-	if (sortedRoles.length === 0) return null;
-	const [firstRole, ...rest] = sortedRoles;
+	const filteredRoles = roles
+		.filter((role) => role.endDate === null || showAll)
+		.sort((a, b) => {
+			if (a.division === "Executive" && b.division !== "Executive") return -1;
+			if (b.division === "Executive" && a.division !== "Executive") return 1;
+			if (a.level !== b.level) return b.level - a.level;
+			return a.division.localeCompare(b.division);
+		});
+	if (filteredRoles.length === 0) return null;
+	const [firstRole, ...rest] = filteredRoles;
 	return (
 		<div className="flex flex-wrap items-center gap-2">
 			<Badge role={firstRole} />

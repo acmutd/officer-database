@@ -13,7 +13,7 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import type { ColumnFiltersState } from "@tanstack/react-table";
+import type { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import {
 	ChevronLeft,
 	ChevronRight,
@@ -69,6 +69,7 @@ export default function Table() {
 
 	const [search, setSearch] = useState("");
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+	const [sorting, setSorting] = useState<SortingState>([]);
 
 	const columns = createColumns(view === "past");
 
@@ -80,10 +81,12 @@ export default function Table() {
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		onPaginationChange: setPagination,
+		onSortingChange: setSorting,
 		state: {
 			pagination,
 			globalFilter: search,
 			columnFilters,
+			sorting,
 		},
 		onGlobalFilterChange: setSearch,
 		onColumnFiltersChange: setColumnFilters,
@@ -174,6 +177,53 @@ export default function Table() {
 						</SelectContent>
 					</Select>
 				</div>
+			</div>
+
+			<div className="flex md:hidden">
+				<Select
+					value={
+						sorting.length > 0
+							? `${sorting[0].id}-${sorting[0].desc ? "desc" : "asc"}`
+							: "default"
+					}
+					onValueChange={(value) => {
+						if (value === "default") {
+							setSorting([]);
+						} else {
+							const [id, direction] = value.split("-");
+							setSorting([{ id, desc: direction === "desc" }]);
+						}
+					}}
+				>
+					<SelectTrigger
+						className={cn(
+							"w-full rounded-lg bg-black/30 text-sm text-white",
+							"border border-white/10 transition-colors hover:border-white/20",
+							"focus-visible:ring-white/20 focus-visible:border-white/30"
+						)}
+					>
+						<SelectValue placeholder="Sort by..." />
+					</SelectTrigger>
+					<SelectContent className="bg-black/90 text-white border border-white/10">
+						<SelectItem value="default">Default</SelectItem>
+						<SelectItem value="name-asc">Name (A-Z)</SelectItem>
+						<SelectItem value="name-desc">Name (Z-A)</SelectItem>
+						<SelectItem value="joinDate-desc">Join Date (Newest First)</SelectItem>
+						<SelectItem value="joinDate-asc">Join Date (Oldest First)</SelectItem>
+						<SelectItem value="expectedGrad-asc">
+							Expected Graduation (Soonest)
+						</SelectItem>
+						<SelectItem value="expectedGrad-desc">
+							Expected Graduation (Latest)
+						</SelectItem>
+						<SelectItem value="roles-asc">Role (Highest First)</SelectItem>
+						<SelectItem value="roles-desc">Role (Lowest First)</SelectItem>
+						<SelectItem value="isActive-asc">Activity (Active First)</SelectItem>
+						<SelectItem value="isActive-desc">
+							Activity (Inactive First)
+						</SelectItem>
+					</SelectContent>
+				</Select>
 			</div>
 
 			<div className="flex md:hidden flex-col gap-3">
