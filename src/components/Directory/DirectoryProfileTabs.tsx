@@ -25,6 +25,7 @@ export function DirectoryProfileTabs({ officerId, archived = false }: Props) {
 						to="/directory/$userId"
 						search={{ tab: "background", archived }}
 						params={{ userId: officerId }}
+						resetScroll={false}
 					>
 						Background
 					</Link>
@@ -38,6 +39,7 @@ export function DirectoryProfileTabs({ officerId, archived = false }: Props) {
 						to="/directory/$userId"
 						search={{ tab: "roles", archived }}
 						params={{ userId: officerId }}
+						resetScroll={false}
 					>
 						Roles
 					</Link>
