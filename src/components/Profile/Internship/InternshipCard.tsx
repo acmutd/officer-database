@@ -26,13 +26,15 @@ export function InternshipCard({ internship, index, editable = false }: Props) {
 		>
 			<CardContent className="flex items-start justify-between p-6">
 				<div className="space-y-3">
-					<div className="flex items-center gap-3">
-						<Briefcase className="h-4 w-4 text-white/30" />
-						<h3 className="text-base font-medium text-white">
-							{internship.title}
-						</h3>
-						<span className="text-white/30">•</span>
-						<p className="text-base text-white/70">{internship.company}</p>
+					<div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+						<div className="flex items-center gap-3">
+							<Briefcase className="h-4 w-4 text-white/30 shrink-0" />
+							<h3 className="text-base font-medium text-white">
+								{internship.title}
+							</h3>
+						</div>
+						<span className="hidden sm:inline text-white/30">•</span>
+						<p className="text-base text-white/70 pl-7 sm:pl-0">{internship.company}</p>
 					</div>
 					<div className="flex items-center gap-3">
 						<Calendar className="h-4 w-4 text-white/30" />
