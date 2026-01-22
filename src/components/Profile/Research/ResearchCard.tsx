@@ -59,7 +59,7 @@ export function ResearchCard({ research, index, editable = false }: Props) {
 				</div>
 
 				{editable && index !== undefined && (
-					<div className="flex gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+					<div className="flex gap-1 opacity-100 md:opacity-0 transition-opacity duration-200 md:group-hover:opacity-100">
 						<EditResearchModal research={research} index={index} />
 						<DeleteResearchModal research={research} index={index} />
 					</div>

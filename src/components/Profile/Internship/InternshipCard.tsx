@@ -53,7 +53,7 @@ export function InternshipCard({ internship, index, editable = false }: Props) {
 				</div>
 
 				{editable && index !== undefined && (
-					<div className="flex gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+					<div className="flex gap-1 opacity-100 md:opacity-0 transition-opacity duration-200 md:group-hover:opacity-100">
 						<EditInternshipModal internship={internship} index={index} />
 						<DeleteInternshipModal internship={internship} index={index} />
 					</div>
