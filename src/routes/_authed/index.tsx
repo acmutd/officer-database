@@ -1,5 +1,6 @@
 import { ACMErrorComponent } from "@/components/ErrorComponent";
 import { Spinner } from "@/components/Spinner";
+import { Dashboard } from "@/components/Dashboard";
 import { getOfficerQuery } from "@/queries/officer";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
@@ -20,5 +21,5 @@ function App() {
 		return <Navigate to="/login" />;
 	}
 
-	return <Navigate to ="/profile"/>;
+	return <Dashboard officer={officer} />;
 }
