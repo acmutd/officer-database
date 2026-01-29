@@ -1,4 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DASHBOARD_CARDS } from "@/lib/dashboard";
+import DashboardCard from "@/components/ui/dashboard-card"
 
 export function DashboardPlaceholder() {
 	return (
@@ -9,7 +11,15 @@ export function DashboardPlaceholder() {
 				</CardTitle>
 			</CardHeader>
 			<CardContent className="p-6">
-				<p className="text-white/70">Dashboard content coming soon...</p>
+			<div className="flex justify-center gap-4">	
+				{DASHBOARD_CARDS.map((card, index) => (
+					<DashboardCard 
+					title = {card.title}
+					description = {card.description}
+					link={card.link}
+					/>
+					))}
+			</div>
 			</CardContent>
 		</Card>
 	);

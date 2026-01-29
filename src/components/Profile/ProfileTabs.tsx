@@ -3,7 +3,7 @@ import { InternshipList } from "./Internship/InternshipList";
 import { ResearchList } from "./Research/ResearchList";
 import { AcademicInfo } from "./AcademicInfo";
 import { ResumeSection } from "./ResumeSection";
-import { DashboardPlaceholder } from "./DashboardPlaceholder";
+import { DashboardPlaceholder } from "./Dashboard";
 import { Link, useSearch } from "@tanstack/react-router";
 
 export function ProfileTabs() {
