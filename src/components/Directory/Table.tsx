@@ -103,7 +103,7 @@ export default function Table() {
 		(divisionColumn?.getFilterValue() as string | undefined) ?? "all";
 
 	return (
-		<div className="w-full flex flex-col space-y-6 h-full min-h-0">
+		<div className="w-full flex flex-col space-y-6 md:h-full md:min-h-0">
 			<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 shrink-0">
 				<div className="relative w-full md:max-w-2xl md:flex-1">
 					<Input
@@ -342,7 +342,7 @@ export default function Table() {
 				</div>
 			</div>
 
-			<div className="rounded-lg border border-white/10 bg-black/30 px-4 md:px-6 py-3 md:py-4 shrink-0">
+			<div className="rounded-lg border border-white/10 bg-black/30 px-4 md:px-6 py-3 md:py-4 shrink-0 mb-8 md:mb-0">
 				<div className="flex flex-col md:flex-row items-center md:justify-between gap-3">
 					<div className="flex items-center gap-4">
 						<span className="text-sm text-white/70">
