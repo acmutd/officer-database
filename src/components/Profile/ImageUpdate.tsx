@@ -50,8 +50,8 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 	};
 
 	return (
-		<div className="group relative mx-auto flex flex-col items-center">
-			<Avatar className="relative h-36 w-36 ring-2 ring-white/10">
+		<div className="group relative flex flex-col items-center">
+			<Avatar className="h-36 w-36 shadow-2xl">
 				{photo.url && (
 					<AvatarImage
 						src={avatar}
@@ -74,7 +74,7 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 			<Button
 				size="icon"
 				variant="secondary"
-				className="absolute -right-2 -bottom-2 cursor-pointer rounded-full shadow-xl transition-shadow duration-300 hover:shadow-purple-500/20"
+				className="absolute -right-1 bottom-0 cursor-pointer rounded-full shadow-xl transition-shadow duration-300 hover:shadow-purple-500/20"
 				onClick={handleImageClick}
 				disabled={isPending}
 			>

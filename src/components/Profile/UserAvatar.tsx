@@ -24,7 +24,7 @@ export function UserAvatar({
 	return (
 		<Avatar
 			{...props}
-			className={cn("relative h-36 w-36 ring-2 ring-white/10", props.className)}
+			className={cn("relative h-36 w-36", props.className)}
 		>
 			{photo.url && (
 				<AvatarImage
