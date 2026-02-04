@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { ArrowRight } from "lucide-react";
 
 interface CardDataProps {
   title: string;
@@ -14,14 +15,13 @@ const DashboardCard: React.FC<CardDataProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
-      <button
+<div className="flex flex-col h-full rounded-xl border-2 border-white/20 bg-white/10 shadow-sm hover:bg-white/15 transition-colors">      <button
         onClick={() => setIsExpanded((prev) => !prev)}
         className="flex w-full items-center justify-between px-4 py-3 text-left"
       >
-        <h3 className="text-lg font-semibold">{title}</h3>
+        <h3 className="text-lg font-semibold text-white">{title}</h3>
         <span
-          className={`transition-transform duration-200 ${
+          className={`transition-transform duration-200 text-white ${
             isExpanded ? "rotate-180" : ""
           }`}
         >
@@ -30,13 +30,16 @@ const DashboardCard: React.FC<CardDataProps> = ({
       </button>
 
       <div
-        className={`overflow-hidden transition-all duration-300 ${
+        className={`overflow-hidden transition-all duration-300 flex flex-col flex-1 ${
           isExpanded ? "max-h-64 px-4 pb-4" : "max-h-0 px-4"
         }`}
       >
-        <p className="mb-3 text-sm text-gray-600">{description}</p>
-
-          <a href={link}>Go</a>
+        <p className="text-sm text-white/70">{description}</p>
+        <div className="flex justify-end mt-auto pt-3">
+          <a href={link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-full hover:shadow-lg transition-all">
+            <ArrowRight className="w-5 h-5 text-white" />
+          </a>
+        </div>
       </div>
     </div>
   );

@@ -29,13 +29,13 @@ export const DASHBOARD_CARDS: DashboardCardData[] = [
 
    {
     title: "ACM Budget Spring 2026",
-    description: " Here are the approved Spring 2026 finances for each division!",
+    description: "Use this form to request funding for ACM-related events, projects, or activities. Please provide detailed and accurate information to help the finance team review, approve, and allocate resources.",
     link: "https://docs.google.com/spreadsheets/d/14RVrfa7pBpnQ8fzUM0_l4uWOOHJnYeCxr4Gn1JgWOqc/edit?gid=0#gid=0",
     
   },
    {
     title: "ACM Media Request Form",
-    description: "Our Media team works hard to get your events marketed to the public! Fill out this form, preferably 2 weeks in advance, to get all your media needs covered!",
+    description: "Use this to request graphic designs, promotional materials, or media coverage for ACM events and initiatives. Please submit your request in advance to allow sufficient time for and coordination with the content and media teams.",
     link: "https://acmutd.typeform.com/acmedia-request",
     
   },

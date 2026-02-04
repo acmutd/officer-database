@@ -10,10 +10,11 @@ export function DashboardPlaceholder() {
 					Dashboard
 				</CardTitle>
 			</CardHeader>
-			<CardContent className="p-6">
-			<div className="flex justify-center gap-4">	
+				<CardContent className="p-6">
+			<div className="grid grid-cols-3 gap-4 items-stretch">	
 				{DASHBOARD_CARDS.map((card, index) => (
 					<DashboardCard 
+					key={index}
 					title = {card.title}
 					description = {card.description}
 					link={card.link}
