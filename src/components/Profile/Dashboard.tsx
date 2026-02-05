@@ -1,8 +1,29 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DASHBOARD_CARDS } from "@/lib/dashboard";
 import DashboardCard from "@/components/ui/dashboard-card"
+import {getOfficerQuery} from "@/queries/officer";
+import { useQuery } from "@tanstack/react-query";
+import { Spinner } from "../Spinner";
+
+
 
 export function DashboardPlaceholder() {
+
+	
+
+
+	const { data: officer, isLoading} = useQuery(getOfficerQuery);
+
+	if (isLoading) {
+			return <Spinner />;
+		}
+
+	if (!officer) {
+			return null;
+		}
+
+	const cardsShown = DASHBOARD_CARDS.filter(card => card.minLevel <= officer.accessLevel);
+
 	return (
 		<Card className="rounded-xl border border-white/10 bg-black/40 shadow-xl">
 			<CardHeader>
@@ -12,7 +33,7 @@ export function DashboardPlaceholder() {
 			</CardHeader>
 			<CardContent className="p-6">
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">	
-				{DASHBOARD_CARDS.map((card, index) => (
+				{cardsShown.map((card, index) => (
 					<DashboardCard 
 					key={index}
 					title = {card.title}

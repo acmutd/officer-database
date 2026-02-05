@@ -37,7 +37,7 @@ export function ProfileTabs() {
 				<ResumeSection />
 			</TabsContent>
 			<TabsContent value="dashboard" className="mt-6">
-				<DashboardPlaceholder />
+				<DashboardPlaceholder/>
 			</TabsContent>
 		</Tabs>
 	);
