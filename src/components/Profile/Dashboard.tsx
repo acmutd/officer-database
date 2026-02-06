@@ -27,11 +27,11 @@ export function DashboardPlaceholder() {
 	return (
 		<Card className="rounded-xl border border-white/10 bg-black/40 shadow-xl">
 			<CardHeader>
-				<CardTitle className="text-2xl font-semibold text-white">
-					Dashboard
+				<CardTitle className="text-3xl font-semibold text-white pl-2">
+					ACM Resources
 				</CardTitle>
 			</CardHeader>
-			<CardContent className="p-6">
+			<CardContent className="p-4">
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">	
 				{cardsShown.map((card, index) => (
 					<DashboardCard 
