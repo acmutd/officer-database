@@ -125,8 +125,19 @@ export default function Table() {
 				.filter((role) => (view === "current" ? role.endDate === null : true))
 				.map((role) => `${role.title} (${role.division})`)
 				.join("; ");
+			const highestLevel =
+				officer.roles.length === 0
+					? 0
+					: Math.max(...officer.roles.map((role) => role.level));
+			const levelLabel =
+				highestLevel === 3
+					? "Executive"
+					: highestLevel === 2
+						? "Director"
+						: "Officer";
 			return [
 				`${officer.firstName} ${officer.lastName}`,
+				levelLabel,
 				officer.netId,
 				formatTerm(officer.joinDate),
 				formatTerm(officer.expectedGrad),
@@ -138,6 +149,7 @@ export default function Table() {
 
 		const headers = [
 			"Name",
+			"Level",
 			"NetID",
 			"Join Date",
 			"Expected Graduation",
