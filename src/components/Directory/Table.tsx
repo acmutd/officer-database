@@ -19,6 +19,7 @@ import {
 	ChevronRight,
 	ChevronsLeft,
 	ChevronsRight,
+	Download,
 	Search,
 	SortAsc,
 	SortDesc,
@@ -101,6 +102,64 @@ export default function Table() {
 	const divisionColumn = table.getColumn("roles");
 	const divisionFilterValue =
 		(divisionColumn?.getFilterValue() as string | undefined) ?? "all";
+	const exportRows = () => {
+		const rowsToExport = table.getPrePaginationRowModel().rows;
+		if (rowsToExport.length === 0) return;
+
+		const escapeCsvValue = (value: string) => {
+			if (value.includes("\"")) {
+				value = value.replace(/\"/g, "\"\"");
+			}
+			if (value.includes(",") || value.includes("\n") || value.includes("\r")) {
+				return `"${value}"`;
+			}
+			return value;
+		};
+
+		const formatTerm = (term: { term: string; year: number }) =>
+			`${term.term} ${term.year}`;
+
+		const rows = rowsToExport.map((row) => {
+			const officer = row.original;
+			const roles = officer.roles
+				.filter((role) => (view === "current" ? role.endDate === null : true))
+				.map((role) => `${role.title} (${role.division})`)
+				.join("; ");
+			return [
+				`${officer.firstName} ${officer.lastName}`,
+				officer.netId,
+				formatTerm(officer.joinDate),
+				formatTerm(officer.expectedGrad),
+				officer.yearStanding,
+				roles,
+				officer.isActive ? "Active" : "Inactive",
+			];
+		});
+
+		const headers = [
+			"Name",
+			"NetID",
+			"Join Date",
+			"Expected Graduation",
+			"Year Standing",
+			view === "current" ? "Current Roles" : "Roles",
+			"Active",
+		];
+		const csv = [headers, ...rows]
+			.map((row) => row.map((value) => escapeCsvValue(String(value))).join(","))
+			.join("\n");
+
+		const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement("a");
+		const dateTag = new Date().toISOString().slice(0, 10);
+		link.href = url;
+		link.download = `officers-${view}-${dateTag}.csv`;
+		link.click();
+		URL.revokeObjectURL(url);
+	};
+
+	const exportDisabled = table.getPrePaginationRowModel().rows.length === 0;
 
 	return (
 		<div className="w-full flex flex-col space-y-6 md:h-full md:min-h-0">
@@ -176,6 +235,19 @@ export default function Table() {
 								))}
 						</SelectContent>
 					</Select>
+					<Button
+						variant="outline"
+						size="icon-sm"
+						onClick={exportRows}
+						disabled={exportDisabled}
+						aria-label="Export officers"
+						className={cn(
+							"bg-white/5 text-white hover:bg-white/10",
+							"border-white/10 disabled:hover:bg-white/5"
+						)}
+					>
+						<Download className="h-4 w-4" />
+					</Button>
 				</div>
 			</div>
 
