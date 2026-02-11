@@ -29,6 +29,7 @@ import { useEffect, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
 	getCurrentOfficersQuery,
+	getOfficerQuery,
 	getPastOfficersQuery,
 } from "@/queries/officer";
 import { Input } from "@/components/ui/input";
@@ -51,6 +52,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { isAdmin } from "@/lib/admin";
 
 export default function Table() {
 	const [view, setView] = useState<"current" | "past">("current");
@@ -63,6 +65,7 @@ export default function Table() {
 	const currentQuery =
 		view === "past" ? getPastOfficersQuery : getCurrentOfficersQuery;
 	const { data } = useSuspenseQuery(currentQuery);
+	const { data: currentOfficer } = useSuspenseQuery(getOfficerQuery);
 
 	useEffect(() => {
 		setPagination((prev) => ({ ...prev, pageIndex: 0 }));
@@ -172,6 +175,7 @@ export default function Table() {
 	};
 
 	const exportDisabled = table.getPrePaginationRowModel().rows.length === 0;
+	const canViewExport = !!currentOfficer && isAdmin(currentOfficer);
 
 	return (
 		<div className="w-full flex flex-col space-y-6 md:h-full md:min-h-0">
@@ -247,19 +251,21 @@ export default function Table() {
 								))}
 						</SelectContent>
 					</Select>
-					<Button
-						variant="outline"
-						size="icon-sm"
-						onClick={exportRows}
-						disabled={exportDisabled}
-						aria-label="Export officers"
-						className={cn(
-							"bg-white/5 text-white hover:bg-white/10",
-							"border-white/10 disabled:hover:bg-white/5"
-						)}
-					>
-						<Download className="h-4 w-4" />
-					</Button>
+					{canViewExport ? (
+						<Button
+							variant="outline"
+							size="icon-sm"
+							onClick={exportRows}
+							disabled={exportDisabled}
+							aria-label="Export officers"
+							className={cn(
+								"bg-white/5 text-white hover:bg-white/10",
+								"border-white/10 disabled:hover:bg-white/5"
+							)}
+						>
+							<Download className="h-4 w-4" />
+						</Button>
+					) : null}
 				</div>
 			</div>
 
