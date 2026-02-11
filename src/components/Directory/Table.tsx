@@ -106,7 +106,17 @@ export default function Table() {
 	const divisionFilterValue =
 		(divisionColumn?.getFilterValue() as string | undefined) ?? "all";
 	const exportRows = () => {
-		const rowsToExport = table.getPrePaginationRowModel().rows;
+		let rowsToExport = table.getPrePaginationRowModel().rows;
+
+		// Filter by selected division if one is selected
+		if (divisionFilterValue !== "all") {
+			rowsToExport = rowsToExport.filter((row) => {
+				const officer = row.original;
+				const currentRole = officer.roles.filter((role) => role.endDate === null);
+				return currentRole.some((role) => role.division === divisionFilterValue);
+			});
+		}
+
 		if (rowsToExport.length === 0) return;
 
 		const escapeCsvValue = (value: string) => {
