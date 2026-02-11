@@ -177,9 +177,15 @@ export default function Table() {
 		const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
 		const url = URL.createObjectURL(blob);
 		const link = document.createElement("a");
-		const dateTag = new Date().toISOString().slice(0, 10);
+		const now = new Date();
+		const month = String(now.getMonth() + 1).padStart(2, "0");
+		const day = String(now.getDate()).padStart(2, "0");
+		const year = now.getFullYear();
+		const dateTag = `${month}-${day}-${year}`;
+
+		const divisionPart = divisionFilterValue !== "all" ? `-${divisionFilterValue.toLowerCase()}` : "";
 		link.href = url;
-		link.download = `officers-${view}-${dateTag}.csv`;
+		link.download = `officers-${view}${divisionPart}-${dateTag}.csv`;
 		link.click();
 		URL.revokeObjectURL(url);
 	};
