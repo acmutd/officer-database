@@ -1,9 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { DASHBOARD_CARDS } from "@/lib/dashboard";
 import DashboardCard from "@/components/ui/dashboard-card"
 import {getOfficerQuery} from "@/queries/officer";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "../Spinner";
+import AstraLoginCredentials from "@/components/ui/astra-login"
+import AstraDetails from "@/components/ui/astra-details"
 
 
 
@@ -43,6 +45,27 @@ export function DashboardPlaceholder() {
 					))}
 			</div>
 			</CardContent>
+
+			{officer.accessLevel > 1 && (
+				<>
+				<CardHeader>
+					<CardTitle className="text-3xl font-semibold text-white pl-2 pt-6">
+						Astra Information
+					</CardTitle>
+					<CardDescription className="text-l text-white/60 pl-2">
+						Below is all the needed information for room reservations! Please reach out to the executive team for any questions!
+					</CardDescription>
+				</CardHeader>
+
+				<div className="md:flex sm:flex-cols">
+					<AstraLoginCredentials/>
+					<AstraDetails/>
+				</div>
+				</>
+			)}
+
+			
+			
 		</Card>
 	);
 }

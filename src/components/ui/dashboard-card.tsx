@@ -17,7 +17,7 @@ const DashboardCard: React.FC<CardDataProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-<div className="flex flex-col h-full rounded-xl border-1 border-white/20 bg-black/40 shadow-sm transition-colors">     
+  <div className="flex flex-col h-full rounded-xl border-1 border-white/20 bg-black/40 shadow-sm">     
       
        <button
         onClick={() => setIsExpanded((prev) => !prev)}
