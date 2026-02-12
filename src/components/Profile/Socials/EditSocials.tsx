@@ -24,37 +24,31 @@ type EditSocialsProps = {
 	onSuccess?: () => void;
 };
 
-const urlValidator = z.url();
 const emailValidator = z.email();
 
+const SOCIAL_PREFIXES = {
+	linkedin: "https://linkedin.com/in/",
+	github: "https://github.com/",
+	instagram: "https://instagram.com/",
+} as const;
+
+const extractUsername = (url: string | undefined, prefix: string): string => {
+	if (!url) return "";
+	if (url.startsWith(prefix)) {
+		return url.slice(prefix.length);
+	}
+	return url;
+};
+
+const buildUrl = (username: string, prefix: string): string => {
+	if (!username) return "";
+	return `${prefix}${username}`;
+};
+
 const SocialLinksFormSchema = z.object({
-	linkedin: z
-		.string()
-		.trim()
-		.optional()
-		.refine(
-			(value) =>
-				!value || value.length === 0 || urlValidator.safeParse(value).success,
-			{ message: "Please enter a valid URL" }
-		),
-	github: z
-		.string()
-		.trim()
-		.optional()
-		.refine(
-			(value) =>
-				!value || value.length === 0 || urlValidator.safeParse(value).success,
-			{ message: "Please enter a valid URL" }
-		),
-	instagram: z
-		.string()
-		.trim()
-		.optional()
-		.refine(
-			(value) =>
-				!value || value.length === 0 || urlValidator.safeParse(value).success,
-			{ message: "Please enter a valid URL" }
-		),
+	linkedin: z.string().trim().optional(),
+	github: z.string().trim().optional(),
+	instagram: z.string().trim().optional(),
 	personalEmail: z
 		.string()
 		.trim()
@@ -88,9 +82,9 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 	} = useForm<SocialLinksFormValues>({
 		resolver: zodResolver(SocialLinksFormSchema),
 		defaultValues: {
-			linkedin: links.linkedin ?? "",
-			github: links.github ?? "",
-			instagram: links.instagram ?? "",
+			linkedin: extractUsername(links.linkedin, SOCIAL_PREFIXES.linkedin),
+			github: extractUsername(links.github, SOCIAL_PREFIXES.github),
+			instagram: extractUsername(links.instagram, SOCIAL_PREFIXES.instagram),
 			personalEmail: links.personalEmail ?? "",
 		},
 	});
@@ -101,9 +95,9 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 
 	useEffect(() => {
 		reset({
-			linkedin: links.linkedin ?? "",
-			github: links.github ?? "",
-			instagram: links.instagram ?? "",
+			linkedin: extractUsername(links.linkedin, SOCIAL_PREFIXES.linkedin),
+			github: extractUsername(links.github, SOCIAL_PREFIXES.github),
+			instagram: extractUsername(links.instagram, SOCIAL_PREFIXES.instagram),
 			personalEmail: links.personalEmail ?? "",
 		});
 	}, [links.github, links.instagram, links.linkedin, links.personalEmail, reset]);
@@ -113,7 +107,8 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 
 		const applyField = (
 			field: keyof SocialLinks,
-			value: SocialLinksFormValues[keyof SocialLinksFormValues]
+			value: SocialLinksFormValues[keyof SocialLinksFormValues],
+			prefix?: string
 		) => {
 			if (typeof value === "undefined") {
 				return;
@@ -125,20 +120,20 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 				return;
 			}
 
-			updated[field] = trimmed;
+			updated[field] = prefix ? buildUrl(trimmed, prefix) : trimmed;
 		};
 
-		applyField("linkedin", values.linkedin);
-		applyField("github", values.github);
-		applyField("instagram", values.instagram);
+		applyField("linkedin", values.linkedin, SOCIAL_PREFIXES.linkedin);
+		applyField("github", values.github, SOCIAL_PREFIXES.github);
+		applyField("instagram", values.instagram, SOCIAL_PREFIXES.instagram);
 		applyField("personalEmail", values.personalEmail);
 
 		try {
 			await mutateSocials(updated);
 			reset({
-				linkedin: updated.linkedin ?? "",
-				github: updated.github ?? "",
-				instagram: updated.instagram ?? "",
+				linkedin: extractUsername(updated.linkedin, SOCIAL_PREFIXES.linkedin),
+				github: extractUsername(updated.github, SOCIAL_PREFIXES.github),
+				instagram: extractUsername(updated.instagram, SOCIAL_PREFIXES.instagram),
 				personalEmail: updated.personalEmail ?? "",
 			});
 			toast.success("Social links updated successfully");
@@ -151,9 +146,9 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 
 	const handleCancel = () => {
 		reset({
-			linkedin: links.linkedin ?? "",
-			github: links.github ?? "",
-			instagram: links.instagram ?? "",
+			linkedin: extractUsername(links.linkedin, SOCIAL_PREFIXES.linkedin),
+			github: extractUsername(links.github, SOCIAL_PREFIXES.github),
+			instagram: extractUsername(links.instagram, SOCIAL_PREFIXES.instagram),
 			personalEmail: links.personalEmail ?? "",
 		});
 		onCancel?.();
@@ -176,9 +171,9 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 								aria-hidden="true"
 							/>
 							<Input
-								type="url"
+								type="text"
 								id="linkedin"
-								placeholder="https://linkedin.com/in/username"
+								placeholder="username"
 								{...register("linkedin")}
 								disabled={isPending}
 								className={inputClassName}
@@ -200,9 +195,9 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 								aria-hidden="true"
 							/>
 							<Input
-								type="url"
+								type="text"
 								id="github"
-								placeholder="https://github.com/username"
+								placeholder="username"
 								{...register("github")}
 								disabled={isPending}
 								className={inputClassName}
@@ -224,9 +219,9 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 								aria-hidden="true"
 							/>
 							<Input
-								type="url"
+								type="text"
 								id="instagram"
-								placeholder="https://instagram.com/username"
+								placeholder="username"
 								{...register("instagram")}
 								disabled={isPending}
 								className={inputClassName}
