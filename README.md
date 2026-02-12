@@ -22,6 +22,12 @@ This is the frontend repository for the ACM Officer Database, a comprehensive ma
 - View archived officer profiles
 - Role-based access control
 
+### Table Exporting
+- Export officer data to CSV format
+- Filter exports by division (when a division is selected)
+- Automatic filename generation with view type and date
+- Admin-only export functionality
+
 ### Data Validation
 - All API responses parsed against Zod schemas
 - Type-safe query client with React Query
