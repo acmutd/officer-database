@@ -4,6 +4,7 @@ import type { SocialLinks } from "@/schemas/officer";
 import { Button } from "@/components/ui/button";
 import { LinkedInLink } from "./LinkedInLink";
 import { GithubLink } from "./GithubLink";
+import { InstagramLink } from "./InstagramLink";
 import { EmailLink } from "./EmailLink";
 import { EditSocials } from "@/components/Profile/Socials/EditSocials";
 
@@ -14,8 +15,8 @@ type Props = {
 
 export function ExternalLinks({ links, editable = false }: Props) {
 	const hasLinks = useMemo(
-		() => Boolean(links.linkedin || links.github || links.personalEmail),
-		[links.github, links.linkedin, links.personalEmail]
+		() => Boolean(links.linkedin || links.github || links.instagram || links.personalEmail),
+		[links.github, links.instagram, links.linkedin, links.personalEmail]
 	);
 
 	const [isEditing, setIsEditing] = useState(false);
@@ -39,6 +40,7 @@ export function ExternalLinks({ links, editable = false }: Props) {
 			<div className="flex flex-col gap-2 items-start">
 				{links.linkedin && <LinkedInLink url={links.linkedin} />}
 				{links.github && <GithubLink url={links.github} />}
+				{links.instagram && <InstagramLink url={links.instagram} />}
 				{links.personalEmail && <EmailLink url={links.personalEmail} />}
 				{!hasLinks && (
 					<span className="text-sm text-white/60">
@@ -56,6 +58,7 @@ export function ExternalLinks({ links, editable = false }: Props) {
 					<>
 						{links.linkedin && <LinkedInLink url={links.linkedin} />}
 						{links.github && <GithubLink url={links.github} />}
+						{links.instagram && <InstagramLink url={links.instagram} />}
 						{links.personalEmail && <EmailLink url={links.personalEmail} />}
 					</>
 				) : (

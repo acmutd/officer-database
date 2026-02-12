@@ -26,6 +26,7 @@ export const DivisionSchema = z.enum(divisions);
 export const SocialLinksSchema = z.object({
 	linkedin: z.url().optional(),
 	github: z.url().optional(),
+	instagram: z.url().optional(),
 	personalEmail: z.email().optional(),
 });
 
