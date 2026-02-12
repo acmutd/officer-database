@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Github, Linkedin, Loader2, Mail } from "lucide-react";
+import { Github, Instagram, Linkedin, Loader2, Mail } from "lucide-react";
 
 import type { SocialLinks } from "@/schemas/officer";
 import { updateSocialsMutation } from "@/queries/socials";
@@ -38,6 +38,15 @@ const SocialLinksFormSchema = z.object({
 			{ message: "Please enter a valid URL" }
 		),
 	github: z
+		.string()
+		.trim()
+		.optional()
+		.refine(
+			(value) =>
+				!value || value.length === 0 || urlValidator.safeParse(value).success,
+			{ message: "Please enter a valid URL" }
+		),
+	instagram: z
 		.string()
 		.trim()
 		.optional()
@@ -81,6 +90,7 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 		defaultValues: {
 			linkedin: links.linkedin ?? "",
 			github: links.github ?? "",
+			instagram: links.instagram ?? "",
 			personalEmail: links.personalEmail ?? "",
 		},
 	});
@@ -93,9 +103,10 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 		reset({
 			linkedin: links.linkedin ?? "",
 			github: links.github ?? "",
+			instagram: links.instagram ?? "",
 			personalEmail: links.personalEmail ?? "",
 		});
-	}, [links.github, links.linkedin, links.personalEmail, reset]);
+	}, [links.github, links.instagram, links.linkedin, links.personalEmail, reset]);
 
 	const onSubmit = async (values: SocialLinksFormValues) => {
 		const updated: SocialLinks = { ...links };
@@ -119,6 +130,7 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 
 		applyField("linkedin", values.linkedin);
 		applyField("github", values.github);
+		applyField("instagram", values.instagram);
 		applyField("personalEmail", values.personalEmail);
 
 		try {
@@ -126,6 +138,7 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 			reset({
 				linkedin: updated.linkedin ?? "",
 				github: updated.github ?? "",
+				instagram: updated.instagram ?? "",
 				personalEmail: updated.personalEmail ?? "",
 			});
 			toast.success("Social links updated successfully");
@@ -140,6 +153,7 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 		reset({
 			linkedin: links.linkedin ?? "",
 			github: links.github ?? "",
+			instagram: links.instagram ?? "",
 			personalEmail: links.personalEmail ?? "",
 		});
 		onCancel?.();
@@ -195,6 +209,30 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 							/>
 						</div>
 						<FieldError errors={[errors.github]} />
+					</FieldContent>
+				</Field>
+
+				<Field className={fieldContainerClassName}>
+					<FieldLabel htmlFor="instagram" className={fieldLabelClassName}>
+						Instagram
+						<span className={optionalBadgeClassName}>Optional</span>
+					</FieldLabel>
+					<FieldContent className="gap-3">
+						<div className="relative">
+							<Instagram
+								className={`${inputIconClassName} text-pink-300`}
+								aria-hidden="true"
+							/>
+							<Input
+								type="url"
+								id="instagram"
+								placeholder="https://instagram.com/username"
+								{...register("instagram")}
+								disabled={isPending}
+								className={inputClassName}
+							/>
+						</div>
+						<FieldError errors={[errors.instagram]} />
 					</FieldContent>
 				</Field>
 
