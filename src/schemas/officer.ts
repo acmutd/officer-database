@@ -19,6 +19,7 @@ export const divisions = [
 	"Community",
 	"HackUTD",
 	"Industry",
+	"Finance",
 ];
 
 export const DivisionSchema = z.enum(divisions);
