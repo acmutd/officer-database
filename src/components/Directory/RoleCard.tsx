@@ -160,7 +160,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 
 				{isEditing ? (
 					<>
-						<div className="mb-6 grid grid-cols-2 gap-4 border-b border-white/10 pb-4">
+						<div className="mb-6  grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-white/10 pb-4">
 							<Field>
 								<FieldContent>
 									<FieldLabel className="text-white/70">Title</FieldLabel>
@@ -238,7 +238,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 					</>
 				) : null}
 
-				<div className="mt-2 grid grid-cols-2 gap-6">
+				<div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-6 pb-8">
 					<div>
 						<FieldLabel className="text-sm font-normal text-white/50">
 							Start Date
@@ -384,7 +384,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 				</div>
 
 				{isEditing && (
-					<div className="absolute bottom-4 right-4 space-x-2 flex justify-end">
+					<div className="absolute bottom-5 left-6 space-x-2 flex justify-end">
 						<Button
 							onClick={handleSubmit(onSubmit)}
 							disabled={isPending}
