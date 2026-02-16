@@ -57,7 +57,7 @@ export function DashboardPlaceholder() {
 					</CardDescription>
 				</CardHeader>
 
-				<div className="md:flex sm:flex-cols">
+				<div className="flex flex-col min-[769px]:flex-row">
 					<AstraLoginCredentials/>
 					<AstraDetails/>
 				</div>

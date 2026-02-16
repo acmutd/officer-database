@@ -48,7 +48,7 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 		<div className="overflow-hidden rounded-3xl border border-white/10 bg-black/40 p-6 md:p-8 shadow-2xl backdrop-blur-xl">
 			<div className="flex flex-col gap-6 text-center">
 			<div className="flex w-full items-center justify-between px-1 pt-2">
-					<div className="z-10">
+					<div className="z-10 -ml-6 mb-2 -mt-4">
 						{isViewerExecutive && officerId && (
 							<Popover>
 								<PopoverTrigger asChild>
@@ -110,7 +110,7 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 						)}
 					</div>
 
-					<div className="z-10 ml-auto">
+					<div className="z-10 -mr-6 mb-2 -mt-4">
 						<div
 							className={cn(
 								"flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors",

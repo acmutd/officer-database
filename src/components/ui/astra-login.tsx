@@ -20,7 +20,7 @@ export default function AstraLoginCredentials(){
       </h3>
 
       
-      <div className="h-px w-48 bg-white/20 mb-4 ml-2" />
+      <div className="h-px w-40 bg-white/20 mb-4 ml-2" />
 
       
       <div className=" mb-5">
@@ -81,8 +81,27 @@ export default function AstraLoginCredentials(){
         </div>
       </div>
       
-
-    
+      <div className="mt-6 text-sm text-white/60 text-center">
+        Go to{" "}
+        <a
+          href="https://www.aaiscloud.com/UTXDallas/logon.aspx?ReturnUrl=%2futxdallas%2fcalendars%2fdailygridcalendar.aspx"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-white hover:text-white transition underline-offset-4 hover:underline"
+        >
+          Astra
+        </a>{" "}
+        or use{" "}
+        <a
+          href="https://github.com/acmutd/form-autocomplete-ext"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-white hover:text-white transition underline-offset-4 hover:underline"
+        >
+          Autofill
+        </a>
+      </div>
+        
 
     </div>
   );
