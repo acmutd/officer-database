@@ -250,6 +250,7 @@ code {
   --background-image-hackutd-gradient: linear-gradient(98deg, #FE002E 7.24%, #AD00FF 95.11%);
   --background-image-apply-gradient: linear-gradient(128deg, rgba(255, 255, 255, 0.12) 3.07%, rgba(255, 255, 255, 0.03) 96.39%);
   --background-image-industry-gradient: linear-gradient(98deg, #6F6F6F 7.24%, #FFFFFF 95.11%);
+  --background-image-finance-gradient: linear-gradient(97deg, #B4F000 7%, #5ED300 55%, #00B85C 100%);
   --background-image-about-gradient: linear-gradient(128deg, rgba(255, 255, 255, 0.12) 3.07%, rgba(255, 255, 255, 0.03) 96.39%);
   --background-image-gold-gradient: linear-gradient(128deg, rgba(227, 160, 73, 0.12) 3.07%, rgba(227, 160, 73, 0.09) 96.39%);
   --background-image-silver-gradient: linear-gradient(128deg, rgba(143, 155, 166, 0.12) 3.07%, rgba(143, 155, 166, 0.09) 96.39%);

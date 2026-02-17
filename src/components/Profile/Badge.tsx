@@ -16,6 +16,7 @@ const divisions = {
 	Community: "bg-community-gradient",
 	HackUTD: "bg-hackutd-gradient",
 	Industry: "bg-industry-gradient",
+	Finance: "bg-finance-gradient",
 };
 
 type Props = {

@@ -16,7 +16,7 @@ export function ProfileTabs() {
 					className="text-white/70 data-[state=active]:bg-white/10  data-[state=active]:text-white"
 					asChild
 				>
-					<Link to="/profile" search={{ tab: "background" }} replace>
+					<Link to="/profile" search={{ tab: "background" }} replace resetScroll={false}>
 						Background
 					</Link>
 				</TabsTrigger>
@@ -25,7 +25,7 @@ export function ProfileTabs() {
 					className="text-white/70 data-[state=active]:bg-white/10  data-[state=active]:text-white"
 					asChild
 				>
-					<Link to="/profile" search={{ tab: "dashboard" }} replace>
+					<Link to="/profile" search={{ tab: "dashboard" }} replace resetScroll={false}>
 						Dashboard
 					</Link>
 				</TabsTrigger>

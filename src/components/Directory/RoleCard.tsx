@@ -312,7 +312,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 								/>
 							) : (
 								<div className="mt-2 space-y-2">
-									<div className="flex space-x-2">
+									<div className="flex flex-wrap gap-2">
 										<Controller
 											name="endDate.term"
 											control={control}
@@ -321,7 +321,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 													value={field.value || "Fall"}
 													onValueChange={field.onChange}
 												>
-													<SelectTrigger className="border-white/20 bg-white/10 text-white/90">
+													<SelectTrigger className="border-white/20 bg-white/10 text-white/90 w-24">
 														<SelectValue />
 													</SelectTrigger>
 													<SelectContent className="border-white/20 bg-black/30 backdrop-blur-xl">
@@ -349,7 +349,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 													onChange={(e) =>
 														field.onChange(parseInt(e.target.value))
 													}
-													className="border-white/20 bg-white/10 text-white/90"
+													className="border-white/20 bg-white/10 text-white/90 w-20"
 												/>
 											)}
 										/>

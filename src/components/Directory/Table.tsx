@@ -19,6 +19,7 @@ import {
 	ChevronRight,
 	ChevronsLeft,
 	ChevronsRight,
+	Download,
 	Search,
 	SortAsc,
 	SortDesc,
@@ -28,6 +29,7 @@ import { useEffect, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
 	getCurrentOfficersQuery,
+	getOfficerQuery,
 	getPastOfficersQuery,
 } from "@/queries/officer";
 import { Input } from "@/components/ui/input";
@@ -50,6 +52,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { isAdmin } from "@/lib/admin";
 
 export default function Table() {
 	const [view, setView] = useState<"current" | "past">("current");
@@ -62,6 +65,7 @@ export default function Table() {
 	const currentQuery =
 		view === "past" ? getPastOfficersQuery : getCurrentOfficersQuery;
 	const { data } = useSuspenseQuery(currentQuery);
+	const { data: currentOfficer } = useSuspenseQuery(getOfficerQuery);
 
 	useEffect(() => {
 		setPagination((prev) => ({ ...prev, pageIndex: 0 }));
@@ -101,9 +105,96 @@ export default function Table() {
 	const divisionColumn = table.getColumn("roles");
 	const divisionFilterValue =
 		(divisionColumn?.getFilterValue() as string | undefined) ?? "all";
+	const exportRows = () => {
+		let rowsToExport = table.getPrePaginationRowModel().rows;
+
+		// Filter by selected division if one is selected
+		if (divisionFilterValue !== "all") {
+			rowsToExport = rowsToExport.filter((row) => {
+				const officer = row.original;
+				const currentRole = officer.roles.filter((role) => role.endDate === null);
+				return currentRole.some((role) => role.division === divisionFilterValue);
+			});
+		}
+
+		if (rowsToExport.length === 0) return;
+
+		const escapeCsvValue = (value: string) => {
+			if (value.includes("\"")) {
+				value = value.replace(/\"/g, "\"\"");
+			}
+			if (value.includes(",") || value.includes("\n") || value.includes("\r")) {
+				return `"${value}"`;
+			}
+			return value;
+		};
+
+		const formatTerm = (term: { term: string; year: number }) =>
+			`${term.term} ${term.year}`;
+
+		const rows = rowsToExport.map((row) => {
+			const officer = row.original;
+			const roles = officer.roles
+				.filter((role) => (view === "current" ? role.endDate === null : true))
+				.map((role) => `${role.title} (${role.division})`)
+				.join("; ");
+			const highestLevel =
+				officer.roles.length === 0
+					? 0
+					: Math.max(...officer.roles.map((role) => role.level));
+			const levelLabel =
+				highestLevel === 3
+					? "Executive"
+					: highestLevel === 2
+						? "Director"
+						: "Officer";
+			return [
+				`${officer.firstName} ${officer.lastName}`,
+				levelLabel,
+				officer.netId,
+				formatTerm(officer.joinDate),
+				formatTerm(officer.expectedGrad),
+				officer.yearStanding,
+				roles,
+				officer.isActive ? "Active" : "Inactive",
+			];
+		});
+
+		const headers = [
+			"Name",
+			"Level",
+			"NetID",
+			"Join Date",
+			"Expected Graduation",
+			"Year Standing",
+			view === "current" ? "Current Roles" : "Roles",
+			"Active",
+		];
+		const csv = [headers, ...rows]
+			.map((row) => row.map((value) => escapeCsvValue(String(value))).join(","))
+			.join("\n");
+
+		const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement("a");
+		const now = new Date();
+		const month = String(now.getMonth() + 1).padStart(2, "0");
+		const day = String(now.getDate()).padStart(2, "0");
+		const year = now.getFullYear();
+		const dateTag = `${month}-${day}-${year}`;
+
+		const divisionPart = divisionFilterValue !== "all" ? `-${divisionFilterValue.toLowerCase()}` : "";
+		link.href = url;
+		link.download = `officers-${view}${divisionPart}-${dateTag}.csv`;
+		link.click();
+		URL.revokeObjectURL(url);
+	};
+
+	const exportDisabled = table.getPrePaginationRowModel().rows.length === 0;
+	const canViewExport = !!currentOfficer && isAdmin(currentOfficer);
 
 	return (
-		<div className="w-full flex flex-col space-y-6 h-full min-h-0">
+		<div className="w-full flex flex-col space-y-6 md:h-full md:min-h-0">
 			<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 shrink-0">
 				<div className="relative w-full md:max-w-2xl md:flex-1">
 					<Input
@@ -176,6 +267,21 @@ export default function Table() {
 								))}
 						</SelectContent>
 					</Select>
+					{canViewExport ? (
+						<Button
+							variant="outline"
+							size="icon-sm"
+							onClick={exportRows}
+							disabled={exportDisabled}
+							aria-label="Export officers"
+							className={cn(
+								"bg-white/5 text-white hover:bg-white/10",
+								"border-white/10 disabled:hover:bg-white/5"
+							)}
+						>
+							<Download className="h-4 w-4" />
+						</Button>
+					) : null}
 				</div>
 			</div>
 
@@ -342,7 +448,7 @@ export default function Table() {
 				</div>
 			</div>
 
-			<div className="rounded-lg border border-white/10 bg-black/30 px-4 md:px-6 py-3 md:py-4 shrink-0">
+			<div className="rounded-lg border border-white/10 bg-black/30 px-4 md:px-6 py-3 md:py-4 shrink-0 mb-8 md:mb-0">
 				<div className="flex flex-col md:flex-row items-center md:justify-between gap-3">
 					<div className="flex items-center gap-4">
 						<span className="text-sm text-white/70">
