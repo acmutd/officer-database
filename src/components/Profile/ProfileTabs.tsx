@@ -3,7 +3,7 @@ import { InternshipList } from "./Internship/InternshipList";
 import { ResearchList } from "./Research/ResearchList";
 import { AcademicInfo } from "./AcademicInfo";
 import { ResumeSection } from "./ResumeSection";
-import { DashboardPlaceholder } from "./DashboardPlaceholder";
+import { DashboardPlaceholder } from "./Dashboard";
 import { Link, useSearch } from "@tanstack/react-router";
 
 export function ProfileTabs() {
@@ -37,7 +37,7 @@ export function ProfileTabs() {
 				<ResumeSection />
 			</TabsContent>
 			<TabsContent value="dashboard" className="mt-6">
-				<DashboardPlaceholder />
+				<DashboardPlaceholder/>
 			</TabsContent>
 		</Tabs>
 	);

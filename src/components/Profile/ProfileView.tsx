@@ -46,9 +46,9 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 	}
 	return (
 		<div className="overflow-hidden rounded-3xl border border-white/10 bg-black/40 p-6 md:p-8 shadow-2xl backdrop-blur-xl">
-			<div className="flex flex-col items-center gap-6 text-center">
-				<div className="flex w-full flex-col md:flex-row items-center md:items-start justify-between gap-4 md:gap-0">
-					<div className="flex md:flex-1 justify-start">
+			<div className="flex flex-col gap-6 text-center">
+			<div className="flex w-full items-center justify-between px-1 pt-2">
+					<div className="z-10 -ml-6 mb-2 -mt-4">
 						{isViewerExecutive && officerId && (
 							<Popover>
 								<PopoverTrigger asChild>
@@ -63,18 +63,16 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 								</PopoverTrigger>
 								<PopoverContent
 									align="start"
-									className="w-64 border-white/10 bg-black/90 text-white shadow-2xl backdrop-blur"
+									className="w-56 border-white/10 bg-black/90 text-white shadow-2xl backdrop-blur"
 								>
-									<div className="flex flex-col gap-3">
-										<div className="text-left">
-											<p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60">
-												Profile actions
-											</p>
-										</div>
+									<div className="flex flex-col gap-2">
+										<p className="px-2 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+											Admin Actions
+										</p>
 										<Button
 											variant="ghost"
 											size="sm"
-											className="justify-start rounded-full border border-white/10 bg-white/10 px-3 text-xs text-white/80 hover:bg-white/15 hover:text-white"
+											className="justify-start rounded-lg text-xs"
 											disabled={isUpdatingStatus}
 											onClick={() =>
 												updateStatus({
@@ -83,45 +81,36 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 													isArchived: officer.isArchived,
 												})
 											}
-											>
-												{isUpdatingStatus && <Loader2 className="h-3 w-3 animate-spin mr-2" />}
-											{officer.isActive ? "Deactivate" : "Activate"} profile
+										>
+											{isUpdatingStatus && (
+												<Loader2 className="mr-2 h-3 w-3 animate-spin" />
+											)}
+											{officer.isActive ? "Deactivate" : "Activate"}
 										</Button>
+
 										<Button
-											variant={officer.isArchived ? "secondary" : "destructive"}
+											variant="ghost"
 											size="sm"
-											className="justify-start rounded-full border border-white/10 px-3 text-xs"
+											className="justify-start rounded-lg text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
 											disabled={isArchiving || isUnarchiving}
 											onClick={() =>
 												officer.isArchived
 													? unarchive(officer.id)
 													: archive(officer.id)
-										}
-									>
-										{(isArchiving || isUnarchiving) && <Loader2 className="h-3 w-3 animate-spin mr-2" />}
-										{officer.isArchived ? "Unarchive" : "Archive"} profile
+											}
+										>
+											{(isArchiving || isUnarchiving) && (
+												<Loader2 className="mr-2 h-3 w-3 animate-spin" />
+											)}
+											{officer.isArchived ? "Unarchive" : "Archive"}
 										</Button>
 									</div>
 								</PopoverContent>
 							</Popover>
 						)}
 					</div>
-					{editable ? (
-						<ImageUpdate
-							officerId={officer.id}
-							firstName={officer.firstName}
-							lastName={officer.lastName}
-							photo={officer.photo}
-						/>
-					) : (
-						<UserAvatar
-							photo={officer.photo}
-							firstName={officer.firstName}
-							lastName={officer.lastName}
-							className="shadow-2xl ring-4 ring-white/30"
-						/>
-					)}
-					<div className="flex md:flex-1 justify-center md:justify-end">
+
+					<div className="z-10 -mr-6 mb-2 -mt-4">
 						<div
 							className={cn(
 								"flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
@@ -143,13 +132,29 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 					</div>
 				</div>
 
+			<div className="relative -mt-6 flex flex-col items-center justify-center">
+					{editable ? (
+						<ImageUpdate
+							officerId={officer.id}
+							firstName={officer.firstName}
+							lastName={officer.lastName}
+							photo={officer.photo}
+						/>
+					) : (
+						<UserAvatar
+							photo={officer.photo}
+							firstName={officer.firstName}
+							lastName={officer.lastName}
+							className="shadow-2xl"
+						/>
+					)}
+				</div>
 
 				{editable ? (
 					<UpdateName
 						firstName={officer.firstName}
 						lastName={officer.lastName}
 					/>
-
 				) : (
 					<h1 className="text-2xl font-semibold tracking-tight text-white">
 						{officer.firstName} {officer.lastName}
@@ -159,8 +164,6 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 				<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70 -mt-3">
 					<RoleList roles={officer.roles} showAll />
 				</div>
-
-
 			</div>
 
 			<Separator className="mt-6 bg-white/10" />
@@ -172,6 +175,5 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 				<ExternalLinks links={officer.socialLinks} editable={editable} />
 			</div>
 		</div>
-
 	);
 }
