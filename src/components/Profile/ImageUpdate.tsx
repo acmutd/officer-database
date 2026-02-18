@@ -7,6 +7,8 @@ import { updateOfficerImageMutation } from "@/queries/officer";
 import { toast } from "sonner";
 import type { Photo } from "@/schemas/officer";
 import { getOfficerImageUrl } from "@/lib/image";
+import { CropModal } from "./cropModal";
+import type { Area } from "react-easy-crop";
 
 type Props = {
 	photo: Photo;
@@ -15,7 +17,16 @@ type Props = {
 	lastName: string;
 };
 
+
+
 export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
+
+	const [imageSrc, setImageSrc] = React.useState<string | null>(null);
+	const [showCropper, setShowCropper] = React.useState(false);
+	const [crop, setCrop] = React.useState({ x: 0, y: 0 });
+	const [zoom, setZoom] = React.useState(1);
+	const [area, setArea] = React.useState<Area | null>(null);
+
 	const avatar = getOfficerImageUrl(photo);
 	const { mutate: updateUserImage, isPending } = useMutation({
 		...updateOfficerImageMutation,
@@ -46,44 +57,126 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 			toast.error("Image size must be less than 10MB");
 			return;
 		}
-		updateUserImage({ officerId, file });
+		const url = URL.createObjectURL(file);
+		setImageSrc(url);
+		setShowCropper(true);
 	};
 
+	async function cropImage(src: string, area:{x: number, y: number, width: number, height: number}){
+		const image = new Image();
+		image.src = src;
+
+		await new Promise((resolve)=> {
+			image.onload = resolve;
+		})
+
+		const canvas = document.createElement("canvas");
+  	    canvas.width = area.width;
+  		canvas.height = area.height;
+		const ctx = canvas.getContext("2d");
+
+		ctx?.drawImage(
+			image,
+			area.x,
+			area.y,
+			area.width,
+			area.height,
+			0,
+			0,
+			area.width,
+			area.height
+		);
+
+		return new Promise<Blob | null>((resolve) => {
+			canvas.toBlob(
+			(blob) => resolve(blob),
+			"image/jpeg",
+			0.9
+			);
+		});
+
+	};
+
+	const handleSaveCrop = async () => {
+
+		if (!area || !imageSrc) 
+			return;
+
+		try {
+
+			const blob = await cropImage(imageSrc, area);
+			if (!blob) {
+				toast.error("Failed to process image");
+				return;
+}
+			const file = new File([blob], "avatar.jpg", {
+			type: "image/jpeg",
+			});
+
+			updateUserImage({ officerId, file });
+
+			setShowCropper(false);
+			setImageSrc(null);
+
+		} catch {
+			toast.error("Failed to process image");
+		}
+		};
+
 	return (
-		<div className="group relative flex flex-col items-center">
-			<Avatar className="h-36 w-36 shadow-2xl">
-				{photo.url && (
-					<AvatarImage
-						src={avatar}
-						alt="Profile"
-						className="rounded-full object-cover"
+		<>
+				<CropModal
+					open={showCropper}
+					imageSrc={imageSrc}
+					crop={crop}
+					zoom={zoom}
+					onCropChange={setCrop}
+					onZoomChange={setZoom}
+					onCropComplete={setArea}
+					onClose={() => {
+						if (imageSrc) URL.revokeObjectURL(imageSrc);
+						setShowCropper(false);
+						setImageSrc(null);
+					}}
+					onSave={handleSaveCrop}
 					/>
-				)}
-				<AvatarFallback className="bg-gradient-to-br from-purple-500 to-blue-500 text-white text-2xl font-bold">
-					{firstName[0] ?? ""}
-					{lastName[0] ?? ""}
-				</AvatarFallback>
-			</Avatar>
-			<input
-				type="file"
-				ref={fileInputRef}
-				onChange={handleImageChange}
-				accept="image/*"
-				className="hidden"
-			/>
-			<Button
-				size="icon"
-				variant="secondary"
-				className="absolute -right-1 bottom-0 cursor-pointer rounded-full shadow-xl transition-shadow duration-300 hover:shadow-purple-500/20"
-				onClick={handleImageClick}
-				disabled={isPending}
-			>
-				{isPending ? (
-					<Loader2 className="h-4 w-4 animate-spin" />
-				) : (
-					<Pencil className="h-4 w-4" />
-				)}
-			</Button>
-		</div>
+
+					
+			<div className="group relative flex flex-col items-center">
+				<Avatar className="h-36 w-36 shadow-2xl">
+					{photo.url && (
+						<AvatarImage
+							src={avatar}
+							alt="Profile"
+							className="rounded-full object-cover"
+						/>
+					)}
+					<AvatarFallback className="bg-gradient-to-br from-purple-500 to-blue-500 text-white text-2xl font-bold">
+						{firstName[0] ?? ""}
+						{lastName[0] ?? ""}
+					</AvatarFallback>
+				</Avatar>
+				<input
+					type="file"
+					ref={fileInputRef}
+					onChange={handleImageChange}
+					accept="image/*"
+					className="hidden"
+				/>
+				<Button
+					size="icon"
+					variant="secondary"
+					className="absolute -right-1 bottom-0 cursor-pointer rounded-full shadow-xl transition-shadow duration-300 hover:shadow-purple-500/20"
+					onClick={handleImageClick}
+					disabled={isPending}
+				>
+					{isPending ? (
+						<Loader2 className="h-4 w-4 animate-spin" />
+					) : (
+						<Pencil className="h-4 w-4" />
+					)}
+				</Button>
+			</div>
+		</>
 	);
 }
