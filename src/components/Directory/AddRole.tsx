@@ -44,7 +44,7 @@ export function AddRole({ officerId }: Props) {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isDirty },
 		control,
 		reset,
 	} = useForm<RoleFormData>({
@@ -224,7 +224,7 @@ export function AddRole({ officerId }: Props) {
 
 					<Button
 						type="submit"
-						disabled={isPending}
+						disabled={isPending || !isDirty}
 						className="w-full bg-white/10 text-white hover:bg-white/20"
 					>
 						{isPending ? "Adding..." : "Add Role"}

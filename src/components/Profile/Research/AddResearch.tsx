@@ -38,7 +38,7 @@ export function AddResearch() {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isDirty },
 		control,
 		reset,
 		watch,
@@ -180,7 +180,9 @@ export function AddResearch() {
 								</FieldLabel>
 								<DatePicker
 									value={watch("startDate")}
-									onChange={(date) => setValue("startDate", date)}
+									onChange={(date) =>
+										setValue("startDate", date, { shouldDirty: true })
+									}
 									placeholder="Select start date"
 									maxDate={new Date()}
 								/>
@@ -195,7 +197,9 @@ export function AddResearch() {
 								</FieldLabel>
 								<DatePicker
 									value={watch("endDate")}
-									onChange={(date) => setValue("endDate", date)}
+									onChange={(date) =>
+										setValue("endDate", date, { shouldDirty: true })
+									}
 									placeholder="Select end date"
 								maxDate={new Date()}
 								/>
@@ -206,7 +210,7 @@ export function AddResearch() {
 
 					<Button
 						type="submit"
-						disabled={isPending}
+						disabled={isPending || !isDirty}
 						className="w-full bg-white/10 text-white hover:bg-white/20"
 					>
 						{isPending ? "Adding..." : "Add Research"}

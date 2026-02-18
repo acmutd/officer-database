@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/field";
 import { type Research, ResearchSchema } from "@/schemas/officer";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { updateResearchMutation } from "@/queries/research";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -44,10 +44,11 @@ export function EditResearchModal({ research, index }: Props) {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isDirty },
 		control,
 		watch,
 		setValue,
+		reset,
 	} = useForm<ResearchFormData>({
 		resolver: zodResolver(ResearchFormSchema),
 		defaultValues: {
@@ -72,6 +73,22 @@ export function EditResearchModal({ research, index }: Props) {
 		updateResearchMutation
 	);
 
+	useEffect(() => {
+		if (!isOpen) {
+			return;
+		}
+
+		reset({
+			title: research.title,
+			lab: research.lab,
+			principalInvestigator: research.principalInvestigator.map((name) => ({
+				name,
+			})),
+			startDate: research.startDate,
+			endDate: research.endDate || "",
+		});
+	}, [research.title, research.lab, research.principalInvestigator, research.startDate, research.endDate, isOpen, reset]);
+
 	const onSubmit = async (data: ResearchFormData) => {
 		try {
 			const transformedData = {
@@ -79,6 +96,7 @@ export function EditResearchModal({ research, index }: Props) {
 				principalInvestigator: data.principalInvestigator.map((pi) => pi.name),
 			};
 			await updateResearch({ index, data: transformedData });
+			reset(data);
 			setIsOpen(false);
 			toast.success("Research updated successfully");
 		} catch (error) {
@@ -206,7 +224,9 @@ export function EditResearchModal({ research, index }: Props) {
 								</FieldLabel>
 								<DatePicker
 									value={watch("startDate")}
-									onChange={(date) => setValue("startDate", date)}
+									onChange={(date) =>
+										setValue("startDate", date, { shouldDirty: true })
+									}
 									placeholder="Select start date"
 									maxDate={new Date()}
 								/>
@@ -221,7 +241,9 @@ export function EditResearchModal({ research, index }: Props) {
 								</FieldLabel>
 								<DatePicker
 									value={watch("endDate")}
-									onChange={(date) => setValue("endDate", date)}
+									onChange={(date) =>
+										setValue("endDate", date, { shouldDirty: true })
+									}
 									placeholder="Select end date"
 									maxDate={new Date()}
 								/>
@@ -241,7 +263,7 @@ export function EditResearchModal({ research, index }: Props) {
 						</Button>
 						<Button
 							type="submit"
-							disabled={isPending}
+							disabled={isPending || !isDirty}
 							className="bg-blue-500/10 text-blue-400 hover:bg-blue-500/20"
 						>
 							{isPending ? "Saving..." : "Save Changes"}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -22,27 +22,33 @@ type Props = {
 
 export function UpdateName({ firstName, lastName }: Props) {
 	const [isEditing, setIsEditing] = useState(false);
+	const initialValues = {
+		firstName,
+		lastName,
+	};
 
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isDirty },
 		reset,
 	} = useForm<UpdateNameFormData>({
 		resolver: zodResolver(UpdateNameSchema),
-		defaultValues: {
-			firstName,
-			lastName,
-		},
+		defaultValues: initialValues,
 	});
 
-	const { mutate: updateName, isPending } = useMutation(
+	const { mutateAsync: updateName, isPending } = useMutation(
 		updateOfficerNameMutation
 	);
 
-	const onSubmit = (data: UpdateNameFormData) => {
+	useEffect(() => {
+		reset(initialValues);
+	}, [firstName, lastName, reset]);
+
+	const onSubmit = async (data: UpdateNameFormData) => {
 		try {
-			updateName(data);
+			await updateName(data);
+			reset(data);
 			toast.success("Name updated successfully");
 			setIsEditing(false);
 		} catch (error) {
@@ -51,7 +57,7 @@ export function UpdateName({ firstName, lastName }: Props) {
 	};
 
 	const handleCancel = () => {
-		reset();
+		reset(initialValues);
 		setIsEditing(false);
 	};
 
@@ -62,7 +68,10 @@ export function UpdateName({ firstName, lastName }: Props) {
 					{firstName} {lastName}
 				</h1>
 				<Button
-					onClick={() => setIsEditing(true)}
+					onClick={() => {
+						reset(initialValues);
+						setIsEditing(true);
+					}}
 					variant="outline"
 					size="sm"
 					className="border-white/20 bg-white/10 text-sm text-white hover:bg-white/20 hover:text-white/20"
@@ -115,7 +124,7 @@ export function UpdateName({ firstName, lastName }: Props) {
 				</Button>
 				<Button
 					type="submit"
-					disabled={isPending}
+					disabled={isPending || !isDirty}
 					className="bg-acm-gradient px-6"
 				>
 					{isPending ? "Saving..." : "Save Changes"}
