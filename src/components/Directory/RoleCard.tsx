@@ -50,7 +50,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 
 	const {
 		register,
-		formState: { errors },
+		formState: { errors, isDirty },
 		control,
 		reset,
 		watch,
@@ -83,6 +83,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 				index,
 				officerId,
 			});
+			reset(data);
 			setIsEditing(false);
 			toast.success("Role updated successfully");
 		} catch (error) {
@@ -111,7 +112,10 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 				{canEdit && !isEditing && (
 					<div className="absolute top-4 right-4 space-x-2">
 						<Button
-							onClick={() => setIsEditing(true)}
+							onClick={() => {
+								reset(role);
+								setIsEditing(true);
+							}}
 							variant="secondary"
 							size="sm"
 							className="bg-white/10 text-white hover:bg-white/20"
@@ -387,7 +391,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 					<div className="absolute bottom-5 left-6 space-x-2 flex justify-end">
 						<Button
 							onClick={handleSubmit(onSubmit)}
-							disabled={isPending}
+							disabled={isPending || !isDirty}
 							variant="default"
 							size="sm"
 							className="bg-green-500/20 text-green-200 hover:bg-green-500/30"

@@ -21,6 +21,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 const UpdateAcademicsSchema = z.object({
 	netId: z.string().min(1, "Net ID is required"),
@@ -35,29 +36,36 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 	const currentYear = new Date().getFullYear();
 	const startYear = 2020; // matches TermSchema minimum
 	const years = Array.from({ length: currentYear + 6 - startYear + 1 }, (_, i) => startYear + i);
+	const initialValues = {
+		netId: officer.netId,
+		creditStanding: officer.creditStanding,
+		yearStanding: officer.yearStanding,
+		expectedGrad: officer.expectedGrad,
+	};
 
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isDirty },
 		control,
+		reset,
 	} = useForm<UpdateAcademicsFormData>({
 		resolver: zodResolver(UpdateAcademicsSchema),
-		defaultValues: {
-			netId: officer.netId,
-			creditStanding: officer.creditStanding,
-			yearStanding: officer.yearStanding,
-			expectedGrad: officer.expectedGrad,
-		},
+		defaultValues: initialValues,
 	});
 
-	const { mutate: updateAcademicInfo, isPending } = useMutation(
+	const { mutateAsync: updateAcademicInfo, isPending } = useMutation(
 		updateAcademicInfoMutationOptions
 	);
 
-	const onSubmit = (data: UpdateAcademicsFormData) => {
+	useEffect(() => {
+		reset(initialValues);
+	}, [officer.netId, officer.creditStanding, officer.yearStanding, officer.expectedGrad, reset]);
+
+	const onSubmit = async (data: UpdateAcademicsFormData) => {
 		try {
-			updateAcademicInfo(data);
+			await updateAcademicInfo(data);
+			reset(data);
 			toast.success("Academic info updated successfully");
 		} catch (error) {
 			toast.error("Failed to update academic info");
@@ -195,7 +203,11 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 			</FieldGroup>
 
 			<div className="flex justify-end">
-				<Button type="submit" disabled={isPending} className="bg-acm-gradient">
+				<Button
+					type="submit"
+					disabled={isPending || !isDirty}
+					className="bg-acm-gradient"
+				>
 					{isPending ? "Saving..." : "Save Changes"}
 				</Button>
 			</div>

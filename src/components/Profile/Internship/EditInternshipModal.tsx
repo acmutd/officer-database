@@ -20,7 +20,7 @@ import {
 import { updateInternshipMutation } from "@/queries/internships";
 import { type Internships, InternshipsSchema } from "@/schemas/officer";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -39,9 +39,10 @@ export function EditInternshipModal({ internship, index }: Props) {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isDirty },
 		watch,
 		setValue,
+		reset,
 	} = useForm<InternshipFormData>({
 		resolver: zodResolver(InternshipsSchema),
 		defaultValues: {
@@ -56,9 +57,23 @@ export function EditInternshipModal({ internship, index }: Props) {
 		updateInternshipMutation
 	);
 
+	useEffect(() => {
+		if (!isOpen) {
+			return;
+		}
+
+		reset({
+			title: internship.title,
+			company: internship.company,
+			startDate: internship.startDate,
+			endDate: internship.endDate || "",
+		});
+	}, [internship.title, internship.company, internship.startDate, internship.endDate, isOpen, reset]);
+
 	const onSubmit = async (data: InternshipFormData) => {
 		try {
 			await updateInternship({ index, data });
+			reset(data);
 			setIsOpen(false);
 			toast.success("Internship updated successfully");
 		} catch (error) {
@@ -133,7 +148,9 @@ export function EditInternshipModal({ internship, index }: Props) {
 								</FieldLabel>
 								<DatePicker
 									value={watch("startDate")}
-									onChange={(date) => setValue("startDate", date)}
+									onChange={(date) =>
+										setValue("startDate", date, { shouldDirty: true })
+									}
 									placeholder="Select start date"
 									maxDate={new Date()}
 								/>
@@ -148,7 +165,9 @@ export function EditInternshipModal({ internship, index }: Props) {
 								</FieldLabel>
 								<DatePicker
 									value={watch("endDate")}
-									onChange={(date) => setValue("endDate", date)}
+									onChange={(date) =>
+										setValue("endDate", date, { shouldDirty: true })
+									}
 									placeholder="Select end date"
 									maxDate={new Date()}
 								/>
@@ -168,7 +187,7 @@ export function EditInternshipModal({ internship, index }: Props) {
 						</Button>
 						<Button
 							type="submit"
-							disabled={isPending}
+							disabled={isPending || !isDirty}
 							className="bg-blue-500/10 text-blue-400 hover:bg-blue-500/20"
 						>
 							{isPending ? "Saving..." : "Save Changes"}
