@@ -60,7 +60,14 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 
 	useEffect(() => {
 		reset(initialValues);
-	}, [officer.netId, officer.creditStanding, officer.yearStanding, officer.expectedGrad, reset]);
+	}, [
+		officer.netId,
+		officer.creditStanding,
+		officer.yearStanding,
+		officer.expectedGrad.term,
+		officer.expectedGrad.year,
+		reset,
+	]);
 
 	const onSubmit = async (data: UpdateAcademicsFormData) => {
 		try {
