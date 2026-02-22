@@ -2,7 +2,8 @@ import { DirectoryProfileTabs } from "@/components/Directory/DirectoryProfileTab
 import { ACMErrorComponent } from "@/components/ErrorComponent";
 import { ProfileView } from "@/components/Profile/ProfileView";
 import { Spinner } from "@/components/Spinner";
-import { getOfficerByIdQuery, getPastOfficersQuery } from "@/queries/officer";
+import { isExecutive } from "@/lib/admin";
+import { getOfficerByIdQuery, getOfficerQuery, getPastOfficersQuery } from "@/queries/officer";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import z from "zod";
@@ -31,9 +32,11 @@ export const Route = createFileRoute("/_authed/directory/$userId")({
 function RouteComponent() {
 	const { userId } = Route.useParams();
 	const { archived } = Route.useSearch();
+	const { data: viewer } = useSuspenseQuery(getOfficerQuery);
 	const { data: pastOfficers } = useSuspenseQuery(getPastOfficersQuery);
 	const effectiveArchived = archived ?? Boolean(pastOfficers?.some((o) => o.id === userId));
 	const { data: officer } = useSuspenseQuery(getOfficerByIdQuery(userId, effectiveArchived));
+	const canEditProfile = viewer?.id === userId || (viewer ? isExecutive(viewer) : false);
 
 	if (!officer) {
 		return <Navigate to="/directory" />;
@@ -42,10 +45,14 @@ function RouteComponent() {
 	return (
 		<div className="flex flex-col md:flex-row justify-around gap-6 md:gap-8 px-4 md:px-6">
 			<div className="container w-full md:w-1/4 flex-col">
-				<ProfileView officerId={userId} archived={effectiveArchived} />
+				<ProfileView officerId={userId} archived={effectiveArchived} editable={canEditProfile} />
 			</div>
 			<div className="container flex w-full md:w-3/4 flex-col gap-8">
-				<DirectoryProfileTabs officerId={userId} archived={effectiveArchived} />
+				<DirectoryProfileTabs
+					officerId={userId}
+					archived={effectiveArchived}
+					editable={canEditProfile}
+				/>
 			</div>
 
 			{/*

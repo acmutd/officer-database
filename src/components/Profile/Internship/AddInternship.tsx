@@ -27,7 +27,7 @@ import { toast } from "sonner";
 
 type InternshipFormData = z.infer<typeof InternshipsSchema>;
 
-export function AddInternship() {
+export function AddInternship({ officerId }: { officerId?: string }) {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const {
@@ -53,7 +53,7 @@ export function AddInternship() {
 
 	const onSubmit = async (data: InternshipFormData) => {
 		try {
-			await addInternship(data);
+			await addInternship({ officerId, data });
 			setIsOpen(false);
 			reset();
 			toast.success("Internship added successfully");

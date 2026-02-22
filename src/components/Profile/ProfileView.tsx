@@ -152,6 +152,7 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 
 				{editable ? (
 					<UpdateName
+						officerId={officer.id}
 						firstName={officer.firstName}
 						lastName={officer.lastName}
 					/>
@@ -172,7 +173,11 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 				<span className="text-xs font-semibold uppercase text-white/60">
 					Socials
 				</span>
-				<ExternalLinks links={officer.socialLinks} editable={editable} />
+				<ExternalLinks
+					officerId={officer.id}
+					links={officer.socialLinks}
+					editable={editable}
+				/>
 			</div>
 		</div>
 	);

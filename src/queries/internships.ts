@@ -1,5 +1,6 @@
 import { mutationOptions } from "@tanstack/react-query";
-import { getOfficerQuery } from "./officer";
+import { type Officer } from "@/schemas/officer";
+import { getOfficerByIdQuery, getOfficerQuery } from "./officer";
 import {
 	addInternship,
 	deleteInternship,
@@ -8,21 +9,54 @@ import {
 
 export const addInternshipMutation = mutationOptions({
 	mutationFn: addInternship,
-	onSuccess: (res, __, ___, ctx) => {
-		ctx.client.setQueryData(getOfficerQuery.queryKey, res);
+	onSuccess: (res, variables, ___, ctx) => {
+		ctx.client.setQueryData(getOfficerByIdQuery(res.id, false).queryKey, res);
+		ctx.client.setQueryData(getOfficerByIdQuery(res.id, true).queryKey, res);
+		if (!variables.officerId) {
+			ctx.client.setQueryData(getOfficerQuery.queryKey, res);
+		} else {
+			const currentOfficer = ctx.client.getQueryData<Officer | null>(
+				getOfficerQuery.queryKey
+			);
+			if (currentOfficer?.id === variables.officerId) {
+				ctx.client.setQueryData(getOfficerQuery.queryKey, res);
+			}
+		}
 	},
 });
 
 export const deleteInternshipMutation = mutationOptions({
 	mutationFn: deleteInternship,
-	onSuccess: (res, __, ___, ctx) => {
-		ctx.client.setQueryData(getOfficerQuery.queryKey, res);
+	onSuccess: (res, variables, ___, ctx) => {
+		ctx.client.setQueryData(getOfficerByIdQuery(res.id, false).queryKey, res);
+		ctx.client.setQueryData(getOfficerByIdQuery(res.id, true).queryKey, res);
+		if (!variables.officerId) {
+			ctx.client.setQueryData(getOfficerQuery.queryKey, res);
+		} else {
+			const currentOfficer = ctx.client.getQueryData<Officer | null>(
+				getOfficerQuery.queryKey
+			);
+			if (currentOfficer?.id === variables.officerId) {
+				ctx.client.setQueryData(getOfficerQuery.queryKey, res);
+			}
+		}
 	},
 });
 
 export const updateInternshipMutation = mutationOptions({
 	mutationFn: updateInternship,
-	onSuccess: (res, __, ___, ctx) => {
-		ctx.client.setQueryData(getOfficerQuery.queryKey, res);
+	onSuccess: (res, variables, ___, ctx) => {
+		ctx.client.setQueryData(getOfficerByIdQuery(res.id, false).queryKey, res);
+		ctx.client.setQueryData(getOfficerByIdQuery(res.id, true).queryKey, res);
+		if (!variables.officerId) {
+			ctx.client.setQueryData(getOfficerQuery.queryKey, res);
+		} else {
+			const currentOfficer = ctx.client.getQueryData<Officer | null>(
+				getOfficerQuery.queryKey
+			);
+			if (currentOfficer?.id === variables.officerId) {
+				ctx.client.setQueryData(getOfficerQuery.queryKey, res);
+			}
+		}
 	},
 });

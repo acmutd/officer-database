@@ -32,7 +32,7 @@ const ResearchFormSchema = ResearchSchema.extend({
 
 type ResearchFormData = z.infer<typeof ResearchFormSchema>;
 
-export function AddResearch() {
+export function AddResearch({ officerId }: { officerId?: string }) {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const {
@@ -65,7 +65,7 @@ export function AddResearch() {
 				...data,
 				principalInvestigator: data.principalInvestigator.map((pi) => pi.name),
 			};
-			await addResearch(transformedData);
+			await addResearch({ officerId, data: transformedData });
 			setIsOpen(false);
 			reset();
 			toast.success("Research added successfully");

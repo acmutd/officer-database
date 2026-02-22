@@ -71,7 +71,7 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 
 	const onSubmit = async (data: UpdateAcademicsFormData) => {
 		try {
-			await updateAcademicInfo(data);
+			await updateAcademicInfo({ officerId: officer.id, ...data });
 			reset(data);
 			toast.success("Academic info updated successfully");
 		} catch (error) {

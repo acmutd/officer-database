@@ -4,16 +4,18 @@ import {
 	type Officer,
 } from "@/schemas/officer";
 import { fetchWithAuth } from "./fetch";
-import { auth } from "@/lib/firebase";
-import { getCurrentOfficer } from "./officer";
+import { getAuthorizedOfficerId, getOfficerById } from "./officer";
 
-export async function addInternship(data: Internships): Promise<Officer> {
-	const id = auth.currentUser?.uid;
-	if (!id) {
-		throw new Error("Unauthorized");
-	}
+export async function addInternship({
+	officerId,
+	data,
+}: {
+	officerId?: string;
+	data: Internships;
+}): Promise<Officer> {
+	const id = await getAuthorizedOfficerId(officerId);
 
-	const officer = await getCurrentOfficer();
+	const officer = await getOfficerById(id);
 	if (!officer) throw new Error("Officer not found");
 	const newInternships = [...officer.internships, data];
 	const newOfficer = await fetchWithAuth(`/updateOfficer?id=${id}`, {
@@ -27,12 +29,15 @@ export async function addInternship(data: Internships): Promise<Officer> {
 	return OfficerSchema.parse(res);
 }
 
-export async function deleteInternship(index: number): Promise<Officer> {
-	const id = auth.currentUser?.uid;
-	if (!id) {
-		throw new Error("Unauthorized");
-	}
-	const officer = await getCurrentOfficer();
+export async function deleteInternship({
+	officerId,
+	index,
+}: {
+	officerId?: string;
+	index: number;
+}): Promise<Officer> {
+	const id = await getAuthorizedOfficerId(officerId);
+	const officer = await getOfficerById(id);
 	if (!officer) throw new Error("Officer not found");
 	const newInternships = [...officer.internships];
 	newInternships.splice(index, 1);
@@ -50,17 +55,16 @@ export async function deleteInternship(index: number): Promise<Officer> {
 }
 
 export async function updateInternship({
+	officerId,
 	index,
 	data,
 }: {
+	officerId?: string;
 	index: number;
 	data: Internships;
 }): Promise<Officer> {
-	const id = auth.currentUser?.uid;
-	if (!id) {
-		throw new Error("Unauthorized");
-	}
-	const officer = await getCurrentOfficer();
+	const id = await getAuthorizedOfficerId(officerId);
+	const officer = await getOfficerById(id);
 	if (!officer) throw new Error("Officer not found");
 	const newInternships = [...officer.internships];
 	newInternships[index] = data;
