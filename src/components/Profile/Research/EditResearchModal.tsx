@@ -27,6 +27,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 
 type Props = {
+	officerId?: string;
 	research: Research;
 	index: number;
 };
@@ -38,7 +39,7 @@ const ResearchFormSchema = ResearchSchema.extend({
 
 type ResearchFormData = z.infer<typeof ResearchFormSchema>;
 
-export function EditResearchModal({ research, index }: Props) {
+export function EditResearchModal({ officerId, research, index }: Props) {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const {
@@ -95,7 +96,7 @@ export function EditResearchModal({ research, index }: Props) {
 				...data,
 				principalInvestigator: data.principalInvestigator.map((pi) => pi.name),
 			};
-			await updateResearch({ index, data: transformedData });
+			await updateResearch({ officerId, index, data: transformedData });
 			reset(data);
 			setIsOpen(false);
 			toast.success("Research updated successfully");

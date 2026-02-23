@@ -16,11 +16,12 @@ const UpdateNameSchema = z.object({
 type UpdateNameFormData = z.infer<typeof UpdateNameSchema>;
 
 type Props = {
+	officerId?: string;
 	firstName: string;
 	lastName: string;
 };
 
-export function UpdateName({ firstName, lastName }: Props) {
+export function UpdateName({ officerId, firstName, lastName }: Props) {
 	const [isEditing, setIsEditing] = useState(false);
 	const initialValues = {
 		firstName,
@@ -47,7 +48,7 @@ export function UpdateName({ firstName, lastName }: Props) {
 
 	const onSubmit = async (data: UpdateNameFormData) => {
 		try {
-			await updateName(data);
+			await updateName({ officerId, ...data });
 			reset(data);
 			toast.success("Name updated successfully");
 			setIsEditing(false);

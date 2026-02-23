@@ -79,18 +79,16 @@ export async function getOfficerById(
 }
 
 export async function updateOfficerName(
-	data: Pick<Officer, "firstName" | "lastName">
+	data: Pick<Officer, "firstName" | "lastName"> & { officerId?: string }
 ): Promise<Officer> {
-	const id = auth.currentUser?.uid;
-	if (!id) {
-		throw new Error("Unauthorized");
-	}
+	const { officerId, ...payload } = data;
+	const id = await getAuthorizedOfficerId(officerId);
 	const officer = await fetchWithAuth(`/updateOfficer?id=${id}`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify(data),
+		body: JSON.stringify(payload),
 	});
 	const res = await officer.json();
 	return OfficerSchema.parse(res);
@@ -100,18 +98,16 @@ export async function updateAcademicInfo(
 	data: Pick<
 		Officer,
 		"netId" | "creditStanding" | "yearStanding" | "expectedGrad"
-	>
+	> & { officerId?: string }
 ): Promise<Officer> {
-	const id = auth.currentUser?.uid;
-	if (!id) {
-		throw new Error("Unauthorized");
-	}
+	const { officerId, ...payload } = data;
+	const id = await getAuthorizedOfficerId(officerId);
 	const officer = await fetchWithAuth(`/updateOfficer?id=${id}`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify(data),
+		body: JSON.stringify(payload),
 	});
 	const res = await officer.json();
 	return OfficerSchema.parse(res);
@@ -250,8 +246,10 @@ export async function updateOfficerImage({
 		throw new Error("No image provided");
 	}
 
+	const authorizedOfficerId = await getAuthorizedOfficerId(officerId);
+
 	const formData = new FormData();
-	formData.append("id", officerId);
+	formData.append("id", authorizedOfficerId);
 	formData.append("file", file);
 
 	const res = await fetchWithAuth("/uploadOfficerPhoto", {
@@ -274,8 +272,10 @@ export async function uploadOfficerResume({
 		throw new Error("No file provided");
 	}
 
+	const authorizedOfficerId = await getAuthorizedOfficerId(officerId);
+
 	const formData = new FormData();
-	formData.append("id", officerId);
+	formData.append("id", authorizedOfficerId);
 	formData.append("file", file);
 
 	const res = await fetchWithAuth("/uploadOfficerResume", {
@@ -287,6 +287,24 @@ export async function uploadOfficerResume({
 		const error = await res.json();
 		throw new Error(error.error || "Failed to upload resume");
 	}
+}
+
+export async function getAuthorizedOfficerId(officerId?: string): Promise<string> {
+	const currentUserId = auth.currentUser?.uid;
+	if (!currentUserId) {
+		throw new Error("Unauthorized");
+	}
+
+	if (!officerId || officerId === currentUserId) {
+		return currentUserId;
+	}
+
+	const currentOfficer = await getCurrentOfficer();
+	if (!currentOfficer || !isExecutive(currentOfficer)) {
+		throw new Error("Unauthorized");
+	}
+
+	return officerId;
 }
 
 export async function getOfficerResumeUrl(officerId: string): Promise<string> {

@@ -9,11 +9,12 @@ import { EmailLink } from "./EmailLink";
 import { EditSocials } from "@/components/Profile/Socials/EditSocials";
 
 type Props = {
+	officerId?: string;
 	links: SocialLinks;
 	editable?: boolean;
 };
 
-export function ExternalLinks({ links, editable = false }: Props) {
+export function ExternalLinks({ officerId, links, editable = false }: Props) {
 	const hasLinks = useMemo(
 		() => Boolean(links.linkedin || links.github || links.instagram || links.personalEmail),
 		[links.github, links.instagram, links.linkedin, links.personalEmail]
@@ -82,6 +83,7 @@ export function ExternalLinks({ links, editable = false }: Props) {
 
 			{editable && isEditing && (
 				<EditSocials
+					officerId={officerId}
 					links={links}
 					onCancel={handleCancel}
 					onSuccess={handleSuccess}

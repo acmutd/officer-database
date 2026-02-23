@@ -14,11 +14,12 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
 type Props = {
+	officerId?: string;
 	internship: Internships;
 	index: number;
 };
 
-export function DeleteInternshipModal({ internship, index }: Props) {
+export function DeleteInternshipModal({ officerId, internship, index }: Props) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 
@@ -29,7 +30,7 @@ export function DeleteInternshipModal({ internship, index }: Props) {
 	const handleDelete = async () => {
 		setIsDeleting(true);
 		try {
-			await deleteInternship(index);
+			await deleteInternship({ officerId, index });
 			setIsOpen(false);
 		} catch (error) {
 			console.error("Failed to delete internship:", error);

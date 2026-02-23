@@ -11,13 +11,18 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { FileText, Upload, Loader2, Eye } from "lucide-react";
 import { uploadResumeMutation, getResumeUrlQuery } from "@/queries/resume";
-import { getOfficerQuery } from "@/queries/officer";
+import { getOfficerByIdQuery, getOfficerQuery } from "@/queries/officer";
 import { toast } from "sonner";
 import { useRef } from "react";
 
-export function ResumeSection() {
+type Props = {
+	officerId?: string;
+	archived?: boolean;
+};
+
+export function ResumeSection({ officerId, archived = false }: Props) {
 	const { data: officer, isLoading: isOfficerLoading } =
-		useQuery(getOfficerQuery);
+		useQuery(officerId ? getOfficerByIdQuery(officerId, archived) : getOfficerQuery);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const { refetch: viewResume, isFetching: isViewing } = useQuery({
@@ -28,6 +33,10 @@ export function ResumeSection() {
 	const { mutate: uploadResume, isPending: isUploading } = useMutation({
 		...uploadResumeMutation,
 		onSuccess: (_, __, ___, context) => {
+			if (officer?.id) {
+				context.client.invalidateQueries(getOfficerByIdQuery(officer.id, false));
+				context.client.invalidateQueries(getOfficerByIdQuery(officer.id, true));
+			}
 			context.client.refetchQueries(getOfficerQuery);
 			toast.success("Resume uploaded successfully");
 		},

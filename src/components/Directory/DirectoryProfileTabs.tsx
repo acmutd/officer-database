@@ -3,14 +3,16 @@ import { InternshipList } from "../Profile/Internship/InternshipList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ResearchList } from "../Profile/Research/ResearchList";
 import { RoleInfo } from "./RoleInfo";
+import { ResumeSection } from "../Profile/ResumeSection";
 import { Link, useSearch } from "@tanstack/react-router";
 
 type Props = {
 	officerId: string;
 	archived?: boolean;
+	editable?: boolean;
 };
 
-export function DirectoryProfileTabs({ officerId, archived = false }: Props) {
+export function DirectoryProfileTabs({ officerId, archived = false, editable = false }: Props) {
 	const { tab } = useSearch({ from: "/_authed/directory/$userId" });
 
 	return (
@@ -46,9 +48,10 @@ export function DirectoryProfileTabs({ officerId, archived = false }: Props) {
 				</TabsTrigger>
 			</TabsList>
 			<TabsContent value="background" className="mt-6 flex flex-col gap-y-6">
-				<AcademicInfo officerId={officerId} archived={archived} />
-				<InternshipList officerId={officerId} archived={archived} />
-				<ResearchList officerId={officerId} archived={archived} />
+				<AcademicInfo officerId={officerId} archived={archived} editable={editable} />
+				<InternshipList officerId={officerId} archived={archived} editable={editable} />
+				<ResearchList officerId={officerId} archived={archived} editable={editable} />
+				{editable && <ResumeSection officerId={officerId} archived={archived} />}
 			</TabsContent>
 			<TabsContent value="roles" className="mt-6">
 				<RoleInfo officerId={officerId} archived={archived} />

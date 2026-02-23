@@ -1,14 +1,16 @@
-import { auth } from "@/lib/firebase";
 import { fetchWithAuth } from "./fetch";
-import { getCurrentOfficer } from "./officer";
+import { getAuthorizedOfficerId, getOfficerById } from "./officer";
 import { OfficerSchema, type Research } from "@/schemas/officer";
 
-export async function deleteResearch(index: number) {
-	const id = auth.currentUser?.uid;
-	if (!id) {
-		throw new Error("Unauthorized");
-	}
-	const officer = await getCurrentOfficer();
+export async function deleteResearch({
+	officerId,
+	index,
+}: {
+	officerId?: string;
+	index: number;
+}) {
+	const id = await getAuthorizedOfficerId(officerId);
+	const officer = await getOfficerById(id);
 	if (!officer) throw new Error("Officer not found");
 	const newResearch = [...officer.research];
 	newResearch.splice(index, 1);
@@ -25,17 +27,16 @@ export async function deleteResearch(index: number) {
 }
 
 export async function updateResearch({
+	officerId,
 	index,
 	data,
 }: {
+	officerId?: string;
 	index: number;
 	data: Research;
 }) {
-	const id = auth.currentUser?.uid;
-	if (!id) {
-		throw new Error("Unauthorized");
-	}
-	const officer = await getCurrentOfficer();
+	const id = await getAuthorizedOfficerId(officerId);
+	const officer = await getOfficerById(id);
 	if (!officer) throw new Error("Officer not found");
 	const newResearch = [...officer.research];
 	newResearch[index] = data;
@@ -50,13 +51,16 @@ export async function updateResearch({
 	return OfficerSchema.parse(newData);
 }
 
-export async function addResearch(data: Research) {
-	const id = auth.currentUser?.uid;
-	if (!id) {
-		throw new Error("Unauthorized");
-	}
+export async function addResearch({
+	officerId,
+	data,
+}: {
+	officerId?: string;
+	data: Research;
+}) {
+	const id = await getAuthorizedOfficerId(officerId);
 
-	const officer = await getCurrentOfficer();
+	const officer = await getOfficerById(id);
 	if (!officer) throw new Error("Officer not found");
 	const newResearch = [...officer.research, data];
 	const res = await fetchWithAuth(`/updateOfficer?id=${id}`, {

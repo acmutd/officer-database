@@ -27,13 +27,14 @@ import { z } from "zod";
 import { toast } from "sonner";
 
 type Props = {
+	officerId?: string;
 	internship: Internships;
 	index: number;
 };
 
 type InternshipFormData = z.infer<typeof InternshipsSchema>;
 
-export function EditInternshipModal({ internship, index }: Props) {
+export function EditInternshipModal({ officerId, internship, index }: Props) {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const {
@@ -72,7 +73,7 @@ export function EditInternshipModal({ internship, index }: Props) {
 
 	const onSubmit = async (data: InternshipFormData) => {
 		try {
-			await updateInternship({ index, data });
+			await updateInternship({ officerId, index, data });
 			reset(data);
 			setIsOpen(false);
 			toast.success("Internship updated successfully");
