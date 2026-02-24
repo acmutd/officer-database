@@ -38,13 +38,14 @@ export function InternshipList({ officerId, archived = false, editable = false }
 							: "Professional experience and internships"}
 					</CardDescription>
 				</div>
-				{editable && <AddInternship />}
+				{editable && <AddInternship officerId={officer?.id} />}
 			</CardHeader>
 			<CardContent>
 				<div className="grid gap-4">
 					{officer?.internships.map((internship, index) => (
 						<InternshipCard
 							key={index}
+							officerId={officer?.id}
 							internship={internship}
 							index={index}
 							editable={editable}

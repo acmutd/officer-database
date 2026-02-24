@@ -38,13 +38,14 @@ export function ResearchList({ officerId, archived = false, editable = false }: 
 							: "Academic research and projects"}
 					</CardDescription>
 				</div>
-				{editable && <AddResearch />}
+				{editable && <AddResearch officerId={officer?.id} />}
 			</CardHeader>
 			<CardContent>
 				<div className="grid gap-4">
 					{officer?.research.map((research, index) => (
 						<ResearchCard
 							key={index}
+							officerId={officer?.id}
 							research={research}
 							index={index}
 							editable={editable}

@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/field";
 
 type EditSocialsProps = {
+	officerId?: string;
 	links: SocialLinks;
 	onCancel?: () => void;
 	onSuccess?: () => void;
@@ -73,7 +74,7 @@ const inputClassName =
 
 type SocialLinksFormValues = z.infer<typeof SocialLinksFormSchema>;
 
-export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
+export function EditSocials({ officerId, links, onCancel, onSuccess }: EditSocialsProps) {
 	const {
 		register,
 		handleSubmit,
@@ -129,7 +130,7 @@ export function EditSocials({ links, onCancel, onSuccess }: EditSocialsProps) {
 		applyField("personalEmail", values.personalEmail);
 
 		try {
-			await mutateSocials(updated);
+			await mutateSocials({ officerId, socialLinks: updated });
 			reset({
 				linkedin: extractUsername(updated.linkedin, SOCIAL_PREFIXES.linkedin),
 				github: extractUsername(updated.github, SOCIAL_PREFIXES.github),

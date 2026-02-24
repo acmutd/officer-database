@@ -12,12 +12,13 @@ const formatDate = (value: string) =>
 	});
 
 type Props = {
+	officerId?: string;
 	research: Research;
 	index?: number;
 	editable?: boolean;
 };
 
-export function ResearchCard({ research, index, editable = false }: Props) {
+export function ResearchCard({ officerId, research, index, editable = false }: Props) {
 	return (
 		<Card
 			className={`${
@@ -60,8 +61,8 @@ export function ResearchCard({ research, index, editable = false }: Props) {
 
 				{editable && index !== undefined && (
 					<div className="flex gap-1 opacity-100 md:opacity-0 transition-opacity duration-200 md:group-hover:opacity-100">
-						<EditResearchModal research={research} index={index} />
-						<DeleteResearchModal research={research} index={index} />
+						<EditResearchModal officerId={officerId} research={research} index={index} />
+						<DeleteResearchModal officerId={officerId} research={research} index={index} />
 					</div>
 				)}
 			</CardContent>

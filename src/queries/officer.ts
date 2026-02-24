@@ -33,8 +33,13 @@ export const getPastOfficersQuery = officersQuery(true);
 
 export const updateOfficerImageMutation = mutationOptions({
 	mutationFn: updateOfficerImage,
-	onSuccess: (_, __, ___, context) => {
-		context.client.refetchQueries(getOfficerQuery);
+	onSuccess: (_, variables, ___, context) => {
+		context.client.invalidateQueries(getOfficerByIdQuery(variables.officerId, false));
+		context.client.invalidateQueries(getOfficerByIdQuery(variables.officerId, true));
+		const currentOfficer = context.client.getQueryData<Officer | null>(getOfficerQuery.queryKey);
+		if (currentOfficer?.id === variables.officerId) {
+			context.client.refetchQueries(getOfficerQuery);
+		}
 		context.client.invalidateQueries(getCurrentOfficersQuery);
 		context.client.invalidateQueries(getPastOfficersQuery);
 	},
@@ -42,8 +47,19 @@ export const updateOfficerImageMutation = mutationOptions({
 
 export const updateOfficerNameMutation = mutationOptions({
 	mutationFn: updateOfficerName,
-	onSuccess: (res, _, __, context) => {
-		context.client.setQueryData(getOfficerQuery.queryKey, res);
+	onSuccess: (res, variables, __, context) => {
+		context.client.setQueryData(getOfficerByIdQuery(res.id, false).queryKey, res);
+		context.client.setQueryData(getOfficerByIdQuery(res.id, true).queryKey, res);
+		if (!variables.officerId) {
+			context.client.setQueryData(getOfficerQuery.queryKey, res);
+		} else {
+			const currentOfficer = context.client.getQueryData<Officer | null>(
+				getOfficerQuery.queryKey
+			);
+			if (currentOfficer?.id === variables.officerId) {
+				context.client.setQueryData(getOfficerQuery.queryKey, res);
+			}
+		}
 		context.client.invalidateQueries(getCurrentOfficersQuery);
 		context.client.invalidateQueries(getPastOfficersQuery);
 	},
@@ -51,8 +67,19 @@ export const updateOfficerNameMutation = mutationOptions({
 
 export const updateAcademicInfoMutationOptions = mutationOptions({
 	mutationFn: updateAcademicInfo,
-	onSuccess: (res, _, __, context) => {
-		context.client.setQueryData(getOfficerQuery.queryKey, res);
+	onSuccess: (res, variables, __, context) => {
+		context.client.setQueryData(getOfficerByIdQuery(res.id, false).queryKey, res);
+		context.client.setQueryData(getOfficerByIdQuery(res.id, true).queryKey, res);
+		if (!variables.officerId) {
+			context.client.setQueryData(getOfficerQuery.queryKey, res);
+		} else {
+			const currentOfficer = context.client.getQueryData<Officer | null>(
+				getOfficerQuery.queryKey
+			);
+			if (currentOfficer?.id === variables.officerId) {
+				context.client.setQueryData(getOfficerQuery.queryKey, res);
+			}
+		}
 		context.client.invalidateQueries(getCurrentOfficersQuery);
 		context.client.invalidateQueries(getPastOfficersQuery);
 	},
