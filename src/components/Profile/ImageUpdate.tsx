@@ -7,7 +7,7 @@ import { updateOfficerImageMutation } from "@/queries/officer";
 import { toast } from "sonner";
 import type { Photo } from "@/schemas/officer";
 import { getOfficerImageUrl } from "@/lib/image";
-import { CropModal } from "./cropModal";
+import { CropModal, type ImageAdjustments } from "./cropModal";
 import type { Area } from "react-easy-crop";
 
 type Props = {
@@ -20,11 +20,21 @@ type Props = {
 
 
 export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
+	const defaultAdjustments: ImageAdjustments = {
+		brightness: 100,
+		contrast: 100,
+		saturation: 100,
+	};
 
 	const [imageSrc, setImageSrc] = React.useState<string | null>(null);
 	const [showCropper, setShowCropper] = React.useState(false);
 	const [crop, setCrop] = React.useState({ x: 0, y: 0 });
 	const [zoom, setZoom] = React.useState(1);
+	const [rotation, setRotation] = React.useState(0);
+	const [outputSize, setOutputSize] = React.useState(720);
+	const [adjustments, setAdjustments] = React.useState<ImageAdjustments>(
+		defaultAdjustments
+	);
 	const [area, setArea] = React.useState<Area | null>(null);
 
 	const avatar = getOfficerImageUrl(photo);
@@ -59,47 +69,104 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 		}
 		const url = URL.createObjectURL(file);
 		setImageSrc(url);
+		setCrop({ x: 0, y: 0 });
+		setZoom(1);
+		setRotation(0);
+		setOutputSize(720);
+		setAdjustments(defaultAdjustments);
 		setShowCropper(true);
+		e.target.value = "";
 	};
 
-	async function cropImage(src: string, area:{x: number, y: number, width: number, height: number}){
+	const handleAdjustmentChange = React.useCallback(
+		(key: keyof ImageAdjustments, value: number) => {
+			setAdjustments((prev) => ({ ...prev, [key]: value }));
+		},
+		[]
+	);
+
+	const resetAdjustments = React.useCallback(() => {
+		setAdjustments(defaultAdjustments);
+	}, []);
+
+	function toRadians(degrees: number) {
+		return (degrees * Math.PI) / 180;
+	}
+
+	function getRotatedSize(width: number, height: number, rotationInDegrees: number) {
+		const rotationInRadians = toRadians(rotationInDegrees);
+		return {
+			width:
+				Math.abs(Math.cos(rotationInRadians) * width) +
+				Math.abs(Math.sin(rotationInRadians) * height),
+			height:
+				Math.abs(Math.sin(rotationInRadians) * width) +
+				Math.abs(Math.cos(rotationInRadians) * height),
+		};
+	}
+
+	async function cropImage(
+		src: string,
+		cropArea: { x: number; y: number; width: number; height: number }
+	) {
 		const image = new Image();
 		image.src = src;
 
-		await new Promise((resolve)=> {
+		await new Promise((resolve, reject) => {
 			image.onload = resolve;
-		})
+			image.onerror = reject;
+		});
 
-		const canvas = document.createElement("canvas");
-  	    canvas.width = area.width;
-  		canvas.height = area.height;
-		const ctx = canvas.getContext("2d");
+		const rotatedBounds = getRotatedSize(image.width, image.height, rotation);
+		const previewCanvas = document.createElement("canvas");
+		previewCanvas.width = rotatedBounds.width;
+		previewCanvas.height = rotatedBounds.height;
+		const previewContext = previewCanvas.getContext("2d");
 
-		ctx?.drawImage(
-			image,
-			area.x,
-			area.y,
-			area.width,
-			area.height,
+		if (!previewContext) {
+			return null;
+		}
+
+		previewContext.filter = `brightness(${adjustments.brightness}%) contrast(${adjustments.contrast}%) saturate(${adjustments.saturation}%)`;
+		previewContext.translate(rotatedBounds.width / 2, rotatedBounds.height / 2);
+		previewContext.rotate(toRadians(rotation));
+		previewContext.translate(-image.width / 2, -image.height / 2);
+		previewContext.drawImage(image, 0, 0);
+		previewContext.setTransform(1, 0, 0, 1, 0, 0);
+
+		const outputCanvas = document.createElement("canvas");
+		outputCanvas.width = outputSize;
+		outputCanvas.height = outputSize;
+		const outputContext = outputCanvas.getContext("2d");
+
+		if (!outputContext) {
+			return null;
+		}
+
+		outputContext.drawImage(
+			previewCanvas,
+			cropArea.x,
+			cropArea.y,
+			cropArea.width,
+			cropArea.height,
 			0,
 			0,
-			area.width,
-			area.height
+			outputSize,
+			outputSize
 		);
 
 		return new Promise<Blob | null>((resolve) => {
-			canvas.toBlob(
+			outputCanvas.toBlob(
 			(blob) => resolve(blob),
 			"image/jpeg",
 			0.9
 			);
 		});
-
-	};
+	}
 
 	const handleSaveCrop = async () => {
 
-		if (!area || !imageSrc) 
+		if (!area || !imageSrc)
 			return;
 
 		try {
@@ -116,6 +183,7 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 			updateUserImage({ officerId, file });
 
 			setShowCropper(false);
+			URL.revokeObjectURL(imageSrc);
 			setImageSrc(null);
 
 		} catch {
@@ -130,8 +198,15 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 					imageSrc={imageSrc}
 					crop={crop}
 					zoom={zoom}
+					rotation={rotation}
+					outputSize={outputSize}
+					adjustments={adjustments}
 					onCropChange={setCrop}
 					onZoomChange={setZoom}
+					onRotationChange={setRotation}
+					onOutputSizeChange={setOutputSize}
+					onAdjustmentChange={handleAdjustmentChange}
+					onResetAdjustments={resetAdjustments}
 					onCropComplete={setArea}
 					onClose={() => {
 						if (imageSrc) URL.revokeObjectURL(imageSrc);
@@ -139,9 +214,10 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 						setImageSrc(null);
 					}}
 					onSave={handleSaveCrop}
+					isSaving={isPending}
 					/>
 
-					
+
 			<div className="group relative flex flex-col items-center">
 				<Avatar className="h-36 w-36 shadow-2xl">
 					{photo.url && (
