@@ -109,7 +109,7 @@ export function CropModal({
     <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <DialogContent
         showCloseButton={false}
-        className="dark w-[92vw] max-w-[92vw] sm:max-w-5xl h-[80vh] p-0 gap-0 overflow-hidden border-border bg-background text-foreground"
+        className="dark w-[92vw] max-w-[92vw] sm:max-w-5xl h-[80vh] grid-rows-[auto_minmax(0,1fr)_auto] p-0 gap-0 overflow-hidden border-border bg-background text-foreground"
       >
         <DialogHeader className="border-b px-6 py-4">
           <DialogTitle>Edit photo</DialogTitle>
