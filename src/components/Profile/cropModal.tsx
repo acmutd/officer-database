@@ -60,6 +60,7 @@ export function CropModal({
   if (!open || !imageSrc) return null;
 
   const cropViewportSize = 420;
+  const wheelZoomSpeed = 0.2;
   const [minZoomLevel, setMinZoomLevel] = React.useState(1);
 
   const filterStyle = `brightness(${adjustments.brightness}%) contrast(${adjustments.contrast}%) saturate(${adjustments.saturation}%)`;
@@ -129,6 +130,7 @@ export function CropModal({
                 zoom={zoom}
                 minZoom={minZoomLevel}
                 maxZoom={4}
+                zoomSpeed={wheelZoomSpeed}
                 rotation={rotation}
                 aspect={1}
                 cropSize={{ width: 420, height: 420 }}
