@@ -18,6 +18,19 @@ export type ImageAdjustments = {
   saturation: number;
 };
 
+type FilterPreset = {
+  id:
+    | "original"
+    | "studio"
+    | "spotlight"
+    | "prime"
+    | "classic"
+    | "edge"
+    | "luminate";
+  label: string;
+  adjustments: ImageAdjustments;
+};
+
 type CropModalProps = {
   open: boolean;
   imageSrc: string | null;
@@ -54,6 +67,44 @@ export function CropModal({
   isSaving,
 }: CropModalProps) {
   if (!open || !imageSrc) return null;
+
+  const filterPresets: FilterPreset[] = [
+    {
+      id: "original",
+      label: "Original",
+      adjustments: { brightness: 100, contrast: 100, saturation: 100 },
+    },
+    {
+      id: "studio",
+      label: "Studio",
+      adjustments: { brightness: 106, contrast: 112, saturation: 116 },
+    },
+    {
+      id: "spotlight",
+      label: "Spotlight",
+      adjustments: { brightness: 112, contrast: 118, saturation: 128 },
+    },
+    {
+      id: "prime",
+      label: "Prime",
+      adjustments: { brightness: 98, contrast: 110, saturation: 92 },
+    },
+    {
+      id: "classic",
+      label: "Classic",
+      adjustments: { brightness: 102, contrast: 106, saturation: 110 },
+    },
+    {
+      id: "edge",
+      label: "Edge",
+      adjustments: { brightness: 96, contrast: 124, saturation: 122 },
+    },
+    {
+      id: "luminate",
+      label: "Luminate",
+      adjustments: { brightness: 114, contrast: 102, saturation: 108 },
+    },
+  ];
 
   const [cropViewportSize, setCropViewportSize] = React.useState(420);
   const wheelZoomSpeed = 0.2;
@@ -99,29 +150,29 @@ export function CropModal({
     [cropViewportSize, onZoomChange, zoom]
   );
 
-  const applyPreset = (preset: "original" | "vivid" | "bw" | "warm") => {
-    if (preset === "original") {
+  const activePresetId = React.useMemo(() => {
+    const matchedPreset = filterPresets.find(
+      (preset) =>
+        preset.adjustments.brightness === adjustments.brightness &&
+        preset.adjustments.contrast === adjustments.contrast &&
+        preset.adjustments.saturation === adjustments.saturation
+    );
+
+    return matchedPreset?.id;
+  }, [adjustments, filterPresets]);
+
+  const applyPreset = (presetId: FilterPreset["id"]) => {
+    if (presetId === "original") {
       onResetAdjustments();
       return;
     }
 
-    if (preset === "vivid") {
-      onAdjustmentChange("brightness", 105);
-      onAdjustmentChange("contrast", 115);
-      onAdjustmentChange("saturation", 130);
-      return;
-    }
+    const preset = filterPresets.find((item) => item.id === presetId);
+    if (!preset) return;
 
-    if (preset === "bw") {
-      onAdjustmentChange("brightness", 100);
-      onAdjustmentChange("contrast", 120);
-      onAdjustmentChange("saturation", 0);
-      return;
-    }
-
-    onAdjustmentChange("brightness", 108);
-    onAdjustmentChange("contrast", 104);
-    onAdjustmentChange("saturation", 92);
+    onAdjustmentChange("brightness", preset.adjustments.brightness);
+    onAdjustmentChange("contrast", preset.adjustments.contrast);
+    onAdjustmentChange("saturation", preset.adjustments.saturation);
   };
 
   return (
@@ -226,37 +277,43 @@ export function CropModal({
 
               </TabsContent>
 
-              <TabsContent value="filter" className="mt-5 space-y-3">
-                <div className="text-sm font-medium">Presets</div>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => applyPreset("original")}
-                  >
-                    Original
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => applyPreset("vivid")}
-                  >
-                    Vivid
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => applyPreset("bw")}
-                  >
-                    B&amp;W
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => applyPreset("warm")}
-                  >
-                    Warm
-                  </Button>
+              <TabsContent value="filter" className="mt-5">
+                <div className="grid grid-cols-3 gap-3">
+                  {filterPresets.map((preset) => {
+                    const presetFilterStyle = `brightness(${preset.adjustments.brightness}%) contrast(${preset.adjustments.contrast}%) saturate(${preset.adjustments.saturation}%)`;
+                    const isActive = activePresetId === preset.id;
+
+                    return (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        onClick={() => applyPreset(preset.id)}
+                        className="flex flex-col items-center gap-1 text-xs"
+                        aria-label={`Apply ${preset.label} preset`}
+                      >
+                        <span
+                          className={`relative h-16 w-16 overflow-hidden rounded-full border-2 ${isActive ? "border-primary" : "border-border"}`}
+                        >
+                          <span
+                            className="absolute inset-0 bg-cover bg-center"
+                            style={{
+                              backgroundImage: `url(${imageSrc})`,
+                              filter: presetFilterStyle,
+                            }}
+                          />
+                        </span>
+                        <span
+                          className={
+                            isActive
+                              ? "text-foreground"
+                              : "text-muted-foreground"
+                          }
+                        >
+                          {preset.label}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </TabsContent>
 
