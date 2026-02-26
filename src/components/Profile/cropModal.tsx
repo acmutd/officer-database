@@ -67,7 +67,6 @@ export function CropModal({
   const handleMediaLoaded = React.useCallback(
     ({ width, height }: { width: number; height: number }) => {
       const fittedMinZoom = Math.max(
-        1,
         cropViewportSize / width,
         cropViewportSize / height
       );
