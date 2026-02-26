@@ -24,12 +24,10 @@ type CropModalProps = {
   crop: { x: number; y: number };
   zoom: number;
   rotation: number;
-  outputSize: number;
   adjustments: ImageAdjustments;
   onCropChange: (crop: { x: number; y: number }) => void;
   onZoomChange: (zoom: number) => void;
   onRotationChange: (rotation: number) => void;
-  onOutputSizeChange: (size: number) => void;
   onAdjustmentChange: (key: keyof ImageAdjustments, value: number) => void;
   onResetAdjustments: () => void;
   onCropComplete: (area: Area) => void;
@@ -44,12 +42,10 @@ export function CropModal({
   crop,
   zoom,
   rotation,
-  outputSize,
   adjustments,
   onCropChange,
   onZoomChange,
   onRotationChange,
-  onOutputSizeChange,
   onAdjustmentChange,
   onResetAdjustments,
   onCropComplete,
@@ -59,9 +55,26 @@ export function CropModal({
 }: CropModalProps) {
   if (!open || !imageSrc) return null;
 
-  const cropViewportSize = 420;
+  const [cropViewportSize, setCropViewportSize] = React.useState(420);
   const wheelZoomSpeed = 0.2;
   const [minZoomLevel, setMinZoomLevel] = React.useState(1);
+
+  React.useEffect(() => {
+    const updateViewportSize = () => {
+      const isMobile = window.innerWidth < 640;
+      const maxByWidth = isMobile ? window.innerWidth - 40 : window.innerWidth - 56;
+      const maxByHeight = isMobile ? window.innerHeight * 0.45 - 24 : 420;
+      const nextSize = Math.round(Math.max(220, Math.min(420, maxByWidth, maxByHeight)));
+      setCropViewportSize(nextSize);
+    };
+
+    updateViewportSize();
+    window.addEventListener("resize", updateViewportSize);
+
+    return () => {
+      window.removeEventListener("resize", updateViewportSize);
+    };
+  }, []);
 
   const filterStyle = `brightness(${adjustments.brightness}%) contrast(${adjustments.contrast}%) saturate(${adjustments.saturation}%)`;
 
@@ -83,7 +96,7 @@ export function CropModal({
         onZoomChange(fittedMinZoom);
       }
     },
-    [onZoomChange, zoom]
+    [cropViewportSize, onZoomChange, zoom]
   );
 
   const applyPreset = (preset: "original" | "vivid" | "bw" | "warm") => {
@@ -115,14 +128,14 @@ export function CropModal({
     <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <DialogContent
         showCloseButton={false}
-        className="dark w-[92vw] max-w-[92vw] sm:max-w-5xl h-[80vh] grid-rows-[auto_minmax(0,1fr)_auto] p-0 gap-0 overflow-hidden border-border bg-background text-foreground"
+        className="dark w-[100vw] max-w-[100vw] h-[100dvh] rounded-none sm:w-[92vw] sm:max-w-5xl sm:h-[80vh] sm:rounded-lg grid-rows-[auto_minmax(0,1fr)_auto] p-0 gap-0 overflow-hidden border-border bg-background text-foreground"
       >
-        <DialogHeader className="border-b px-6 py-4">
+        <DialogHeader className="border-b px-4 py-4 sm:px-6">
           <DialogTitle>Edit photo</DialogTitle>
         </DialogHeader>
 
-        <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <div className="relative bg-muted/20">
+        <div className="grid min-h-0 flex-1 grid-cols-1 grid-rows-[minmax(0,45vh)_minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_320px] lg:grid-rows-1">
+          <div className="relative h-full bg-muted/20">
             <div className="absolute inset-0">
               <Cropper
                 image={imageSrc}
@@ -133,7 +146,7 @@ export function CropModal({
                 zoomSpeed={wheelZoomSpeed}
                 rotation={rotation}
                 aspect={1}
-                cropSize={{ width: 420, height: 420 }}
+                cropSize={{ width: cropViewportSize, height: cropViewportSize }}
                 cropShape="round"
                 showGrid={false}
                 objectFit="contain"
@@ -151,7 +164,7 @@ export function CropModal({
             </div>
           </div>
 
-          <div className="border-l bg-muted/20 p-5 overflow-y-auto">
+          <div className="border-t bg-muted/20 p-4 overflow-y-auto lg:border-t-0 lg:border-l lg:p-5">
             <Tabs defaultValue="crop" className="h-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="crop">Crop</TabsTrigger>
@@ -211,24 +224,6 @@ export function CropModal({
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm font-medium">Output size</div>
-                    <div className="text-sm text-muted-foreground">
-                      {outputSize}px
-                    </div>
-                  </div>
-                  <Input
-                    type="range"
-                    min={320}
-                    max={1080}
-                    step={10}
-                    value={outputSize}
-                    onChange={(event) =>
-                      onOutputSizeChange(Number(event.target.value))
-                    }
-                  />
-                </div>
               </TabsContent>
 
               <TabsContent value="filter" className="mt-5 space-y-3">
@@ -344,7 +339,7 @@ export function CropModal({
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 border-t px-6 py-4">
+        <div className="flex justify-end gap-3 border-t px-4 py-4 sm:px-6">
           <Button type="button" variant="outline" onClick={onClose}>
             Cancel
           </Button>

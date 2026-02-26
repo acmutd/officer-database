@@ -20,6 +20,8 @@ type Props = {
 
 
 export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
+	const avatarOutputSize = 720;
+
 	const defaultAdjustments: ImageAdjustments = {
 		brightness: 100,
 		contrast: 100,
@@ -31,7 +33,6 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 	const [crop, setCrop] = React.useState({ x: 0, y: 0 });
 	const [zoom, setZoom] = React.useState(1);
 	const [rotation, setRotation] = React.useState(0);
-	const [outputSize, setOutputSize] = React.useState(720);
 	const [adjustments, setAdjustments] = React.useState<ImageAdjustments>(
 		defaultAdjustments
 	);
@@ -72,7 +73,6 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 		setCrop({ x: 0, y: 0 });
 		setZoom(1);
 		setRotation(0);
-		setOutputSize(720);
 		setAdjustments(defaultAdjustments);
 		setShowCropper(true);
 		e.target.value = "";
@@ -135,8 +135,8 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 		previewContext.setTransform(1, 0, 0, 1, 0, 0);
 
 		const outputCanvas = document.createElement("canvas");
-		outputCanvas.width = outputSize;
-		outputCanvas.height = outputSize;
+		outputCanvas.width = avatarOutputSize;
+		outputCanvas.height = avatarOutputSize;
 		const outputContext = outputCanvas.getContext("2d");
 
 		if (!outputContext) {
@@ -151,8 +151,8 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 			cropArea.height,
 			0,
 			0,
-			outputSize,
-			outputSize
+			avatarOutputSize,
+			avatarOutputSize
 		);
 
 		return new Promise<Blob | null>((resolve) => {
@@ -199,12 +199,10 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 					crop={crop}
 					zoom={zoom}
 					rotation={rotation}
-					outputSize={outputSize}
 					adjustments={adjustments}
 					onCropChange={setCrop}
 					onZoomChange={setZoom}
 					onRotationChange={setRotation}
-					onOutputSizeChange={setOutputSize}
 					onAdjustmentChange={handleAdjustmentChange}
 					onResetAdjustments={resetAdjustments}
 					onCropComplete={setArea}
