@@ -65,7 +65,13 @@ export function CropModal({
   const filterStyle = `brightness(${adjustments.brightness}%) contrast(${adjustments.contrast}%) saturate(${adjustments.saturation}%)`;
 
   const handleMediaLoaded = React.useCallback(
-    ({ width, height }: { width: number; height: number }) => {
+    ({
+      width,
+      height,
+    }: {
+      width: number;
+      height: number;
+    }) => {
       const fittedMinZoom = Math.max(
         cropViewportSize / width,
         cropViewportSize / height
