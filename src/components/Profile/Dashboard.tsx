@@ -6,12 +6,14 @@ import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "../Spinner";
 import AstraLoginCredentials from "@/components/ui/astra-login"
 import AstraDetails from "@/components/ui/astra-details"
+import { isAdmin } from "@/lib/admin";
+import { AdminOfficerOnboarding } from "./AdminOfficerOnboarding";
 
 
 
 export function DashboardPlaceholder() {
 
-	
+
 
 
 	const { data: officer, isLoading} = useQuery(getOfficerQuery);
@@ -25,6 +27,7 @@ export function DashboardPlaceholder() {
 		}
 
 	const cardsShown = DASHBOARD_CARDS.filter(card => card.minLevel <= officer.accessLevel);
+	const userIsAdmin = isAdmin(officer);
 
 	return (
 		<Card className="rounded-xl border border-white/10 bg-black/40 shadow-xl">
@@ -34,9 +37,9 @@ export function DashboardPlaceholder() {
 				</CardTitle>
 			</CardHeader>
 			<CardContent className="p-4">
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">	
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
 				{cardsShown.map((card, index) => (
-					<DashboardCard 
+					<DashboardCard
 					key={index}
 					title = {card.title}
 					description = {card.description}
@@ -64,8 +67,14 @@ export function DashboardPlaceholder() {
 				</>
 			)}
 
-			
-			
+			{userIsAdmin && (
+				<div className="p-4 pt-0">
+					<AdminOfficerOnboarding />
+				</div>
+			)}
+
+
+
 		</Card>
 	);
 }
