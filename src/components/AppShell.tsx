@@ -188,7 +188,7 @@ export function AppShell({ children }: AppShellProps) {
 								<span
 									className={cn(
 										"flex h-9 w-9 shrink-0 items-center justify-center transition-transform duration-300 ease-in-out",
-										desktopCollapsed ? "translate-x-0" : "translate-x-[-1px]"
+										desktopCollapsed ? "translate-x-0" : "-translate-x-px"
 									)}
 								>
 									<item.icon className="h-4 w-4" />
@@ -198,7 +198,7 @@ export function AppShell({ children }: AppShellProps) {
 										"block overflow-hidden whitespace-nowrap text-sm font-medium transition-[max-width,opacity,transform,padding] duration-300 ease-in-out",
 										desktopCollapsed
 											? "max-w-0 translate-x-1 pr-0 opacity-0"
-											: "max-w-[10rem] translate-x-0 pr-3 opacity-100"
+											: "max-w-40 translate-x-0 pr-3 opacity-100"
 									)}
 								>
 									{item.label}
@@ -232,7 +232,7 @@ export function AppShell({ children }: AppShellProps) {
 										<span
 											className={cn(
 												"flex h-9 w-9 shrink-0 items-center justify-center transition-transform duration-300 ease-in-out",
-												desktopCollapsed ? "translate-x-0" : "translate-x-[-1px]"
+												desktopCollapsed ? "translate-x-0" : "-translate-x-px"
 											)}
 										>
 											<item.icon className="h-4 w-4" />
@@ -242,7 +242,7 @@ export function AppShell({ children }: AppShellProps) {
 												"block overflow-hidden whitespace-nowrap text-sm font-medium transition-[max-width,opacity,transform,padding] duration-300 ease-in-out",
 												desktopCollapsed
 													? "max-w-0 translate-x-1 pr-0 opacity-0"
-													: "max-w-[10rem] translate-x-0 pr-3 opacity-100"
+													: "max-w-40 translate-x-0 pr-3 opacity-100"
 											)}
 										>
 											{item.label}
@@ -264,7 +264,7 @@ export function AppShell({ children }: AppShellProps) {
 									<span
 										className={cn(
 											"flex h-9 w-9 shrink-0 items-center justify-center transition-transform duration-300 ease-in-out",
-											desktopCollapsed ? "translate-x-0" : "translate-x-[-1px]"
+											desktopCollapsed ? "translate-x-0" : "-translate-x-px"
 										)}
 									>
 										<Building2 className="h-4 w-4" />
@@ -274,7 +274,7 @@ export function AppShell({ children }: AppShellProps) {
 											"block overflow-hidden whitespace-nowrap text-sm font-medium transition-[max-width,opacity,transform,padding] duration-300 ease-in-out",
 											desktopCollapsed
 												? "max-w-0 translate-x-1 pr-0 opacity-0"
-												: "max-w-[10rem] translate-x-0 pr-3 opacity-100"
+												: "max-w-40 translate-x-0 pr-3 opacity-100"
 										)}
 									>
 										ACM HR

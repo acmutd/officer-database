@@ -150,7 +150,7 @@ function RouteComponent() {
 							<Link
 								key={task.title}
 								to={task.href}
-								className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 transition-colors hover:bg-white/[0.06]"
+								className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/3 px-4 py-3 transition-colors hover:bg-white/6"
 							>
 								{task.done ? (
 									<CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" />
@@ -172,14 +172,14 @@ function RouteComponent() {
 						My ACM Snapshot
 					</h2>
 					<div className="mt-4 grid gap-4 lg:grid-cols-2">
-						<div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 lg:col-span-2">
+						<div className="rounded-xl border border-white/10 bg-white/3 p-4 lg:col-span-2">
 							<p className="text-xs uppercase tracking-wide text-white/60">
 								{hasMultipleActiveRoles ? "Current roles" : "Current role"}
 							</p>
 							{activeRoles.length > 0 ? (
 								<div className="mt-2 space-y-2">
 									{activeRoles.map((role) => (
-										<div key={`${role.title}-${role.division}-${role.startDate.term}-${role.startDate.year}`} className="rounded-lg border border-white/10 bg-white/[0.02] px-3 py-2">
+										<div key={`${role.title}-${role.division}-${role.startDate.term}-${role.startDate.year}`} className="rounded-lg border border-white/10 bg-white/2 px-3 py-2">
 											<p className="text-sm font-semibold text-white">{role.title}</p>
 											<p className="text-xs text-white/65">{role.division} Division</p>
 										</div>
@@ -201,7 +201,7 @@ function RouteComponent() {
 							</div>
 						</div>
 
-						<div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+						<div className="rounded-xl border border-white/10 bg-white/3 p-4">
 							<p className="flex items-center gap-2 text-sm font-medium text-white">
 								<Milestone className="h-4 w-4" />
 								Timeline
@@ -221,7 +221,7 @@ function RouteComponent() {
 							</div>
 						</div>
 
-						<div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+						<div className="rounded-xl border border-white/10 bg-white/3 p-4">
 							<p className="flex items-center gap-2 text-xs uppercase tracking-wide text-white/60">
 								<Clock3 className="h-3.5 w-3.5" />
 								Presence and freshness
