@@ -80,7 +80,10 @@ function ProfileMenu() {
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger>
 				<button
-					className="rounded-full border border-white/20 bg-black/30 p-0.5 transition-colors hover:bg-black/45"
+					className={cn(
+						"group relative rounded-full border border-white/20 bg-black/30 p-0.5 transition-all duration-200 ease-out will-change-transform hover:border-white/45 hover:bg-black/45 hover:shadow-[0_0_0_4px_rgba(255,255,255,0.08)] active:translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
+						open && "border-white/50 bg-black/55 shadow-[0_0_0_4px_rgba(255,255,255,0.1)]"
+					)}
 					aria-label="Open profile menu"
 					title="Profile menu"
 				>
