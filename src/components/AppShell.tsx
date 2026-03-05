@@ -376,8 +376,7 @@ export function AppShell({ children }: AppShellProps) {
 
 				<div className="min-h-0 min-w-0 flex h-full flex-1 flex-col">
 					<header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-black/45 pr-4 backdrop-blur-md sm:pr-6 lg:pr-8">
-						<div className="flex min-w-0 items-center">
-							<div className="flex shrink-0 items-center gap-3 pl-2 sm:pl-3 lg:gap-4">
+						<div className="flex min-w-0 items-center gap-2 pl-2 sm:gap-3 sm:pl-3 lg:pl-4">
 							<button
 								onClick={() => setMobileOpen(true)}
 								className="rounded-lg border border-white/15 p-2 text-white lg:hidden"
@@ -386,16 +385,14 @@ export function AppShell({ children }: AppShellProps) {
 								<Menu className="h-4 w-4" />
 							</button>
 							<Link to="/" className="shrink-0 rounded-sm transition-opacity hover:opacity-90" aria-label="Go to home">
-								<img src="/acm.png" alt="ACM" className="h-7 w-7 shrink-0 rounded-sm object-contain" />
+								<img src="/acm.png" alt="ACM" className="h-6 w-6 shrink-0 rounded-sm object-contain sm:h-7 sm:w-7" />
 							</Link>
-							</div>
-							<div className="ml-3 min-w-0 sm:ml-4">
-								<p className="text-xs uppercase tracking-[0.2em] text-white/60">ACM UTD Officer Database</p>
-								<h2 className="truncate text-lg font-semibold text-white">{pageTitle}</h2>
-							</div>
+							<h2 className="truncate text-base font-semibold text-white sm:text-lg">{pageTitle}</h2>
 						</div>
 
-						<ProfileMenu />
+						<div className="ml-auto">
+							<ProfileMenu />
+						</div>
 					</header>
 
 					<main className={cn("min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-5 transition-[padding-left] duration-300 ease-in-out sm:px-3 lg:px-4 lg:py-8", desktopCollapsed ? "lg:pl-16" : "lg:pl-52")}>
