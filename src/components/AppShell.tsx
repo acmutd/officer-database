@@ -157,8 +157,8 @@ export function AppShell({ children }: AppShellProps) {
 			: "My Profile";
 
 	return (
-		<div className="relative min-h-screen overflow-x-clip text-white">
-			<div className="relative min-h-screen">
+		<div className="relative h-screen overflow-hidden text-white">
+			<div className="relative flex h-full overflow-hidden">
 				<aside
 					className={cn(
 						"fixed left-0 top-16 z-20 hidden h-[calc(100vh-4rem)] border-r border-white/10 bg-black/50 backdrop-blur-md transition-[width] duration-300 ease-in-out lg:flex lg:flex-col",
@@ -309,7 +309,7 @@ export function AppShell({ children }: AppShellProps) {
 				/>
 				<aside
 					className={cn(
-						"fixed left-0 top-16 z-50 h-[calc(100vh-4rem)] w-72 max-w-[88vw] border-r border-white/10 bg-black/95 px-4 py-5 transition-transform duration-300 ease-in-out lg:hidden",
+						"fixed left-0 top-16 z-50 h-[calc(100vh-4rem)] w-72 max-w-[88vw] overflow-y-auto border-r border-white/10 bg-black/95 px-4 py-5 transition-transform duration-300 ease-in-out lg:hidden",
 						mobileOpen ? "translate-x-0" : "-translate-x-full"
 					)}
 				>
@@ -371,7 +371,7 @@ export function AppShell({ children }: AppShellProps) {
 					</nav>
 				</aside>
 
-				<div className="min-w-0 flex flex-1 flex-col">
+				<div className="min-h-0 min-w-0 flex h-full flex-1 flex-col">
 					<header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-black/45 pr-4 backdrop-blur-md sm:pr-6 lg:pr-8">
 						<div className="flex min-w-0 items-center">
 							<div className="flex shrink-0 items-center gap-3 pl-2 sm:pl-3 lg:gap-4">
@@ -395,7 +395,7 @@ export function AppShell({ children }: AppShellProps) {
 						<ProfileMenu />
 					</header>
 
-					<main className={cn("flex-1 px-2 py-5 transition-[padding-left] duration-300 ease-in-out sm:px-3 lg:px-4 lg:py-8", desktopCollapsed ? "lg:pl-16" : "lg:pl-52")}>
+					<main className={cn("min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-5 transition-[padding-left] duration-300 ease-in-out sm:px-3 lg:px-4 lg:py-8", desktopCollapsed ? "lg:pl-16" : "lg:pl-52")}>
 						<div className="w-full">{children}</div>
 					</main>
 				</div>
