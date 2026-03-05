@@ -375,7 +375,7 @@ export function AppShell({ children }: AppShellProps) {
 				</aside>
 
 				<div className="min-h-0 min-w-0 flex h-full flex-1 flex-col">
-					<header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-black/45 pr-4 backdrop-blur-md sm:pr-6 lg:pr-8">
+					<header className="relative sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-black/45 pr-4 backdrop-blur-md sm:pr-6 lg:pr-8">
 						<div className="flex min-w-0 items-center gap-2 pl-2 sm:gap-3 sm:pl-3 lg:pl-4">
 							<button
 								onClick={() => setMobileOpen(true)}
@@ -384,10 +384,17 @@ export function AppShell({ children }: AppShellProps) {
 							>
 								<Menu className="h-4 w-4" />
 							</button>
-							<Link to="/" className="shrink-0 rounded-sm transition-opacity hover:opacity-90" aria-label="Go to home">
-								<img src="/acm.png" alt="ACM" className="h-6 w-6 shrink-0 rounded-sm object-contain sm:h-7 sm:w-7" />
-							</Link>
-							<h2 className="truncate text-base font-semibold text-white sm:text-lg">{pageTitle}</h2>
+							<div className="hidden min-w-0 items-center gap-2 lg:flex">
+								<Link to="/" className="shrink-0 rounded-sm transition-opacity hover:opacity-90" aria-label="Go to home">
+									<img src="/acm.png" alt="ACM" className="h-6 w-6 shrink-0 rounded-sm object-contain sm:h-7 sm:w-7" />
+								</Link>
+								<h2 className="truncate text-base font-semibold text-white sm:text-lg">{pageTitle}</h2>
+							</div>
+						</div>
+
+						<div className="pointer-events-none absolute left-1/2 flex max-w-[calc(100%-8rem)] -translate-x-1/2 items-center gap-2 lg:hidden">
+							<img src="/acm.png" alt="ACM" className="h-6 w-6 shrink-0 rounded-sm object-contain" />
+							<h2 className="truncate text-base font-semibold text-white">{pageTitle}</h2>
 						</div>
 
 						<div className="ml-auto">
