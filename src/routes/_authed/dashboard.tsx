@@ -34,28 +34,28 @@ function RouteComponent() {
 
 	const tasks: TaskItem[] = [
 		{
-			title: "Complete your academic profile",
-			description: "Confirm standing, graduation term, and basics are current.",
+			title: "Upload your profile photo",
+			description: "Add a profile image so everyone can recognize you",
+			done: Boolean(officer.photo?.url?.trim()),
+			href: "/profile",
+		},
+		{
+			title: "Update your academic information",
+			description: "Confirm standing, graduation term, and basics are current",
 			done: Boolean(officer.creditStanding && officer.yearStanding && officer.expectedGrad?.year),
 			href: "/profile",
 		},
 		{
 			title: "Add at least one experience",
-			description: "Share an internship or research item to strengthen your profile.",
+			description: "Share an internship or research item to strengthen your profile",
 			done: officer.internships.length > 0 || officer.research.length > 0,
 			href: "/profile",
 		},
 		{
 			title: "Upload latest resume",
-			description: "Keep your resume fresh for internal opportunities.",
+			description: "Keep your resume fresh for internal opportunities",
 			done: Boolean(officer.resumeUpdatedAt),
 			href: "/profile",
-		},
-		{
-			title: "Explore officer directory",
-			description: "Check who is active and discover current teams.",
-			done: false,
-			href: "/directory",
 		},
 	];
 
