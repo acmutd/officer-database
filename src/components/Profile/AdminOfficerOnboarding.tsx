@@ -84,7 +84,7 @@ export function AdminOfficerOnboarding() {
 	});
 
 	const { mutateAsync, isPending } = useMutation(createWorkspaceOfficerMutation);
-	const selectedGroups = watch("selectedGroups");
+	const selectedGroups = watch("selectedGroups") ?? [];
 	const selectedOrgUnit = watch("org_unit_path");
 
 	const onSubmit = async (data: AdminOfficerOnboardingForm) => {
