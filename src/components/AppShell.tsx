@@ -2,6 +2,7 @@ import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
+	ArrowLeft,
 	Building2,
 	ClipboardCheck,
 	Info,
@@ -141,18 +142,6 @@ export function AppShell({ children }: AppShellProps) {
 		window.localStorage.setItem(SIDEBAR_MODE_STORAGE_KEY, String(desktopCollapsed));
 	}, [desktopCollapsed]);
 
-	const handleDesktopSidebarClick = React.useCallback(
-		(event: React.MouseEvent<HTMLElement>) => {
-			const target = event.target as HTMLElement;
-			if (target.closest("a,button")) {
-				return;
-			}
-
-			setDesktopCollapsed((prev) => !prev);
-		},
-		[]
-	);
-
 	const userIsAdmin = officer ? isAdmin(officer) : false;
 	const visibleNavLinks = navLinks;
 	const visibleAdminNavLinks = userIsAdmin ? adminNavLinks : [];
@@ -171,13 +160,12 @@ export function AppShell({ children }: AppShellProps) {
 		<div className="relative min-h-screen overflow-x-clip text-white">
 			<div className="relative min-h-screen">
 				<aside
-					onClick={handleDesktopSidebarClick}
 					className={cn(
-						"fixed left-0 top-16 z-20 hidden h-[calc(100vh-4rem)] cursor-pointer border-r border-white/10 bg-black/50 backdrop-blur-md transition-[width] duration-300 ease-in-out lg:flex lg:flex-col",
+						"fixed left-0 top-16 z-20 hidden h-[calc(100vh-4rem)] border-r border-white/10 bg-black/50 backdrop-blur-md transition-[width] duration-300 ease-in-out lg:flex lg:flex-col",
 						desktopCollapsed ? "w-14" : "w-48"
 					)}
 				>
-					<nav className={cn("space-y-2 py-4 transition-all duration-300 ease-in-out", desktopCollapsed ? "px-2" : "px-3")}>
+					<nav className={cn("flex-1 space-y-2 overflow-y-auto py-4 transition-all duration-300 ease-in-out", desktopCollapsed ? "px-2" : "px-3")}>
 						{visibleNavLinks.map((item) => (
 							<Link
 								key={item.label}
@@ -187,19 +175,31 @@ export function AppShell({ children }: AppShellProps) {
 										"border-white/30 bg-white/10 text-white",
 								}}
 								className={cn(
-									"flex w-full border border-transparent text-white/80 transition-colors hover:border-white/20 hover:bg-white/5 hover:text-white",
+									"flex w-full border border-transparent text-white/80 transition-all duration-300 ease-in-out hover:border-white/20 hover:bg-white/5 hover:text-white",
 									desktopCollapsed
 										? "mx-auto h-9 w-9 items-center justify-center rounded-lg p-0"
 										: "-ml-0.5 h-9 items-center rounded-lg p-0 text-left"
 								)}
 								title={desktopCollapsed ? item.label : undefined}
 							>
-								<span className="flex h-9 w-9 shrink-0 items-center justify-center">
+								<span
+									className={cn(
+										"flex h-9 w-9 shrink-0 items-center justify-center transition-transform duration-300 ease-in-out",
+										desktopCollapsed ? "translate-x-0" : "translate-x-[-1px]"
+									)}
+								>
 									<item.icon className="h-4 w-4" />
 								</span>
-								{!desktopCollapsed && (
-									<span className="block pr-3 text-sm font-medium">{item.label}</span>
-								)}
+								<span
+									className={cn(
+										"block overflow-hidden whitespace-nowrap text-sm font-medium transition-[max-width,opacity,transform,padding] duration-300 ease-in-out",
+										desktopCollapsed
+											? "max-w-0 translate-x-1 pr-0 opacity-0"
+											: "max-w-[10rem] translate-x-0 pr-3 opacity-100"
+									)}
+								>
+									{item.label}
+								</span>
 							</Link>
 						))}
 
@@ -219,26 +219,38 @@ export function AppShell({ children }: AppShellProps) {
 											className: "border-white/30 bg-white/10 text-white",
 										}}
 										className={cn(
-											"flex w-full border border-transparent text-white/80 transition-colors hover:border-white/20 hover:bg-white/5 hover:text-white",
+											"flex w-full border border-transparent text-white/80 transition-all duration-300 ease-in-out hover:border-white/20 hover:bg-white/5 hover:text-white",
 											desktopCollapsed
 												? "mx-auto h-9 w-9 items-center justify-center rounded-lg p-0"
 												: "-ml-0.5 h-9 items-center rounded-lg p-0 text-left"
 										)}
 										title={desktopCollapsed ? item.label : undefined}
 									>
-										<span className="flex h-9 w-9 shrink-0 items-center justify-center">
+										<span
+											className={cn(
+												"flex h-9 w-9 shrink-0 items-center justify-center transition-transform duration-300 ease-in-out",
+												desktopCollapsed ? "translate-x-0" : "translate-x-[-1px]"
+											)}
+										>
 											<item.icon className="h-4 w-4" />
 										</span>
-										{!desktopCollapsed && (
-											<span className="block pr-3 text-sm font-medium">{item.label}</span>
-										)}
+										<span
+											className={cn(
+												"block overflow-hidden whitespace-nowrap text-sm font-medium transition-[max-width,opacity,transform,padding] duration-300 ease-in-out",
+												desktopCollapsed
+													? "max-w-0 translate-x-1 pr-0 opacity-0"
+													: "max-w-[10rem] translate-x-0 pr-3 opacity-100"
+											)}
+										>
+											{item.label}
+										</span>
 									</Link>
 								))}
 								<button
 									disabled
 									aria-disabled="true"
 									className={cn(
-										"flex w-full border border-dashed border-white/20 text-white/45",
+										"flex w-full border border-dashed border-white/20 text-white/45 transition-all duration-300 ease-in-out",
 										desktopCollapsed
 											? "mx-auto h-9 w-9 items-center justify-center rounded-lg p-0"
 											: "-ml-0.5 h-9 items-center rounded-lg p-0 text-left",
@@ -246,16 +258,46 @@ export function AppShell({ children }: AppShellProps) {
 									)}
 									title={desktopCollapsed ? "ACM HR (Coming Soon)" : undefined}
 								>
-									<span className="flex h-9 w-9 shrink-0 items-center justify-center">
+									<span
+										className={cn(
+											"flex h-9 w-9 shrink-0 items-center justify-center transition-transform duration-300 ease-in-out",
+											desktopCollapsed ? "translate-x-0" : "translate-x-[-1px]"
+										)}
+									>
 										<Building2 className="h-4 w-4" />
 									</span>
-									{!desktopCollapsed && (
-										<span className="block pr-3 text-sm font-medium">ACM HR</span>
-									)}
+									<span
+										className={cn(
+											"block overflow-hidden whitespace-nowrap text-sm font-medium transition-[max-width,opacity,transform,padding] duration-300 ease-in-out",
+											desktopCollapsed
+												? "max-w-0 translate-x-1 pr-0 opacity-0"
+												: "max-w-[10rem] translate-x-0 pr-3 opacity-100"
+										)}
+									>
+										ACM HR
+									</span>
 								</button>
 							</>
 						)}
 					</nav>
+					<div className={cn("border-t border-white/10 py-3", desktopCollapsed ? "px-2" : "px-3")}>
+						<button
+							onClick={() => setDesktopCollapsed((prev) => !prev)}
+							className={cn(
+								"flex h-9 w-full items-center rounded-lg border border-white/15 bg-white/5 text-white/90 transition-colors hover:bg-white/10",
+								"justify-center"
+							)}
+							aria-label={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+							title={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+						>
+							<ArrowLeft
+								className={cn(
+									"h-4 w-4 transition-transform duration-300 ease-in-out",
+									desktopCollapsed ? "rotate-180" : "rotate-0"
+								)}
+							/>
+						</button>
+					</div>
 				</aside>
 
 				<div
@@ -337,14 +379,6 @@ export function AppShell({ children }: AppShellProps) {
 								onClick={() => setMobileOpen(true)}
 								className="rounded-lg border border-white/15 p-2 text-white lg:hidden"
 								aria-label="Open menu"
-							>
-								<Menu className="h-4 w-4" />
-							</button>
-							<button
-								onClick={() => setDesktopCollapsed((prev) => !prev)}
-								className="hidden rounded-lg border border-white/15 p-2 text-white transition-colors hover:bg-white/10 lg:inline-flex"
-								aria-label={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-								title={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
 							>
 								<Menu className="h-4 w-4" />
 							</button>
