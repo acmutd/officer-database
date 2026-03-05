@@ -173,11 +173,11 @@ export function AppShell({ children }: AppShellProps) {
 				<aside
 					onClick={handleDesktopSidebarClick}
 					className={cn(
-						"fixed left-0 top-16 z-20 hidden h-[calc(100vh-4rem)] cursor-pointer border-r border-white/10 bg-black/50 backdrop-blur-md lg:flex lg:flex-col",
+						"fixed left-0 top-16 z-20 hidden h-[calc(100vh-4rem)] cursor-pointer border-r border-white/10 bg-black/50 backdrop-blur-md transition-[width] duration-300 ease-in-out lg:flex lg:flex-col",
 						desktopCollapsed ? "w-14" : "w-48"
 					)}
 				>
-					<nav className={cn("space-y-2 py-4", desktopCollapsed ? "px-2" : "px-3")}>
+					<nav className={cn("space-y-2 py-4 transition-all duration-300 ease-in-out", desktopCollapsed ? "px-2" : "px-3")}>
 						{visibleNavLinks.map((item) => (
 							<Link
 								key={item.label}
@@ -258,12 +258,16 @@ export function AppShell({ children }: AppShellProps) {
 					</nav>
 				</aside>
 
-				{mobileOpen && (
-					<div className="fixed inset-x-0 bottom-0 top-16 z-40 bg-black/70 backdrop-blur-sm lg:hidden" onClick={() => setMobileOpen(false)} />
-				)}
+				<div
+					className={cn(
+						"fixed inset-x-0 bottom-0 top-16 z-40 bg-black/70 backdrop-blur-sm transition-opacity duration-300 ease-in-out lg:hidden",
+						mobileOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+					)}
+					onClick={() => setMobileOpen(false)}
+				/>
 				<aside
 					className={cn(
-						"fixed left-0 top-16 z-50 h-[calc(100vh-4rem)] w-72 max-w-[88vw] border-r border-white/10 bg-black/95 px-4 py-5 transition-transform duration-300 lg:hidden",
+						"fixed left-0 top-16 z-50 h-[calc(100vh-4rem)] w-72 max-w-[88vw] border-r border-white/10 bg-black/95 px-4 py-5 transition-transform duration-300 ease-in-out lg:hidden",
 						mobileOpen ? "translate-x-0" : "-translate-x-full"
 					)}
 				>
@@ -357,7 +361,7 @@ export function AppShell({ children }: AppShellProps) {
 						<ProfileMenu />
 					</header>
 
-					<main className={cn("flex-1 px-2 py-5 sm:px-3 lg:px-4 lg:py-8", desktopCollapsed ? "lg:pl-16" : "lg:pl-52")}>
+					<main className={cn("flex-1 px-2 py-5 transition-[padding-left] duration-300 ease-in-out sm:px-3 lg:px-4 lg:py-8", desktopCollapsed ? "lg:pl-16" : "lg:pl-52")}>
 						<div className="w-full">{children}</div>
 					</main>
 				</div>
