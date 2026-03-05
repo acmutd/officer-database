@@ -28,25 +28,21 @@ const SIDEBAR_MODE_STORAGE_KEY = "officer-db-sidebar-collapsed";
 const navLinks = [
 	{
 		label: "Dashboard",
-		description: "Welcome and quick tasks",
 		to: "/landing" as const,
 		icon: LayoutDashboard,
 	},
 	{
 		label: "Directory",
-		description: "Explore officer records",
 		to: "/directory" as const,
 		icon: Users,
 	},
 	{
 		label: "Information",
-		description: "ACM resources and tools",
 		to: "/dashboard" as const,
 		icon: Info,
 	},
 	{
 		label: "Onboard",
-		description: "Officer onboarding tools",
 		to: "/onboard" as const,
 		icon: ClipboardCheck,
 		requiresAdmin: true,
@@ -160,20 +156,10 @@ export function AppShell({ children }: AppShellProps) {
 			<div className="relative min-h-screen">
 				<aside
 					className={cn(
-						"fixed left-0 top-0 z-30 hidden h-screen border-r border-white/10 bg-black/50 backdrop-blur-md lg:flex lg:flex-col",
-						desktopCollapsed ? "w-20" : "w-56"
+						"fixed left-0 top-16 z-20 hidden h-[calc(100vh-4rem)] border-r border-white/10 bg-black/50 backdrop-blur-md lg:flex lg:flex-col",
+						desktopCollapsed ? "w-16" : "w-48"
 					)}
 				>
-					<div className={cn("border-b border-white/10 py-4", desktopCollapsed ? "px-2" : "px-3") }>
-						<button
-							onClick={() => setDesktopCollapsed((prev) => !prev)}
-							className="flex w-full items-center justify-center rounded-xl border border-white/15 bg-white/5 p-2 text-white transition-colors hover:bg-white/10"
-							aria-label={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-							title={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-						>
-							<Menu className="h-4 w-4" />
-						</button>
-					</div>
 					<nav className={cn("space-y-2 py-4", desktopCollapsed ? "px-2" : "px-3")}>
 						{visibleNavLinks.map((item) => (
 							<Link
@@ -187,16 +173,13 @@ export function AppShell({ children }: AppShellProps) {
 									"flex w-full rounded-2xl border border-transparent text-white/80 transition-colors hover:border-white/20 hover:bg-white/5 hover:text-white",
 									desktopCollapsed
 										? "items-center justify-center px-2 py-3"
-										: "items-start gap-3 px-3 py-3 text-left"
+										: "items-center gap-3 px-3 py-3 text-left"
 								)}
 								title={desktopCollapsed ? item.label : undefined}
 							>
-								<item.icon className="mt-0.5 h-4 w-4 shrink-0" />
+								<item.icon className="h-4 w-4 shrink-0" />
 								{!desktopCollapsed && (
-									<span>
-										<span className="block text-sm font-medium">{item.label}</span>
-										<span className="block text-xs text-white/55">{item.description}</span>
-									</span>
+									<span className="block text-sm font-medium">{item.label}</span>
 								)}
 							</Link>
 						))}
@@ -204,16 +187,18 @@ export function AppShell({ children }: AppShellProps) {
 				</aside>
 
 				{mobileOpen && (
-					<div className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm lg:hidden" onClick={() => setMobileOpen(false)} />
+					<div className="fixed inset-x-0 bottom-0 top-16 z-40 bg-black/70 backdrop-blur-sm lg:hidden" onClick={() => setMobileOpen(false)} />
 				)}
 				<aside
 					className={cn(
-						"fixed left-0 top-0 z-50 h-screen w-80 max-w-[90vw] border-r border-white/10 bg-black/95 px-4 py-5 transition-transform duration-300 lg:hidden",
+						"fixed left-0 top-16 z-50 h-[calc(100vh-4rem)] w-72 max-w-[88vw] border-r border-white/10 bg-black/95 px-4 py-5 transition-transform duration-300 lg:hidden",
 						mobileOpen ? "translate-x-0" : "-translate-x-full"
 					)}
 				>
 					<div className="mb-6 flex items-center justify-between">
-						<p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/80">Officer Hub</p>
+						<Link to="/landing" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 rounded-lg px-1 py-1 text-white transition-colors hover:bg-white/10">
+							<img src="/acm.png" alt="ACM" className="h-6 w-6 rounded-sm object-contain" />
+						</Link>
 						<button
 							onClick={() => setMobileOpen(false)}
 							className="rounded-lg border border-white/20 p-2 text-white"
@@ -229,21 +214,19 @@ export function AppShell({ children }: AppShellProps) {
 								to={item.to}
 								onClick={() => setMobileOpen(false)}
 								activeProps={{ className: "border-white/30 bg-white/10 text-white" }}
-								className="flex w-full items-start gap-3 rounded-2xl border border-transparent px-3 py-3 text-left text-white/80"
+								className="flex w-full items-center gap-3 rounded-2xl border border-transparent px-3 py-3 text-left text-white/80"
 							>
-								<item.icon className="mt-0.5 h-4 w-4 shrink-0" />
-								<span>
-									<span className="block text-sm font-medium">{item.label}</span>
-									<span className="block text-xs text-white/55">{item.description}</span>
-								</span>
+								<item.icon className="h-4 w-4 shrink-0" />
+								<span className="block text-sm font-medium">{item.label}</span>
 							</Link>
 						))}
 					</nav>
 				</aside>
 
-				<div className={cn("min-w-0 flex flex-1 flex-col", desktopCollapsed ? "lg:pl-20" : "lg:pl-56")}>
-					<header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-black/45 px-4 backdrop-blur-md sm:px-6 lg:px-8">
-						<div className="flex min-w-0 items-center gap-3">
+				<div className="min-w-0 flex flex-1 flex-col">
+					<header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-black/45 pr-4 backdrop-blur-md sm:pr-6 lg:pr-8">
+						<div className="flex min-w-0 items-center">
+							<div className="flex shrink-0 items-center gap-3 pl-2 sm:pl-3">
 							<button
 								onClick={() => setMobileOpen(true)}
 								className="rounded-lg border border-white/15 p-2 text-white lg:hidden"
@@ -251,7 +234,19 @@ export function AppShell({ children }: AppShellProps) {
 							>
 								<Menu className="h-4 w-4" />
 							</button>
-							<div>
+							<button
+								onClick={() => setDesktopCollapsed((prev) => !prev)}
+								className="hidden rounded-lg border border-white/15 p-2 text-white transition-colors hover:bg-white/10 lg:inline-flex"
+								aria-label={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+								title={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+							>
+								<Menu className="h-4 w-4" />
+							</button>
+							<Link to="/" className="shrink-0 rounded-sm transition-opacity hover:opacity-90" aria-label="Go to home">
+								<img src="/acm.png" alt="ACM" className="h-7 w-7 shrink-0 rounded-sm object-contain" />
+							</Link>
+							</div>
+							<div className="ml-3 min-w-0 sm:ml-4">
 								<p className="text-xs uppercase tracking-[0.2em] text-white/60">ACM UTD Officer Database</p>
 								<h2 className="truncate text-lg font-semibold text-white">{pageTitle}</h2>
 							</div>
@@ -260,7 +255,7 @@ export function AppShell({ children }: AppShellProps) {
 						<ProfileMenu />
 					</header>
 
-					<main className="flex-1 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
+					<main className={cn("flex-1 px-4 py-5 sm:px-6 lg:px-8 lg:py-8", desktopCollapsed ? "lg:pl-20" : "lg:pl-52")}>
 						<div className="mx-auto w-full max-w-7xl">{children}</div>
 					</main>
 				</div>
