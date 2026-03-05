@@ -157,7 +157,7 @@ export function AppShell({ children }: AppShellProps) {
 				<aside
 					className={cn(
 						"fixed left-0 top-16 z-20 hidden h-[calc(100vh-4rem)] border-r border-white/10 bg-black/50 backdrop-blur-md lg:flex lg:flex-col",
-						desktopCollapsed ? "w-16" : "w-48"
+						desktopCollapsed ? "w-14" : "w-48"
 					)}
 				>
 					<nav className={cn("space-y-2 py-4", desktopCollapsed ? "px-2" : "px-3")}>
@@ -170,16 +170,18 @@ export function AppShell({ children }: AppShellProps) {
 										"border-white/30 bg-white/10 text-white",
 								}}
 								className={cn(
-									"flex w-full rounded-2xl border border-transparent text-white/80 transition-colors hover:border-white/20 hover:bg-white/5 hover:text-white",
+									"flex w-full border border-transparent text-white/80 transition-colors hover:border-white/20 hover:bg-white/5 hover:text-white",
 									desktopCollapsed
-										? "items-center justify-center px-2 py-3"
-										: "items-center gap-3 px-3 py-3 text-left"
+										? "mx-auto h-9 w-9 items-center justify-center rounded-lg p-0"
+										: "-ml-0.5 h-9 items-center rounded-lg p-0 text-left"
 								)}
 								title={desktopCollapsed ? item.label : undefined}
 							>
-								<item.icon className="h-4 w-4 shrink-0" />
+								<span className="flex h-9 w-9 shrink-0 items-center justify-center">
+									<item.icon className="h-4 w-4" />
+								</span>
 								{!desktopCollapsed && (
-									<span className="block text-sm font-medium">{item.label}</span>
+									<span className="block pr-3 text-sm font-medium">{item.label}</span>
 								)}
 							</Link>
 						))}
@@ -255,7 +257,7 @@ export function AppShell({ children }: AppShellProps) {
 						<ProfileMenu />
 					</header>
 
-					<main className={cn("flex-1 px-4 py-5 sm:px-6 lg:px-8 lg:py-8", desktopCollapsed ? "lg:pl-20" : "lg:pl-52")}>
+					<main className={cn("flex-1 px-4 py-5 sm:px-6 lg:px-8 lg:py-8", desktopCollapsed ? "lg:pl-16" : "lg:pl-52")}>
 						<div className="mx-auto w-full max-w-7xl">{children}</div>
 					</main>
 				</div>
