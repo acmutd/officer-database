@@ -2,6 +2,7 @@ import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
+	Building2,
 	ClipboardCheck,
 	Info,
 	LayoutDashboard,
@@ -41,11 +42,13 @@ const navLinks = [
 		to: "/resources" as const,
 		icon: Info,
 	},
+];
+
+const adminNavLinks = [
 	{
 		label: "Onboarding",
 		to: "/onboarding" as const,
 		icon: ClipboardCheck,
-		requiresAdmin: true,
 	},
 ];
 
@@ -139,7 +142,8 @@ export function AppShell({ children }: AppShellProps) {
 	}, [desktopCollapsed]);
 
 	const userIsAdmin = officer ? isAdmin(officer) : false;
-	const visibleNavLinks = navLinks.filter((item) => !item.requiresAdmin || userIsAdmin);
+	const visibleNavLinks = navLinks;
+	const visibleAdminNavLinks = userIsAdmin ? adminNavLinks : [];
 
 	const pageTitle = pathname.startsWith("/directory")
 		? "Directory"
@@ -185,6 +189,59 @@ export function AppShell({ children }: AppShellProps) {
 								)}
 							</Link>
 						))}
+
+						{visibleAdminNavLinks.length > 0 && (
+							<>
+								<div className={cn("my-2 border-t border-white/15", desktopCollapsed ? "mx-1" : "mx-0.5")} />
+								{!desktopCollapsed && (
+									<p className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/55">
+										Admin Section
+									</p>
+								)}
+								{visibleAdminNavLinks.map((item) => (
+									<Link
+										key={item.label}
+										to={item.to}
+										activeProps={{
+											className: "border-white/30 bg-white/10 text-white",
+										}}
+										className={cn(
+											"flex w-full border border-transparent text-white/80 transition-colors hover:border-white/20 hover:bg-white/5 hover:text-white",
+											desktopCollapsed
+												? "mx-auto h-9 w-9 items-center justify-center rounded-lg p-0"
+												: "-ml-0.5 h-9 items-center rounded-lg p-0 text-left"
+										)}
+										title={desktopCollapsed ? item.label : undefined}
+									>
+										<span className="flex h-9 w-9 shrink-0 items-center justify-center">
+											<item.icon className="h-4 w-4" />
+										</span>
+										{!desktopCollapsed && (
+											<span className="block pr-3 text-sm font-medium">{item.label}</span>
+										)}
+									</Link>
+								))}
+								<button
+									disabled
+									aria-disabled="true"
+									className={cn(
+										"flex w-full border border-dashed border-white/20 text-white/45",
+										desktopCollapsed
+											? "mx-auto h-9 w-9 items-center justify-center rounded-lg p-0"
+											: "-ml-0.5 h-9 items-center rounded-lg p-0 text-left",
+										"cursor-not-allowed"
+									)}
+									title={desktopCollapsed ? "ACM HR (Coming Soon)" : undefined}
+								>
+									<span className="flex h-9 w-9 shrink-0 items-center justify-center">
+										<Building2 className="h-4 w-4" />
+									</span>
+									{!desktopCollapsed && (
+										<span className="block pr-3 text-sm font-medium">ACM HR</span>
+									)}
+								</button>
+							</>
+						)}
 					</nav>
 				</aside>
 
@@ -222,6 +279,36 @@ export function AppShell({ children }: AppShellProps) {
 								<span className="block text-sm font-medium">{item.label}</span>
 							</Link>
 						))}
+
+						{visibleAdminNavLinks.length > 0 && (
+							<>
+								<div className="my-3 border-t border-white/15" />
+								<p className="px-1 pb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/55">
+									Admin Section
+								</p>
+								{visibleAdminNavLinks.map((item) => (
+									<Link
+										key={item.label}
+										to={item.to}
+										onClick={() => setMobileOpen(false)}
+										activeProps={{ className: "border-white/30 bg-white/10 text-white" }}
+										className="flex w-full items-center gap-3 rounded-2xl border border-transparent px-3 py-3 text-left text-white/80"
+									>
+										<item.icon className="h-4 w-4 shrink-0" />
+										<span className="block text-sm font-medium">{item.label}</span>
+									</Link>
+								))}
+								<button
+									disabled
+									aria-disabled="true"
+									className="flex w-full cursor-not-allowed items-center gap-3 rounded-2xl border border-dashed border-white/20 px-3 py-3 text-left text-white/45"
+									title="ACM HR (Coming Soon)"
+								>
+									<Building2 className="h-4 w-4 shrink-0" />
+									<span className="block text-sm font-medium">ACM HR</span>
+								</button>
+							</>
+						)}
 					</nav>
 				</aside>
 
