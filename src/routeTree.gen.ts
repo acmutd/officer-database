@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as AuthedIndexRouteImport } from './routes/_authed/index'
+import { Route as AuthedResourcesRouteImport } from './routes/_authed/resources'
 import { Route as AuthedProfileRouteImport } from './routes/_authed/profile'
+import { Route as AuthedOnboardingRouteImport } from './routes/_authed/onboarding'
 import { Route as AuthedOnboardRouteImport } from './routes/_authed/onboard'
 import { Route as AuthedLandingRouteImport } from './routes/_authed/landing'
 import { Route as AuthedDirectoryRouteImport } from './routes/_authed/directory'
@@ -34,9 +36,19 @@ const AuthedIndexRoute = AuthedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedResourcesRoute = AuthedResourcesRouteImport.update({
+  id: '/resources',
+  path: '/resources',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedProfileRoute = AuthedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedOnboardingRoute = AuthedOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => AuthedRoute,
 } as any)
 const AuthedOnboardRoute = AuthedOnboardRouteImport.update({
@@ -77,7 +89,9 @@ export interface FileRoutesByFullPath {
   '/directory': typeof AuthedDirectoryRouteWithChildren
   '/landing': typeof AuthedLandingRoute
   '/onboard': typeof AuthedOnboardRoute
+  '/onboarding': typeof AuthedOnboardingRoute
   '/profile': typeof AuthedProfileRoute
+  '/resources': typeof AuthedResourcesRoute
   '/directory/$userId': typeof AuthedDirectoryUserIdRoute
   '/directory/': typeof AuthedDirectoryIndexRoute
 }
@@ -86,7 +100,9 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthedDashboardRoute
   '/landing': typeof AuthedLandingRoute
   '/onboard': typeof AuthedOnboardRoute
+  '/onboarding': typeof AuthedOnboardingRoute
   '/profile': typeof AuthedProfileRoute
+  '/resources': typeof AuthedResourcesRoute
   '/': typeof AuthedIndexRoute
   '/directory/$userId': typeof AuthedDirectoryUserIdRoute
   '/directory': typeof AuthedDirectoryIndexRoute
@@ -99,7 +115,9 @@ export interface FileRoutesById {
   '/_authed/directory': typeof AuthedDirectoryRouteWithChildren
   '/_authed/landing': typeof AuthedLandingRoute
   '/_authed/onboard': typeof AuthedOnboardRoute
+  '/_authed/onboarding': typeof AuthedOnboardingRoute
   '/_authed/profile': typeof AuthedProfileRoute
+  '/_authed/resources': typeof AuthedResourcesRoute
   '/_authed/': typeof AuthedIndexRoute
   '/_authed/directory/$userId': typeof AuthedDirectoryUserIdRoute
   '/_authed/directory/': typeof AuthedDirectoryIndexRoute
@@ -113,7 +131,9 @@ export interface FileRouteTypes {
     | '/directory'
     | '/landing'
     | '/onboard'
+    | '/onboarding'
     | '/profile'
+    | '/resources'
     | '/directory/$userId'
     | '/directory/'
   fileRoutesByTo: FileRoutesByTo
@@ -122,7 +142,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/landing'
     | '/onboard'
+    | '/onboarding'
     | '/profile'
+    | '/resources'
     | '/'
     | '/directory/$userId'
     | '/directory'
@@ -134,7 +156,9 @@ export interface FileRouteTypes {
     | '/_authed/directory'
     | '/_authed/landing'
     | '/_authed/onboard'
+    | '/_authed/onboarding'
     | '/_authed/profile'
+    | '/_authed/resources'
     | '/_authed/'
     | '/_authed/directory/$userId'
     | '/_authed/directory/'
@@ -168,11 +192,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedIndexRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/resources': {
+      id: '/_authed/resources'
+      path: '/resources'
+      fullPath: '/resources'
+      preLoaderRoute: typeof AuthedResourcesRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/profile': {
       id: '/_authed/profile'
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof AuthedProfileRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/onboarding': {
+      id: '/_authed/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthedOnboardingRouteImport
       parentRoute: typeof AuthedRoute
     }
     '/_authed/onboard': {
@@ -239,7 +277,9 @@ interface AuthedRouteChildren {
   AuthedDirectoryRoute: typeof AuthedDirectoryRouteWithChildren
   AuthedLandingRoute: typeof AuthedLandingRoute
   AuthedOnboardRoute: typeof AuthedOnboardRoute
+  AuthedOnboardingRoute: typeof AuthedOnboardingRoute
   AuthedProfileRoute: typeof AuthedProfileRoute
+  AuthedResourcesRoute: typeof AuthedResourcesRoute
   AuthedIndexRoute: typeof AuthedIndexRoute
 }
 
@@ -248,7 +288,9 @@ const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedDirectoryRoute: AuthedDirectoryRouteWithChildren,
   AuthedLandingRoute: AuthedLandingRoute,
   AuthedOnboardRoute: AuthedOnboardRoute,
+  AuthedOnboardingRoute: AuthedOnboardingRoute,
   AuthedProfileRoute: AuthedProfileRoute,
+  AuthedResourcesRoute: AuthedResourcesRoute,
   AuthedIndexRoute: AuthedIndexRoute,
 }
 

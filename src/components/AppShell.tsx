@@ -28,7 +28,7 @@ const SIDEBAR_MODE_STORAGE_KEY = "officer-db-sidebar-collapsed";
 const navLinks = [
 	{
 		label: "Dashboard",
-		to: "/landing" as const,
+		to: "/dashboard" as const,
 		icon: LayoutDashboard,
 	},
 	{
@@ -37,13 +37,13 @@ const navLinks = [
 		icon: Users,
 	},
 	{
-		label: "Information",
-		to: "/dashboard" as const,
+		label: "Resources",
+		to: "/resources" as const,
 		icon: Info,
 	},
 	{
-		label: "Onboard",
-		to: "/onboard" as const,
+		label: "Onboarding",
+		to: "/onboarding" as const,
 		icon: ClipboardCheck,
 		requiresAdmin: true,
 	},
@@ -143,12 +143,12 @@ export function AppShell({ children }: AppShellProps) {
 
 	const pageTitle = pathname.startsWith("/directory")
 		? "Directory"
-		: pathname.startsWith("/landing")
-			? "Dashboard"
 		: pathname.startsWith("/dashboard")
-			? "Information"
-		: pathname.startsWith("/onboard")
-			? "Onboard"
+			? "Dashboard"
+		: pathname.startsWith("/resources")
+			? "Resources"
+		: pathname.startsWith("/onboarding")
+			? "Onboarding"
 			: "My Profile";
 
 	return (
@@ -198,7 +198,7 @@ export function AppShell({ children }: AppShellProps) {
 					)}
 				>
 					<div className="mb-6 flex items-center justify-between">
-						<Link to="/landing" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 rounded-lg px-1 py-1 text-white transition-colors hover:bg-white/10">
+						<Link to="/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 rounded-lg px-1 py-1 text-white transition-colors hover:bg-white/10">
 							<img src="/acm.png" alt="ACM" className="h-6 w-6 rounded-sm object-contain" />
 						</Link>
 						<button
