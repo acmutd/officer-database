@@ -29,35 +29,55 @@ const AdminOfficerOnboardingSchema = CreateWorkspaceOfficerSchema.extend({
 type AdminOfficerOnboardingForm = z.infer<typeof AdminOfficerOnboardingSchema>;
 
 const GROUP_OPTIONS = [
-	"acmindustry",
-	"education",
-	"hackutd-finance",
-	"hackutd",
-	"outreach",
-	"tip",
-	"community",
-	"finance-team",
-	"hackutd-logistics",
-	"hackutdindustry",
-	"projects",
-	"sponsor",
-	"development",
-	"hackutd-experience",
-	"hackutd-marketing",
 	"media",
 	"research",
+	"development",
+	"projects",
+	"education",
+	"tip",
+	"community",
+	"outreach",
+	"acmindustry",
+	"finance-team",
+	"hackutd",
+	"hackutd-finance",
+	"hackutd-logistics",
+	"hackutdindustry",
+	"hackutd-experience",
+	"hackutd-marketing",
+	"sponsor",
 ] as const;
 
+const GROUP_ALIASES: Record<(typeof GROUP_OPTIONS)[number], string> = {
+	media: "Media",
+	research: "Research",
+	development: "Development",
+	projects: "Projects",
+	acmindustry: "ACM Industry",
+	education: "Education",
+	tip: "TIP",
+	community: "Community",
+	outreach: "Outreach",
+	"finance-team": "Finance Team",
+	hackutd: "HackUTD",
+	"hackutd-finance": "HackUTD Finance",
+	"hackutd-logistics": "HackUTD Logistics",
+	hackutdindustry: "HackUTD Industry",
+	"hackutd-experience": "HackUTD Experience",
+	"hackutd-marketing": "HackUTD Marketing",
+	sponsor: "Sponsor",
+};
+
 const ORG_UNIT_OPTIONS = [
-	{ label: "Development", value: "/Development" },
-	{ label: "Community", value: "/Community" },
-	{ label: "Education", value: "/Education" },
-	{ label: "HackUTD", value: "/HackUTD" },
-	{ label: "Industry", value: "/Industry" },
 	{ label: "Media", value: "/Media" },
 	{ label: "Research", value: "/Research" },
+	{ label: "Development", value: "/Development" },
 	{ label: "Projects", value: "/Projects" },
-	{ label: "Sponsorship", value: "/Sponsorship" },
+	{ label: "Education", value: "/Education" },
+	{ label: "Community", value: "/Community" },
+	{ label: "HackUTD", value: "/HackUTD" },
+	{ label: "Industry", value: "/Industry" },
+	{ label: "Sponsor", value: "/Sponsorship" },
 ];
 
 function toGroupEmail(groupName: string) {
@@ -138,6 +158,7 @@ export function AdminOfficerOnboarding() {
 								<Input
 									id="first_name"
 									className="border-white/10 bg-white/5 text-white"
+									placeholder="Bobby"
 									{...register("first_name")}
 								/>
 								<FieldError errors={[errors.first_name]} />
@@ -152,6 +173,7 @@ export function AdminOfficerOnboarding() {
 								<Input
 									id="last_name"
 									className="border-white/10 bg-white/5 text-white"
+									placeholder="Balls"
 									{...register("last_name")}
 								/>
 								<FieldError errors={[errors.last_name]} />
@@ -166,6 +188,7 @@ export function AdminOfficerOnboarding() {
 								<Input
 									id="send_to_email"
 									type="email"
+									placeholder="bobbyballs@gmail.com"
 									className="border-white/10 bg-white/5 text-white"
 									{...register("send_to_email")}
 								/>
@@ -176,7 +199,7 @@ export function AdminOfficerOnboarding() {
 						<Field>
 							<FieldContent>
 								<FieldLabel htmlFor="org_unit_path" className="text-white/70">
-									Organization Unit
+									Division
 								</FieldLabel>
 								<Select
 									value={selectedOrgUnit}
@@ -204,7 +227,7 @@ export function AdminOfficerOnboarding() {
 					<Field>
 						<FieldContent>
 							<FieldLabel className="text-white/70">Groups</FieldLabel>
-							<div className="grid grid-cols-1 gap-x-8 gap-y-2 pt-1 sm:grid-cols-2 lg:grid-cols-3">
+							<div className="grid grid-cols-1 gap-x-8 gap-y-2 pt-1 sm:grid-cols-2 lg:auto-cols-fr lg:grid-flow-col lg:grid-rows-6">
 								{GROUP_OPTIONS.map((groupName) => {
 									const checked = selectedGroups.includes(groupName);
 
@@ -234,7 +257,7 @@ export function AdminOfficerOnboarding() {
 												}}
 												className="size-4 rounded border border-white/20 bg-white/5 accent-white"
 											/>
-											<span>{groupName}</span>
+											<span>{GROUP_ALIASES[groupName]}</span>
 										</label>
 									);
 								})}
