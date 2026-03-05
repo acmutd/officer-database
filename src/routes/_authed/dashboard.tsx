@@ -4,7 +4,15 @@ import { useAuth } from "@/lib/auth";
 import { getOfficerQuery } from "@/queries/officer";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
-import { CheckCircle2, CircleDashed, ClipboardList, Sparkles } from "lucide-react";
+import {
+	CheckCircle2,
+	Clock3,
+	CircleDashed,
+	ClipboardList,
+	IdCard,
+	Milestone,
+	Sparkles,
+} from "lucide-react";
 
 export const Route = createFileRoute("/_authed/dashboard")({
 	component: RouteComponent,
@@ -31,6 +39,39 @@ function RouteComponent() {
 	}
 
 	const firstName = officer.firstName || user?.displayName?.split(" ")[0] || "Officer";
+	const socialLinksCount = Object.values(officer.socialLinks ?? {}).filter((value) =>
+		Boolean(value?.trim())
+	).length;
+	const termOrder: Record<"Spring" | "Summer" | "Fall", number> = {
+		Spring: 0,
+		Summer: 1,
+		Fall: 2,
+	};
+
+	const sortedRoles = [...officer.roles].sort((a, b) => {
+		if (a.startDate.year !== b.startDate.year) {
+			return b.startDate.year - a.startDate.year;
+		}
+		return termOrder[b.startDate.term] - termOrder[a.startDate.term];
+	});
+	const activeRole = officer.roles.find((role) => role.endDate === null) ?? sortedRoles[0];
+	const accessLevelLabel =
+		officer.accessLevel === 3 ? "Executive" : officer.accessLevel === 2 ? "Director" : "Officer";
+
+	const resumeDate = officer.resumeUpdatedAt ? new Date(officer.resumeUpdatedAt) : null;
+	const resumeAgeDays = resumeDate
+		? Math.floor((Date.now() - resumeDate.getTime()) / (1000 * 60 * 60 * 24))
+		: null;
+	const resumeFreshness =
+		resumeAgeDays === null
+			? "No resume uploaded"
+			: resumeAgeDays <= 45
+				? "Resume looks fresh"
+				: resumeAgeDays <= 120
+					? "Resume may need a refresh soon"
+					: "Resume is likely stale";
+	const formatTerm = (term: { term: "Fall" | "Spring" | "Summer"; year: number }) =>
+		`${term.term} ${term.year}`;
 
 	const tasks: TaskItem[] = [
 		{
@@ -46,9 +87,9 @@ function RouteComponent() {
 			href: "/profile",
 		},
 		{
-			title: "Add at least one experience",
-			description: "Share an internship or research item to strengthen your profile",
-			done: officer.internships.length > 0 || officer.research.length > 0,
+			title: "Add your LinkedIn",
+			description: "Include your LinkedIn profile in social links so officers can connect",
+			done: Boolean(officer.socialLinks?.linkedin?.trim()),
 			href: "/profile",
 		},
 		{
@@ -107,17 +148,73 @@ function RouteComponent() {
 				</div>
 
 				<div className="rounded-2xl border border-white/10 bg-black/30 p-5">
-					<h2 className="text-lg font-semibold text-white">Quick Links</h2>
-					<div className="mt-4 space-y-2 text-sm">
-						<Link to="/resources" className="block rounded-lg border border-white/10 px-3 py-2 text-white/80 hover:bg-white/5">
-							Open resources
-						</Link>
-						<Link to="/directory" className="block rounded-lg border border-white/10 px-3 py-2 text-white/80 hover:bg-white/5">
-							Browse officer directory
-						</Link>
-						<Link to="/profile" className="block rounded-lg border border-white/10 px-3 py-2 text-white/80 hover:bg-white/5">
-							Edit my profile
-						</Link>
+					<h2 className="flex items-center gap-2 text-lg font-semibold text-white">
+						<IdCard className="h-5 w-5" />
+						My ACM Snapshot
+					</h2>
+					<div className="mt-4 space-y-4">
+						<div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+							<p className="text-xs uppercase tracking-wide text-white/60">Current role</p>
+							<p className="mt-1 text-lg font-semibold text-white">
+								{activeRole?.title ?? "No role assigned"}
+							</p>
+							<p className="text-xs text-white/65">
+								{activeRole ? `${activeRole.division} Division` : "Ask leadership to update your role"}
+							</p>
+							<div className="mt-3 flex items-center justify-between text-xs text-white/70">
+								<span className="rounded-full border border-white/15 px-2 py-1">{accessLevelLabel}</span>
+								<span>Joined {formatTerm(officer.joinDate)}</span>
+							</div>
+						</div>
+
+						<div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+							<p className="flex items-center gap-2 text-sm font-medium text-white">
+								<Milestone className="h-4 w-4" />
+								Timeline
+							</p>
+							<div className="mt-3 space-y-2 text-xs text-white/75">
+								<p>Expected graduation: {formatTerm(officer.expectedGrad)}</p>
+								<p>
+									Latest resume update:{" "}
+									{resumeDate ? resumeDate.toLocaleDateString() : "No resume uploaded"}
+								</p>
+								<p>
+									Profile photo updated:{" "}
+									{officer.photo?.lastUpdatedAt
+										? new Date(officer.photo.lastUpdatedAt).toLocaleDateString()
+										: "No photo upload yet"}
+								</p>
+							</div>
+						</div>
+
+						<div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+							<p className="flex items-center gap-2 text-xs uppercase tracking-wide text-white/60">
+								<Clock3 className="h-3.5 w-3.5" />
+								Presence and freshness
+							</p>
+							<p className="mt-1 text-xs text-white/80">{resumeFreshness}</p>
+							<div className="mt-2 grid grid-cols-3 gap-2 text-center">
+								<div className="rounded-lg border border-white/10 px-2 py-2">
+									<p className="text-lg font-semibold text-white">{officer.internships.length}</p>
+									<p className="text-[11px] text-white/60">Internships</p>
+								</div>
+								<div className="rounded-lg border border-white/10 px-2 py-2">
+									<p className="text-lg font-semibold text-white">{officer.research.length}</p>
+									<p className="text-[11px] text-white/60">Research</p>
+								</div>
+								<div className="rounded-lg border border-white/10 px-2 py-2">
+									<p className="text-lg font-semibold text-white">{socialLinksCount}</p>
+									<p className="text-[11px] text-white/60">Social links</p>
+								</div>
+							</div>
+							<Link
+								to="/directory/$userId"
+								params={{ userId: officer.id }}
+								className="mt-3 block rounded-lg border border-white/10 px-3 py-2 text-center text-xs text-white/80 hover:bg-white/5"
+							>
+								Preview directory profile
+							</Link>
+						</div>
 					</div>
 				</div>
 			</section>
