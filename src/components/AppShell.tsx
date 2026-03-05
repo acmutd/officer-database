@@ -33,16 +33,16 @@ const navLinks = [
 		icon: LayoutDashboard,
 	},
 	{
-		label: "Information",
-		description: "ACM resources and tools",
-		to: "/dashboard" as const,
-		icon: Info,
-	},
-	{
 		label: "Directory",
 		description: "Explore officer records",
 		to: "/directory" as const,
 		icon: Users,
+	},
+	{
+		label: "Information",
+		description: "ACM resources and tools",
+		to: "/dashboard" as const,
+		icon: Info,
 	},
 	{
 		label: "Onboard",
@@ -156,7 +156,7 @@ export function AppShell({ children }: AppShellProps) {
 			: "My Profile";
 
 	return (
-		<div className="relative min-h-screen overflow-x-hidden text-white">
+		<div className="relative min-h-screen overflow-x-clip text-white">
 			<div className="relative min-h-screen">
 				<aside
 					className={cn(
