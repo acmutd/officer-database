@@ -41,14 +41,40 @@ export const InternshipsSchema = z.object({
 	company: z.string().min(1),
 	startDate: z.string().min(1),
 	endDate: z.string().optional(),
+}).superRefine((value, ctx) => {
+	if (!value.endDate) {
+		return;
+	}
+
+	if (new Date(value.endDate) < new Date(value.startDate)) {
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			path: ["endDate"],
+			message: "End date cannot be before start date",
+		});
+	}
 });
 
-export const ResearchSchema = z.object({
+export const ResearchBaseSchema = z.object({
 	title: z.string().min(1),
 	lab: z.string().min(1),
 	principalInvestigator: z.array(z.string().min(1)),
 	startDate: z.string().min(1),
 	endDate: z.string().optional(),
+});
+
+export const ResearchSchema = ResearchBaseSchema.superRefine((value, ctx) => {
+	if (!value.endDate) {
+		return;
+	}
+
+	if (new Date(value.endDate) < new Date(value.startDate)) {
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			path: ["endDate"],
+			message: "End date cannot be before start date",
+		});
+	}
 });
 
 export const RoleSchema = z.object({

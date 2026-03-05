@@ -17,7 +17,7 @@ import {
 	FieldGroup,
 	FieldLabel,
 } from "@/components/ui/field";
-import { type Research, ResearchSchema } from "@/schemas/officer";
+import { type Research, ResearchBaseSchema } from "@/schemas/officer";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { updateResearchMutation } from "@/queries/research";
@@ -33,8 +33,20 @@ type Props = {
 };
 
 // Internal form schema with objects for useFieldArray compatibility
-const ResearchFormSchema = ResearchSchema.extend({
+const ResearchFormSchema = ResearchBaseSchema.extend({
 	principalInvestigator: z.array(z.object({ name: z.string().min(1) })),
+}).superRefine((value, ctx) => {
+	if (!value.endDate) {
+		return;
+	}
+
+	if (new Date(value.endDate) < new Date(value.startDate)) {
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			path: ["endDate"],
+			message: "End date cannot be before start date",
+		});
+	}
 });
 
 type ResearchFormData = z.infer<typeof ResearchFormSchema>;
@@ -63,6 +75,9 @@ export function EditResearchModal({ officerId, research, index }: Props) {
 			endDate: research.endDate || "",
 		},
 	});
+
+	const startDateValue = watch("startDate");
+	const endDateValue = watch("endDate");
 
 	// this is a little annoying but it's the only way to get the field array to work with the form
 	const { fields, append, remove } = useFieldArray({
@@ -224,12 +239,12 @@ export function EditResearchModal({ officerId, research, index }: Props) {
 									Start Date
 								</FieldLabel>
 								<DatePicker
-									value={watch("startDate")}
+									value={startDateValue}
 									onChange={(date) =>
-										setValue("startDate", date, { shouldDirty: true })
+										setValue("startDate", date, { shouldDirty: true, shouldValidate: true })
 									}
 									placeholder="Select start date"
-									maxDate={new Date()}
+									maxDate={endDateValue ? new Date(endDateValue) : undefined}
 								/>
 								<FieldError errors={[errors.startDate]} />
 							</FieldContent>
@@ -241,12 +256,12 @@ export function EditResearchModal({ officerId, research, index }: Props) {
 									End Date (Optional)
 								</FieldLabel>
 								<DatePicker
-									value={watch("endDate")}
+									value={endDateValue}
 									onChange={(date) =>
-										setValue("endDate", date, { shouldDirty: true })
+										setValue("endDate", date, { shouldDirty: true, shouldValidate: true })
 									}
 									placeholder="Select end date"
-									maxDate={new Date()}
+									minDate={startDateValue ? new Date(startDateValue) : undefined}
 								/>
 								<FieldError errors={[errors.endDate]} />
 							</FieldContent>

@@ -54,6 +54,9 @@ export function EditInternshipModal({ officerId, internship, index }: Props) {
 		},
 	});
 
+	const startDateValue = watch("startDate");
+	const endDateValue = watch("endDate");
+
 	const { mutateAsync: updateInternship, isPending } = useMutation(
 		updateInternshipMutation
 	);
@@ -148,12 +151,12 @@ export function EditInternshipModal({ officerId, internship, index }: Props) {
 									Start Date
 								</FieldLabel>
 								<DatePicker
-									value={watch("startDate")}
+									value={startDateValue}
 									onChange={(date) =>
-										setValue("startDate", date, { shouldDirty: true })
+										setValue("startDate", date, { shouldDirty: true, shouldValidate: true })
 									}
 									placeholder="Select start date"
-									maxDate={new Date()}
+									maxDate={endDateValue ? new Date(endDateValue) : undefined}
 								/>
 								<FieldError errors={[errors.startDate]} />
 							</FieldContent>
@@ -165,12 +168,12 @@ export function EditInternshipModal({ officerId, internship, index }: Props) {
 									End Date (Optional)
 								</FieldLabel>
 								<DatePicker
-									value={watch("endDate")}
+									value={endDateValue}
 									onChange={(date) =>
-										setValue("endDate", date, { shouldDirty: true })
+										setValue("endDate", date, { shouldDirty: true, shouldValidate: true })
 									}
 									placeholder="Select end date"
-									maxDate={new Date()}
+									minDate={startDateValue ? new Date(startDateValue) : undefined}
 								/>
 								<FieldError errors={[errors.endDate]} />
 							</FieldContent>
