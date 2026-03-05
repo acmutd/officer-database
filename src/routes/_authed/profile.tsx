@@ -33,11 +33,11 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="flex flex-col md:flex-row justify-around gap-6 md:gap-8 px-4 md:px-6">
-			<div className="container w-full md:w-1/4 flex-col">
+		<div className="flex flex-col justify-around gap-6 px-4 pb-20 md:flex-row md:gap-8 md:px-6">
+			<div className="w-full md:w-1/4">
 				<ProfileView editable />
 			</div>
-			<div className="container flex w-full md:w-3/4 flex-col gap-8 pb-20">
+			<div className="flex w-full flex-col gap-8 md:w-3/4">
 				<AcademicInfo editable />
 				<InternshipList editable />
 				<ResearchList editable />

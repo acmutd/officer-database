@@ -228,7 +228,7 @@ export function AppShell({ children }: AppShellProps) {
 				<div className="min-w-0 flex flex-1 flex-col">
 					<header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-black/45 pr-4 backdrop-blur-md sm:pr-6 lg:pr-8">
 						<div className="flex min-w-0 items-center">
-							<div className="flex shrink-0 items-center gap-3 pl-2 sm:pl-3">
+							<div className="flex shrink-0 items-center gap-3 pl-2 sm:pl-3 lg:gap-4">
 							<button
 								onClick={() => setMobileOpen(true)}
 								className="rounded-lg border border-white/15 p-2 text-white lg:hidden"
@@ -257,8 +257,8 @@ export function AppShell({ children }: AppShellProps) {
 						<ProfileMenu />
 					</header>
 
-					<main className={cn("flex-1 px-4 py-5 sm:px-6 lg:px-8 lg:py-8", desktopCollapsed ? "lg:pl-16" : "lg:pl-52")}>
-						<div className="mx-auto w-full max-w-7xl">{children}</div>
+					<main className={cn("flex-1 px-2 py-5 sm:px-3 lg:px-4 lg:py-8", desktopCollapsed ? "lg:pl-16" : "lg:pl-52")}>
+						<div className="w-full">{children}</div>
 					</main>
 				</div>
 			</div>

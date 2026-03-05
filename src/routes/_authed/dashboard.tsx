@@ -22,8 +22,8 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="px-4 md:px-6 pb-20">
-			<div className="container flex w-full flex-col gap-8">
+		<div className="px-4 pb-20 md:px-6">
+			<div className="flex w-full flex-col gap-8">
 				<DashboardPlaceholder />
 			</div>
 		</div>
