@@ -11,7 +11,6 @@ import {
 	ClipboardList,
 	IdCard,
 	Milestone,
-	Sparkles,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authed/dashboard")({
@@ -101,17 +100,30 @@ function RouteComponent() {
 	];
 
 	const completedCount = tasks.filter((task) => task.done).length;
+	const hour = new Date().getHours();
+	const timeGreeting =
+		hour >= 5 && hour < 12
+			? "Good morning"
+			: hour >= 12 && hour < 17
+				? "Good afternoon"
+				: hour >= 17 && hour < 21
+					? "Good evening"
+					: "Good night";
+	const timeEmoji =
+		hour >= 5 && hour < 12
+			? "🌅"
+			: hour >= 12 && hour < 17
+				? "🏙️"
+				: hour >= 17 && hour < 21
+					? "🌇"
+					: "🌆";
 
 	return (
 		<div className="space-y-6 px-4 pb-20 md:px-6">
 			<section className="rounded-2xl border border-white/10 bg-black/35 p-5 sm:p-7">
 				<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 					<div>
-						<p className="flex items-center gap-2 text-sm text-white/65">
-							<Sparkles className="h-4 w-4" />
-							Dashboard (WIP)
-						</p>
-						<h1 className="mt-1 text-2xl font-semibold text-white sm:text-3xl">Welcome, {firstName}</h1>
+						<h1 className="mt-1 text-2xl font-semibold text-white sm:text-3xl">{timeGreeting}, {firstName} {timeEmoji}</h1>
 						<p className="mt-2 text-sm text-white/70">Here is your quick snapshot and a few things to knock out this week.</p>
 					</div>
 					<div className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white/80">
