@@ -195,9 +195,6 @@ function RouteComponent() {
 									</p>
 								</>
 							)}
-							{hasMultipleActiveRoles && (
-								<p className="mt-2 text-xs text-amber-300/90">Multiple active roles detected.</p>
-							)}
 							<div className="mt-3 flex items-center justify-between text-xs text-white/70">
 								<span className="rounded-full border border-white/15 px-2 py-1">{accessLevelLabel}</span>
 								<span>Joined {formatTerm(officer.joinDate)}</span>
