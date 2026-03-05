@@ -141,6 +141,18 @@ export function AppShell({ children }: AppShellProps) {
 		window.localStorage.setItem(SIDEBAR_MODE_STORAGE_KEY, String(desktopCollapsed));
 	}, [desktopCollapsed]);
 
+	const handleDesktopSidebarClick = React.useCallback(
+		(event: React.MouseEvent<HTMLElement>) => {
+			const target = event.target as HTMLElement;
+			if (target.closest("a,button")) {
+				return;
+			}
+
+			setDesktopCollapsed((prev) => !prev);
+		},
+		[]
+	);
+
 	const userIsAdmin = officer ? isAdmin(officer) : false;
 	const visibleNavLinks = navLinks;
 	const visibleAdminNavLinks = userIsAdmin ? adminNavLinks : [];
@@ -159,8 +171,9 @@ export function AppShell({ children }: AppShellProps) {
 		<div className="relative min-h-screen overflow-x-clip text-white">
 			<div className="relative min-h-screen">
 				<aside
+					onClick={handleDesktopSidebarClick}
 					className={cn(
-						"fixed left-0 top-16 z-20 hidden h-[calc(100vh-4rem)] border-r border-white/10 bg-black/50 backdrop-blur-md lg:flex lg:flex-col",
+						"fixed left-0 top-16 z-20 hidden h-[calc(100vh-4rem)] cursor-pointer border-r border-white/10 bg-black/50 backdrop-blur-md lg:flex lg:flex-col",
 						desktopCollapsed ? "w-14" : "w-48"
 					)}
 				>
