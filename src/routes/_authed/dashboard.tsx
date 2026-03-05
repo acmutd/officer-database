@@ -71,6 +71,11 @@ function RouteComponent() {
 				: resumeAgeDays <= 120
 					? "Resume may need a refresh soon"
 					: "Resume is likely stale";
+	const fullDateFormatter = new Intl.DateTimeFormat("en-US", {
+		month: "long",
+		day: "numeric",
+		year: "numeric",
+	});
 	const formatTerm = (term: { term: "Fall" | "Spring" | "Summer"; year: number }) =>
 		`${term.term} ${term.year}`;
 
@@ -208,12 +213,12 @@ function RouteComponent() {
 								<p>Expected graduation: {formatTerm(officer.expectedGrad)}</p>
 								<p>
 									Latest resume update:{" "}
-									{resumeDate ? resumeDate.toLocaleDateString() : "No resume uploaded"}
+									{resumeDate ? fullDateFormatter.format(resumeDate) : "No resume uploaded"}
 								</p>
 								<p>
 									Profile photo updated:{" "}
 									{officer.photo?.lastUpdatedAt
-										? new Date(officer.photo.lastUpdatedAt).toLocaleDateString()
+										? fullDateFormatter.format(new Date(officer.photo.lastUpdatedAt))
 										: "No photo upload yet"}
 								</p>
 							</div>
