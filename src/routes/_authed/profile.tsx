@@ -1,27 +1,19 @@
 import { ACMErrorComponent } from "@/components/ErrorComponent";
-import { ProfileTabs } from "@/components/Profile/ProfileTabs";
+import { AcademicInfo } from "@/components/Profile/AcademicInfo";
+import { InternshipList } from "@/components/Profile/Internship/InternshipList";
 import { ProfileView } from "@/components/Profile/ProfileView";
+import { ResearchList } from "@/components/Profile/Research/ResearchList";
+import { ResumeSection } from "@/components/Profile/ResumeSection";
 import { Spinner } from "@/components/Spinner";
 import { ProfileWelcomeModal } from "@/components/Profile/ProfileWelcomeModal";
 import { useAuth } from "@/lib/auth";
 import { getOfficerQuery } from "@/queries/officer";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
-import { z } from "zod";
 import {FeedbackButton} from "@/components/Feedback"
-
-const searchSchema = z.object({
-	tab: z
-		.enum(["background", "dashboard"])
-		.default("background")
-		.catch("background"),
-});
-
-const searchTab = searchSchema.optional().default(searchSchema.parse({}));
 
 export const Route = createFileRoute("/_authed/profile")({
 	component: RouteComponent,
-	validateSearch: searchTab,
 	loader: async ({ context }) => {
 		context.queryClient.ensureQueryData(getOfficerQuery);
 	},
@@ -46,7 +38,10 @@ function RouteComponent() {
 				<ProfileView editable />
 			</div>
 			<div className="container flex w-full md:w-3/4 flex-col gap-8 pb-20">
-				<ProfileTabs />
+				<AcademicInfo editable />
+				<InternshipList editable />
+				<ResearchList editable />
+				<ResumeSection />
 			</div>
 
 			{/*
