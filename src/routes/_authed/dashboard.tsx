@@ -53,7 +53,9 @@ function RouteComponent() {
 		}
 		return termOrder[b.startDate.term] - termOrder[a.startDate.term];
 	});
-	const activeRole = officer.roles.find((role) => role.endDate === null) ?? sortedRoles[0];
+	const activeRoles = sortedRoles.filter((role) => role.endDate === null);
+	const hasMultipleActiveRoles = activeRoles.length > 1;
+	const fallbackRole = sortedRoles[0];
 	const accessLevelLabel =
 		officer.accessLevel === 3 ? "Executive" : officer.accessLevel === 2 ? "Director" : "Officer";
 
@@ -133,7 +135,7 @@ function RouteComponent() {
 			</section>
 
 			<section className="grid gap-4 lg:grid-cols-3">
-				<div className="rounded-2xl border border-white/10 bg-black/30 p-5 lg:col-span-2">
+				<div className="order-2 rounded-2xl border border-white/10 bg-black/30 p-5 lg:order-2 lg:col-span-1">
 					<h2 className="flex items-center gap-2 text-lg font-semibold text-white">
 						<ClipboardList className="h-5 w-5" />
 						Tasks To Do
@@ -159,20 +161,38 @@ function RouteComponent() {
 					</div>
 				</div>
 
-				<div className="rounded-2xl border border-white/10 bg-black/30 p-5">
+				<div className="order-1 rounded-2xl border border-white/10 bg-black/30 p-5 lg:order-1 lg:col-span-2">
 					<h2 className="flex items-center gap-2 text-lg font-semibold text-white">
 						<IdCard className="h-5 w-5" />
 						My ACM Snapshot
 					</h2>
-					<div className="mt-4 space-y-4">
-						<div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-							<p className="text-xs uppercase tracking-wide text-white/60">Current role</p>
-							<p className="mt-1 text-lg font-semibold text-white">
-								{activeRole?.title ?? "No role assigned"}
+					<div className="mt-4 grid gap-4 lg:grid-cols-2">
+						<div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 lg:col-span-2">
+							<p className="text-xs uppercase tracking-wide text-white/60">
+								{hasMultipleActiveRoles ? "Current roles" : "Current role"}
 							</p>
-							<p className="text-xs text-white/65">
-								{activeRole ? `${activeRole.division} Division` : "Ask leadership to update your role"}
-							</p>
+							{activeRoles.length > 0 ? (
+								<div className="mt-2 space-y-2">
+									{activeRoles.map((role) => (
+										<div key={`${role.title}-${role.division}-${role.startDate.term}-${role.startDate.year}`} className="rounded-lg border border-white/10 bg-white/[0.02] px-3 py-2">
+											<p className="text-sm font-semibold text-white">{role.title}</p>
+											<p className="text-xs text-white/65">{role.division} Division</p>
+										</div>
+									))}
+								</div>
+							) : (
+								<>
+									<p className="mt-1 text-lg font-semibold text-white">
+										{fallbackRole?.title ?? "No role assigned"}
+									</p>
+									<p className="text-xs text-white/65">
+										{fallbackRole ? `${fallbackRole.division} Division` : "Ask leadership to update your role"}
+									</p>
+								</>
+							)}
+							{hasMultipleActiveRoles && (
+								<p className="mt-2 text-xs text-amber-300/90">Multiple active roles detected.</p>
+							)}
 							<div className="mt-3 flex items-center justify-between text-xs text-white/70">
 								<span className="rounded-full border border-white/15 px-2 py-1">{accessLevelLabel}</span>
 								<span>Joined {formatTerm(officer.joinDate)}</span>
