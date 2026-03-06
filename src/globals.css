@@ -257,3 +257,22 @@ code {
   --background-image-bronze-gradient: linear-gradient(128deg, rgba(219, 114, 64, 0.12) 3.07%, rgba(219, 114, 64, 0.09) 96.39%);
   --background-image-green-gradient: linear-gradient(128deg, rgba(34, 193, 195, 0.12) 3.07%, rgba(34, 193, 195, 0.09) 96.39%);
 }
+
+@keyframes haptic-fallback-pulse {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(0.97);
+    filter: brightness(1.08);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+.haptic-fallback-tap {
+  animation: haptic-fallback-pulse 140ms ease-out;
+}

@@ -5,10 +5,6 @@ export function HapticsOnTap() {
 	const { trigger, isSupported } = useWebHaptics();
 
 	useEffect(() => {
-		if (!isSupported) {
-			return;
-		}
-
 		const handleClick = (event: MouseEvent) => {
 			if (!(event.target instanceof Element) || event.defaultPrevented) {
 				return;
@@ -36,7 +32,18 @@ export function HapticsOnTap() {
 				return;
 			}
 
+			// Always trigger so web-haptics can use its own fallback behavior on unsupported browsers.
 			trigger(haptic);
+
+			if (isSupported) {
+				return;
+			}
+
+			// iOS Safari does not support navigator.vibrate; apply a tiny visual pulse fallback.
+			interactiveElement.classList.add("haptic-fallback-tap");
+			window.setTimeout(() => {
+				interactiveElement.classList.remove("haptic-fallback-tap");
+			}, 140);
 		};
 
 		document.addEventListener("click", handleClick);
