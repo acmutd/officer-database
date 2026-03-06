@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { useWebHaptics } from "web-haptics/react";
 
-const DEFAULT_HAPTIC = "selection";
+const DEFAULT_HAPTIC = "medium";
+const MODAL_HAPTIC = "selection";
 
 export function HapticsOnTap() {
 	const { trigger, isSupported } = useWebHaptics();
@@ -43,7 +44,10 @@ export function HapticsOnTap() {
 				return;
 			}
 
-			const resolvedHaptic = haptic || DEFAULT_HAPTIC;
+			const isInsideModal = Boolean(
+				interactiveElement.closest("[data-slot='dialog-content'], [role='dialog']")
+			);
+			const resolvedHaptic = haptic || (isInsideModal ? MODAL_HAPTIC : DEFAULT_HAPTIC);
 
 			// Always trigger so web-haptics can use its own fallback behavior on unsupported browsers.
 			trigger(resolvedHaptic);
