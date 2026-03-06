@@ -109,6 +109,7 @@ export function ProfileWelcomeModal({ isNewUser }: ProfileWelcomeModalProps) {
 				</div>
 				<DialogFooter className="sm:justify-center">
 					<Button
+						data-haptic="nudge"
 						onClick={() => handleChange(false)}
 						className="h-11 rounded-full bg-acm-gradient px-8 text-base font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-acm-gradient/25"
 					>

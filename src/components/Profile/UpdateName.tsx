@@ -69,6 +69,7 @@ export function UpdateName({ officerId, firstName, lastName }: Props) {
 					{firstName} {lastName}
 				</h1>
 				<Button
+					data-haptic="selection"
 					onClick={() => {
 						reset(initialValues);
 						setIsEditing(true);
@@ -125,6 +126,7 @@ export function UpdateName({ officerId, firstName, lastName }: Props) {
 				</Button>
 				<Button
 					type="submit"
+					data-haptic="success"
 					disabled={isPending || !isDirty}
 					className="bg-acm-gradient px-6"
 				>

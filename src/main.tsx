@@ -11,6 +11,7 @@ import "./globals.css";
 import reportWebVitals from "./reportWebVitals.ts";
 import { AuthContextProvider, useAuth } from "./lib/auth.tsx";
 import { Spinner } from "./components/Spinner.tsx";
+import { HapticsOnTap } from "./components/HapticsOnTap.tsx";
 
 // Create a new router instance
 
@@ -47,6 +48,7 @@ function InnerApp() {
 function App() {
 	return (
 		<TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
+			<HapticsOnTap />
 			<AuthContextProvider>
 				<InnerApp />
 			</AuthContextProvider>

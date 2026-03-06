@@ -41,6 +41,7 @@ export function DeleteResearchModal({ officerId, research, index }: Props) {
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
 				<Button
+					data-haptic="warning"
 					variant="ghost"
 					size="icon"
 					className="h-6 w-6 rounded-full p-0 text-white/50 hover:bg-red-500/10 hover:text-red-400"
@@ -79,6 +80,7 @@ export function DeleteResearchModal({ officerId, research, index }: Props) {
 					</Button>
 					<Button
 						variant="destructive"
+						data-haptic="error"
 						onClick={handleDelete}
 						disabled={isDeleting}
 						className="bg-red-500/10 text-red-400 hover:bg-red-500/20"

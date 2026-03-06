@@ -80,6 +80,7 @@ export function AddRole({ officerId }: Props) {
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
 				<Button
+					data-haptic="selection"
 					variant="outline"
 					className="border-white/10 bg-white/5 text-white hover:bg-white/10 hover:text-white"
 				>
@@ -224,6 +225,7 @@ export function AddRole({ officerId }: Props) {
 
 					<Button
 						type="submit"
+						data-haptic="success"
 						disabled={isPending || !isDirty}
 						className="w-full bg-white/10 text-white hover:bg-white/20"
 					>

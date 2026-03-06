@@ -47,6 +47,7 @@ export function ACMErrorComponent({ error, reset }: Props) {
 
 				<CardFooter className="flex justify-center">
 					<Button
+						data-haptic="warning"
 						onClick={reset}
 						variant="outline"
 						className="gap-2 bg-white/10 hover:bg-white/20 border-white/20 text-white"

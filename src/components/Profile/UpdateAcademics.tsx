@@ -212,6 +212,7 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 			<div className="flex justify-end">
 				<Button
 					type="submit"
+					data-haptic="success"
 					disabled={isPending || !isDirty}
 					className="bg-acm-gradient"
 				>

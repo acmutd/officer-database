@@ -7,6 +7,7 @@ export default function LoginButton() {
 
 	return (
 		<Button
+			data-haptic="medium"
 			className={cn(
 				"group flex w-full max-w-sm items-center justify-center gap-2",
 				"rounded-xl border border-white/20 bg-white text-black px-6 py-6 text-sm font-semibold sm:text-base",
