@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/Navbar";
+import { AppShell } from "@/components/AppShell";
 import {
 	createFileRoute,
 	Navigate,
@@ -24,13 +24,8 @@ function RouteComponent() {
 		return <Navigate to="/login" />;
 	}
 	return (
-		<div className="h-screen flex flex-col">
-			<div className="flex w-full justify-center">
-				<Navbar />
-			</div>
-			<main className="flex-1 px-4 pt-32 pb-4 min-h-0">
-				<Outlet />
-			</main>
-		</div>
+		<AppShell>
+			<Outlet />
+		</AppShell>
 	);
 }

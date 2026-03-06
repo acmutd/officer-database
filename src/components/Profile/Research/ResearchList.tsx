@@ -22,7 +22,7 @@ export function ResearchList({ officerId, archived = false, editable = false }: 
 	);
 
 	return (
-		<Card className="rounded-xl border border-white/10 bg-black/40 shadow-xl backdrop-blur-xl mb-8">
+		<Card className="rounded-xl border border-white/10 bg-black/40 shadow-xl backdrop-blur-xl">
 			<CardHeader
 				className={
 					editable ? "flex flex-row items-center justify-between space-y-0" : ""

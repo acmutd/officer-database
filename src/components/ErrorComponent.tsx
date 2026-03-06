@@ -30,7 +30,7 @@ export function ACMErrorComponent({ error, reset }: Props) {
 
 				<CardContent className="space-y-4">
 					<div className="rounded-lg bg-black/30 border border-white/5 p-4">
-						<p className="text-sm font-mono text-white/80 break-words">
+						<p className="text-sm font-mono text-white/80 wrap-break-word">
 							{error.message}
 						</p>
 					</div>

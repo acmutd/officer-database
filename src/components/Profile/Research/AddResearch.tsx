@@ -18,7 +18,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { addResearchMutation } from "@/queries/research";
-import { ResearchSchema } from "@/schemas/officer";
+import { ResearchBaseSchema } from "@/schemas/officer";
 import { Plus } from "lucide-react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,8 +26,20 @@ import { z } from "zod";
 import { toast } from "sonner";
 
 // Internal form schema with objects for useFieldArray compatibility
-const ResearchFormSchema = ResearchSchema.extend({
+const ResearchFormSchema = ResearchBaseSchema.extend({
 	principalInvestigator: z.array(z.object({ name: z.string().min(1) })),
+}).superRefine((value, ctx) => {
+	if (!value.endDate) {
+		return;
+	}
+
+	if (new Date(value.endDate) < new Date(value.startDate)) {
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			path: ["endDate"],
+			message: "End date cannot be before start date",
+		});
+	}
 });
 
 type ResearchFormData = z.infer<typeof ResearchFormSchema>;
@@ -49,6 +61,9 @@ export function AddResearch({ officerId }: { officerId?: string }) {
 			principalInvestigator: [{ name: "" }],
 		},
 	});
+
+	const startDateValue = watch("startDate");
+	const endDateValue = watch("endDate");
 
 	const { fields, append, remove } = useFieldArray({
 		control,
@@ -179,12 +194,12 @@ export function AddResearch({ officerId }: { officerId?: string }) {
 									Start Date
 								</FieldLabel>
 								<DatePicker
-									value={watch("startDate")}
+									value={startDateValue}
 									onChange={(date) =>
-										setValue("startDate", date, { shouldDirty: true })
+										setValue("startDate", date, { shouldDirty: true, shouldValidate: true })
 									}
 									placeholder="Select start date"
-									maxDate={new Date()}
+									maxDate={endDateValue ? new Date(endDateValue) : undefined}
 								/>
 								<FieldError errors={[errors.startDate]} />
 							</FieldContent>
@@ -196,12 +211,12 @@ export function AddResearch({ officerId }: { officerId?: string }) {
 									End Date (Optional)
 								</FieldLabel>
 								<DatePicker
-									value={watch("endDate")}
+									value={endDateValue}
 									onChange={(date) =>
-										setValue("endDate", date, { shouldDirty: true })
+										setValue("endDate", date, { shouldDirty: true, shouldValidate: true })
 									}
 									placeholder="Select end date"
-								maxDate={new Date()}
+									minDate={startDateValue ? new Date(startDateValue) : undefined}
 								/>
 								<FieldError errors={[errors.endDate]} />
 							</FieldContent>

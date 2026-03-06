@@ -14,9 +14,9 @@ export function Navbar() {
 
 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 py-2 bg-black/80">
+        <nav className="sticky top-0 z-50 py-2 bg-black/80">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-2 flex items-center justify-center">
-        
+
             <div className="flex items-center gap-4 sm:gap-8 md:gap-12">
 
                 <Link
@@ -26,7 +26,7 @@ export function Navbar() {
                 >
                     directory
                 </Link>
-               
+
                 <img src="/acm.png" alt="ACM Logo" className="h-8 sm:h-10 md:h-11" />
                 <Link
                     to="/profile"
