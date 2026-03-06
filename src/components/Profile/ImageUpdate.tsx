@@ -1,6 +1,7 @@
-import { Pencil, Loader2 } from "lucide-react";
+import { Pencil, Loader2, Camera as CameraIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import { updateOfficerImageMutation } from "@/queries/officer";
@@ -9,6 +10,7 @@ import type { Photo } from "@/schemas/officer";
 import { getOfficerImageUrl } from "@/lib/image";
 import { CropModal, type ImageAdjustments } from "./cropModal";
 import type { Area } from "react-easy-crop";
+import { Camera as CameraComponent } from "./Camera";
 
 type Props = {
 	photo: Photo;
@@ -56,6 +58,8 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 		},
 	});
 	const fileInputRef = React.useRef<HTMLInputElement>(null);
+	const [showCamera, setShowCamera] = React.useState(false);
+	const [captured, setCaptured] = React.useState<string | null>(null);
 
 	const handleImageClick = () => {
 		fileInputRef.current?.click();
@@ -191,31 +195,57 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 		}
 		};
 
+	// I just yoinked this function (base64ToFile) from the documentation lol.
+	// If this is a better way to do this, please tell me. As of right now, it works so I'll keep it.
+	const base64ToFile = (dataurl: string, filename: string): File => {
+		const arr = dataurl.split(",");
+		const mimeMatch = arr[0].match(/:(.*?);/);
+		const mime = mimeMatch ? mimeMatch[1] : "image/jpeg";
+		const bstr = atob(arr[1]);
+		let n = bstr.length;
+		const u8arr = new Uint8Array(n);
+		while (n--) {
+			u8arr[n] = bstr.charCodeAt(n);
+		}
+		return new File([u8arr], filename, { type: mime });
+	};
+
+	const handleCapture = (imageSrc: string) => {
+		setCaptured(imageSrc);
+		setShowCamera(false);
+	};
+
+	const confirmCapture = () => {
+		if (captured) {
+			const file = base64ToFile(captured, `${officerId}-camera.jpg`);
+			updateUserImage({ officerId, file });
+			setCaptured(null);
+		}
+	};
+
 	return (
 		<>
-				<CropModal
-					open={showCropper}
-					imageSrc={imageSrc}
-					crop={crop}
-					zoom={zoom}
-					rotation={rotation}
-					adjustments={adjustments}
-					onCropChange={setCrop}
-					onZoomChange={setZoom}
-					onRotationChange={setRotation}
-					onAdjustmentChange={handleAdjustmentChange}
-					onResetAdjustments={resetAdjustments}
-					onCropComplete={setArea}
-					onClose={() => {
-						if (imageSrc) URL.revokeObjectURL(imageSrc);
-						setShowCropper(false);
-						setImageSrc(null);
-					}}
-					onSave={handleSaveCrop}
-					isSaving={isPending}
-					/>
-
-
+			<CropModal
+				open={showCropper}
+				imageSrc={imageSrc}
+				crop={crop}
+				zoom={zoom}
+				rotation={rotation}
+				adjustments={adjustments}
+				onCropChange={setCrop}
+				onZoomChange={setZoom}
+				onRotationChange={setRotation}
+				onAdjustmentChange={handleAdjustmentChange}
+				onResetAdjustments={resetAdjustments}
+				onCropComplete={setArea}
+				onClose={() => {
+					if (imageSrc) URL.revokeObjectURL(imageSrc);
+					setShowCropper(false);
+					setImageSrc(null);
+				}}
+				onSave={handleSaveCrop}
+				isSaving={isPending}
+			/>
 			<div className="group relative flex flex-col items-center">
 				<Avatar className="h-36 w-36 shadow-2xl">
 					{photo.url && (
@@ -237,20 +267,61 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 					accept="image/*"
 					className="hidden"
 				/>
-				<Button
-					size="icon"
-					variant="secondary"
-					className="absolute -right-1 bottom-0 cursor-pointer rounded-full shadow-xl transition-shadow duration-300 hover:shadow-purple-500/20"
-					onClick={handleImageClick}
-					disabled={isPending}
-				>
-					{isPending ? (
-						<Loader2 className="h-4 w-4 animate-spin" />
-					) : (
-						<Pencil className="h-4 w-4" />
-					)}
-				</Button>
+				<div className="absolute -right-1 top-0 flex space-x-1">
+					<Button
+						size="icon"
+						variant="secondary"
+						className="absolute -right-1 top-27 cursor-pointer rounded-full shadow-xl transition-shadow duration-300 hover:shadow-purple-500/20"
+						onClick={handleImageClick}
+						disabled={isPending}
+					>
+						{isPending ? (
+							<Loader2 className="h-4 w-4 animate-spin" />
+						) : (
+							<Pencil className="h-4 w-4" />
+						)}
+					</Button>
+					<Button
+						size="icon"
+						variant="secondary"
+						className="cursor-pointer rounded-full shadow-xl transition-shadow duration-300 hover:shadow-purple-500/20"
+						onClick={() => setShowCamera(true)}
+						disabled={isPending}
+					>
+						<CameraIcon className="h-4 w-4" />
+					</Button>
+				</div>
 			</div>
+			{captured && (
+				<Dialog open={true} onOpenChange={() => setCaptured(null)}>
+					<DialogContent className="max-w-md border-white/10 bg-gradient-to-br from-white/5 to-white/10 text-white shadow-2xl backdrop-blur-xl sm:rounded-3xl">
+						<DialogHeader className="items-center text-center">
+							<DialogTitle>Preview</DialogTitle>
+						</DialogHeader>
+						<img
+							src={captured}
+							alt="preview"
+							className="mx-auto max-h-96 object-contain"
+						/>
+						<div className="mt-4 flex justify-center gap-4">
+							<Button onClick={confirmCapture} disabled={isPending}>
+								Confirm
+							</Button>
+							<Button variant="secondary" onClick={() => setCaptured(null)} disabled={isPending}>
+								Retake
+							</Button>
+						</div>
+					</DialogContent>
+				</Dialog>
+			)}
+			<Dialog open={showCamera} onOpenChange={setShowCamera}>
+				<DialogContent className="max-w-md border-white/10 bg-gradient-to-br from-white/5 to-white/10 text-white shadow-2xl backdrop-blur-xl sm:rounded-3xl">
+					<DialogHeader className="items-center text-center">
+						<DialogTitle>Take a Photo</DialogTitle>
+					</DialogHeader>
+					<CameraComponent onCapture={handleCapture} onClose={() => setShowCamera(false)} />
+				</DialogContent>
+			</Dialog>
 		</>
 	);
 }
