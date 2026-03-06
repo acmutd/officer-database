@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useWebHaptics } from "web-haptics/react";
 
+const DEFAULT_HAPTIC = "selection";
+
 export function HapticsOnTap() {
 	const { trigger, isSupported } = useWebHaptics();
 
@@ -10,7 +12,9 @@ export function HapticsOnTap() {
 				return;
 			}
 
-			const interactiveElement = event.target.closest("[data-haptic]");
+			const interactiveElement = event.target.closest(
+				"button, a[href], [role='button'], [data-haptic]"
+			);
 
 			if (!interactiveElement) {
 				return;
@@ -27,13 +31,22 @@ export function HapticsOnTap() {
 				return;
 			}
 
-			const haptic = interactiveElement.getAttribute("data-haptic");
-			if (!haptic || haptic === "off") {
+			if (
+				interactiveElement instanceof HTMLAnchorElement &&
+				interactiveElement.getAttribute("aria-disabled") === "true"
+			) {
 				return;
 			}
 
+			const haptic = interactiveElement.getAttribute("data-haptic");
+			if (haptic === "off") {
+				return;
+			}
+
+			const resolvedHaptic = haptic || DEFAULT_HAPTIC;
+
 			// Always trigger so web-haptics can use its own fallback behavior on unsupported browsers.
-			trigger(haptic);
+			trigger(resolvedHaptic);
 
 			if (isSupported) {
 				return;
