@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import { updateOfficerImageMutation } from "@/queries/officer";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import type { Photo } from "@/schemas/officer";
 import { getOfficerImageUrl } from "@/lib/image";
 import { CropModal, type ImageAdjustments } from "./cropModal";
@@ -254,3 +254,4 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 		</>
 	);
 }
+

@@ -23,7 +23,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InternshipsSchema } from "@/schemas/officer";
 import { z } from "zod";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 type InternshipFormData = z.infer<typeof InternshipsSchema>;
 
@@ -158,3 +158,4 @@ export function AddInternship({ officerId }: { officerId?: string }) {
 		</Dialog>
 	);
 }
+

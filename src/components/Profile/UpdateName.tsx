@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { updateOfficerNameMutation } from "@/queries/officer";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -136,3 +136,4 @@ export function UpdateName({ officerId, firstName, lastName }: Props) {
 		</form>
 	);
 }
+

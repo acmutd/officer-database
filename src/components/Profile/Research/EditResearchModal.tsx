@@ -24,7 +24,7 @@ import { updateResearchMutation } from "@/queries/research";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 type Props = {
 	officerId?: string;
@@ -290,3 +290,4 @@ export function EditResearchModal({ officerId, research, index }: Props) {
 		</Dialog>
 	);
 }
+

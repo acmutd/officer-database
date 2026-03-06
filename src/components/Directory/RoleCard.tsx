@@ -30,7 +30,7 @@ import { updateOfficerRoleMutation, removeOfficerRoleMutation } from "@/queries/
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { Trash2 } from "lucide-react";
 
 type RoleCardProps = {
@@ -440,3 +440,4 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 		</>
 	);
 }
+

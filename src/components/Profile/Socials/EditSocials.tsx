@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { Github, Instagram, Linkedin, Loader2, Mail } from "lucide-react";
 
 import type { SocialLinks } from "@/schemas/officer";
@@ -287,3 +287,4 @@ export function EditSocials({ officerId, links, onCancel, onSuccess }: EditSocia
 		</form>
 	);
 }
+

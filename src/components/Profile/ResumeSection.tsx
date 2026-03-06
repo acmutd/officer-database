@@ -12,7 +12,7 @@ import { Label } from "../ui/label";
 import { FileText, Upload, Loader2, Eye } from "lucide-react";
 import { uploadResumeMutation, getResumeUrlQuery } from "@/queries/resume";
 import { getOfficerByIdQuery, getOfficerQuery } from "@/queries/officer";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { useRef } from "react";
 
 type Props = {
@@ -169,3 +169,4 @@ export function ResumeSection({ officerId, archived = false }: Props) {
 		</Card>
 	);
 }
+

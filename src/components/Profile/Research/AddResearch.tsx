@@ -23,7 +23,7 @@ import { Plus } from "lucide-react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 // Internal form schema with objects for useFieldArray compatibility
 const ResearchFormSchema = ResearchBaseSchema.extend({

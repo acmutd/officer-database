@@ -24,7 +24,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 type Props = {
 	officerId?: string;
@@ -202,3 +202,4 @@ export function EditInternshipModal({ officerId, internship, index }: Props) {
 		</Dialog>
 	);
 }
+
