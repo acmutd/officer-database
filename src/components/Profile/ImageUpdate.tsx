@@ -59,7 +59,12 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 	});
 	const fileInputRef = React.useRef<HTMLInputElement>(null);
 	const [showCamera, setShowCamera] = React.useState(false);
-	const [captured, setCaptured] = React.useState<string | null>(null);
+
+	const cleanupImageSource = React.useCallback((src: string | null) => {
+		if (src?.startsWith("blob:")) {
+			URL.revokeObjectURL(src);
+		}
+	}, []);
 
 	const handleImageClick = () => {
 		fileInputRef.current?.click();
@@ -187,7 +192,7 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 			updateUserImage({ officerId, file });
 
 			setShowCropper(false);
-			URL.revokeObjectURL(imageSrc);
+			cleanupImageSource(imageSrc);
 			setImageSrc(null);
 
 		} catch {
@@ -195,32 +200,14 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 		}
 		};
 
-	// I just yoinked this function (base64ToFile) from the documentation lol.
-	// If this is a better way to do this, please tell me. As of right now, it works so I'll keep it.
-	const base64ToFile = (dataurl: string, filename: string): File => {
-		const arr = dataurl.split(",");
-		const mimeMatch = arr[0].match(/:(.*?);/);
-		const mime = mimeMatch ? mimeMatch[1] : "image/jpeg";
-		const bstr = atob(arr[1]);
-		let n = bstr.length;
-		const u8arr = new Uint8Array(n);
-		while (n--) {
-			u8arr[n] = bstr.charCodeAt(n);
-		}
-		return new File([u8arr], filename, { type: mime });
-	};
-
 	const handleCapture = (imageSrc: string) => {
-		setCaptured(imageSrc);
+		setImageSrc(imageSrc);
+		setCrop({ x: 0, y: 0 });
+		setZoom(1);
+		setRotation(0);
+		setAdjustments(defaultAdjustments);
+		setShowCropper(true);
 		setShowCamera(false);
-	};
-
-	const confirmCapture = () => {
-		if (captured) {
-			const file = base64ToFile(captured, `${officerId}-camera.jpg`);
-			updateUserImage({ officerId, file });
-			setCaptured(null);
-		}
 	};
 
 	return (
@@ -239,7 +226,7 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 				onResetAdjustments={resetAdjustments}
 				onCropComplete={setArea}
 				onClose={() => {
-					if (imageSrc) URL.revokeObjectURL(imageSrc);
+					cleanupImageSource(imageSrc);
 					setShowCropper(false);
 					setImageSrc(null);
 				}}
@@ -292,28 +279,6 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 					</Button>
 				</div>
 			</div>
-			{captured && (
-				<Dialog open={true} onOpenChange={() => setCaptured(null)}>
-					<DialogContent className="max-w-md border-white/10 bg-gradient-to-br from-white/5 to-white/10 text-white shadow-2xl backdrop-blur-xl sm:rounded-3xl">
-						<DialogHeader className="items-center text-center">
-							<DialogTitle>Preview</DialogTitle>
-						</DialogHeader>
-						<img
-							src={captured}
-							alt="preview"
-							className="mx-auto max-h-96 object-contain"
-						/>
-						<div className="mt-4 flex justify-center gap-4">
-							<Button onClick={confirmCapture} disabled={isPending}>
-								Confirm
-							</Button>
-							<Button variant="secondary" onClick={() => setCaptured(null)} disabled={isPending}>
-								Retake
-							</Button>
-						</div>
-					</DialogContent>
-				</Dialog>
-			)}
 			<Dialog open={showCamera} onOpenChange={setShowCamera}>
 				<DialogContent className="max-w-md border-white/10 bg-gradient-to-br from-white/5 to-white/10 text-white shadow-2xl backdrop-blur-xl sm:rounded-3xl">
 					<DialogHeader className="items-center text-center">
