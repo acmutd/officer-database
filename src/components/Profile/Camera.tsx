@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 
 interface CameraProps {
@@ -8,6 +8,7 @@ interface CameraProps {
 
 export const Camera: React.FC<CameraProps> = ({ onCapture, onClose }) => {
     const webcamRef = useRef<Webcam>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const handleCapture = () => {
         const imageSrc = webcamRef.current?.getScreenshot();
@@ -16,13 +17,25 @@ export const Camera: React.FC<CameraProps> = ({ onCapture, onClose }) => {
         }
     };
 
+    // Error handling for webcam access issues (so people can check their permissions if they don't see the preview)
+    const handleUserCameraError = (error: string | DOMException) => {
+        console.error('Webcam error:', error);
+        setError('Unable to access your camera. Please check permissions.');
+    };
+
     return (
         <div className="camera-container">
+            {error && (
+                <div className="mb-4 p-3 bg-red-900/30 border border-red-500 rounded text-red-200 text-sm">
+                    {error}
+                </div>
+            )}
             <Webcam
                 ref={webcamRef}
                 screenshotFormat="image/jpeg"
                 width={500}
                 height={300}
+                onUserMediaError={handleUserCameraError}
             />
 
             <div className="camera-controls flex flex-col items-center mt-4">

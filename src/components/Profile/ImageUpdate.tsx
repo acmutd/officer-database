@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { useMutation } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { updateOfficerImageMutation } from "@/queries/officer";
 import { toast } from "sonner";
 import type { Photo } from "@/schemas/officer";
@@ -59,6 +59,15 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 	});
 	const fileInputRef = React.useRef<HTMLInputElement>(null);
 	const [showCamera, setShowCamera] = React.useState(false);
+	const [isMobile, setIsMobile] = useState(false);
+
+	// Detects if A user is on mobile to determine whether to show the webcam preview (desktop) or open IOS/Android camera directly (mobile).
+	useEffect(() => {
+		const ua = navigator.userAgent || navigator.vendor || '';
+		if (/android/i.test(ua) || /iPad|iPhone|iPod/.test(ua)) {
+			setIsMobile(true);
+		}
+	}, []);
 
 	const cleanupImageSource = React.useCallback((src: string | null) => {
 		if (src?.startsWith("blob:")) {
@@ -253,6 +262,7 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 					onChange={handleImageChange}
 					accept="image/*"
 					className="hidden"
+					{...(isMobile ? { capture: "environment" } : {})}
 				/>
 				<div className="absolute -right-1 top-0 flex space-x-1">
 					<Button
@@ -272,7 +282,13 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 						size="icon"
 						variant="secondary"
 						className="cursor-pointer rounded-full shadow-xl transition-shadow duration-300 hover:shadow-purple-500/20"
-						onClick={() => setShowCamera(true)}
+						onClick={() => {
+		if (isMobile) {
+			handleImageClick();
+		} else {
+			setShowCamera(true);
+		}
+	}}
 						disabled={isPending}
 					>
 						<CameraIcon className="h-4 w-4" />
