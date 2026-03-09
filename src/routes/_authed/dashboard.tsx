@@ -10,6 +10,7 @@ import {
 	CircleDashed,
 	ClipboardList,
 	IdCard,
+	Milestone,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authed/dashboard")({
@@ -110,21 +111,13 @@ function RouteComponent() {
 				: hour >= 17 && hour < 21
 					? "Good evening"
 					: "Good night";
-	const timeEmoji =
-		hour >= 5 && hour < 12
-			? "🌅"
-			: hour >= 12 && hour < 17
-				? "🏙️"
-				: hour >= 17 && hour < 21
-					? "🌇"
-					: "🌆";
 
 	return (
 		<div className="space-y-6 px-4 pb-20 md:px-6">
 			<section className="rounded-2xl border border-white/10 bg-black/35 p-5 sm:p-7">
 				<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 					<div>
-						<h1 className="mt-1 text-2xl font-semibold text-white sm:text-3xl">{timeGreeting}, {firstName} {timeEmoji}</h1>
+						<h1 className="mt-1 text-2xl font-semibold text-white sm:text-3xl">{timeGreeting}, {firstName}</h1>
 						<p className="mt-2 text-sm text-white/70">Here is your quick snapshot and a few things to knock out this week.</p>
 					</div>
 					<div className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white/80">
@@ -167,7 +160,10 @@ function RouteComponent() {
 					</h2>
 					<div className="mt-4 grid gap-4 lg:grid-cols-[1.35fr_1fr]">
 						<div className="rounded-xl border border-white/10 bg-white/3 p-4">
-							<p className="text-xs uppercase tracking-wide text-white/60">Role timeline</p>
+							<p className="flex items-center gap-2 text-xs uppercase tracking-wide text-white/60">
+								<Milestone className="h-3.5 w-3.5" />
+								Timeline
+							</p>
 							{sortedRoles.length > 0 ? (
 								<div className="mt-4 space-y-0">
 									{sortedRoles.map((role, index) => {
@@ -203,11 +199,10 @@ function RouteComponent() {
 						<div className="rounded-xl border border-white/10 bg-white/3 p-4">
 							<p className="flex items-center gap-2 text-xs uppercase tracking-wide text-white/60">
 								<Clock3 className="h-3.5 w-3.5" />
-								Presence and freshness
+								Profile health
 							</p>
 							<p className="mt-1 text-xs text-white/80">{resumeFreshness}</p>
 							<div className="mt-3 space-y-2 text-xs text-white/75">
-								<p>Expected graduation: {formatTerm(officer.expectedGrad)}</p>
 								<p>
 									Latest resume update:{" "}
 									{resumeDate ? fullDateFormatter.format(resumeDate) : "No resume uploaded"}
