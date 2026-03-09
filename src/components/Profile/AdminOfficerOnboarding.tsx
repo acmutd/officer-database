@@ -354,8 +354,10 @@ export function AdminOfficerOnboarding() {
 					) : null}
 
 					<div className="space-y-4">
-						<div className="flex items-center justify-between gap-3">
-							<h3 className="text-base font-medium text-white">Officers</h3>
+						<div className={`flex items-center gap-3 ${mode === "batch" ? "justify-between" : "justify-end"}`}>
+							{mode === "batch" ? (
+								<h3 className="text-base font-medium text-white">Officers</h3>
+							) : null}
 							{mode === "batch" ? (
 								<Button
 									type="button"
@@ -530,7 +532,7 @@ export function AdminOfficerOnboarding() {
 						</FieldContent>
 					</Field>
 
-					<div className="flex flex-wrap items-center gap-3 pt-2">
+					<div className="flex justify-end pt-2">
 						<Button
 							type="submit"
 							disabled={isSubmitting || fields.length === 0}
