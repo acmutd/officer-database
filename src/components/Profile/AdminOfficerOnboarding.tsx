@@ -31,7 +31,7 @@ const SingleOfficerSchema = CreateWorkspaceOfficerSchema.pick({
 });
 
 const AdminOfficerOnboardingSchema = z.object({
-	mode: z.enum(["single", "batch"]).default("batch"),
+	mode: z.enum(["single", "batch"]).default("single"),
 	batch_org_unit_path: z.string().optional(),
 	selectedGroups: z.array(z.string()).default([]),
 	officers: z.array(SingleOfficerSchema).min(1, "Add at least one officer"),
@@ -118,7 +118,7 @@ export function AdminOfficerOnboarding() {
 	} = useForm<AdminOfficerOnboardingForm>({
 		resolver: zodResolver(AdminOfficerOnboardingSchema),
 		defaultValues: {
-			mode: "batch",
+			mode: "single",
 			batch_org_unit_path: "",
 			selectedGroups: [],
 			officers: [createEmptyOfficer()],
@@ -257,48 +257,66 @@ export function AdminOfficerOnboarding() {
 		}
 	};
 
+	const switchMode = (nextMode: "single" | "batch") => {
+		if (nextMode === mode) {
+			return;
+		}
+
+		clearErrors();
+		setValue("mode", nextMode, { shouldDirty: true });
+
+		if (nextMode === "single") {
+			replace([
+				officers[0]
+					? {
+						first_name: officers[0].first_name,
+						last_name: officers[0].last_name,
+						send_to_email: officers[0].send_to_email,
+						org_unit_path: officers[0].org_unit_path ?? "",
+					}
+					: createEmptyOfficer(),
+			]);
+			return;
+		}
+
+		if (fields.length === 0) {
+			replace([createEmptyOfficer()]);
+		}
+	};
+
 	return (
 		<Card className="rounded-xl border border-white/10 bg-black/40 shadow-xl">
 			<CardHeader className="flex flex-row items-start justify-between gap-4">
 				<CardTitle className="text-2xl font-semibold text-white">
 					Officer Onboarding
 				</CardTitle>
-				<div className="flex items-center gap-3 pt-1">
-					<span className="text-xs font-medium text-white/70">Single</span>
-					<label className="relative inline-flex cursor-pointer items-center">
-						<input
-							type="checkbox"
-							checked={mode === "batch"}
-							onChange={(event) => {
-								const nextMode = event.target.checked ? "batch" : "single";
-								clearErrors();
-								setValue("mode", nextMode, { shouldDirty: true });
-
-								if (nextMode === "single") {
-									replace([
-										officers[0]
-											? {
-												first_name: officers[0].first_name,
-												last_name: officers[0].last_name,
-												send_to_email: officers[0].send_to_email,
-												org_unit_path: officers[0].org_unit_path ?? "",
-										  }
-											: createEmptyOfficer(),
-									]);
-									return;
-								}
-
-								if (fields.length === 0) {
-									replace([createEmptyOfficer()]);
-								}
-							}}
-							disabled={isSubmitting}
-							className="peer sr-only"
-						/>
-						<span className="h-6 w-11 rounded-full bg-white/20 transition-colors peer-checked:bg-white/50" />
-						<span className="pointer-events-none absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-5" />
-					</label>
-					<span className="text-xs font-medium text-white/70">Batch</span>
+				<div className="inline-flex items-center rounded-lg border border-white/15 bg-white/5 p-1">
+					<button
+						type="button"
+						onClick={() => switchMode("single")}
+						disabled={isSubmitting}
+						aria-pressed={mode === "single"}
+						className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+							mode === "single"
+								? "bg-white text-black"
+								: "text-white/70 hover:text-white"
+						}`}
+					>
+						Single
+					</button>
+					<button
+						type="button"
+						onClick={() => switchMode("batch")}
+						disabled={isSubmitting}
+						aria-pressed={mode === "batch"}
+						className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+							mode === "batch"
+								? "bg-white text-black"
+								: "text-white/70 hover:text-white"
+						}`}
+					>
+						Batch
+					</button>
 				</div>
 			</CardHeader>
 			<CardContent>
