@@ -53,11 +53,6 @@ function RouteComponent() {
 		}
 		return termOrder[b.startDate.term] - termOrder[a.startDate.term];
 	});
-	const activeRoles = sortedRoles.filter((role) => role.endDate === null);
-	const hasMultipleActiveRoles = activeRoles.length > 1;
-	const fallbackRole = sortedRoles[0];
-	const accessLevelLabel =
-		officer.accessLevel === 3 ? "Executive" : officer.accessLevel === 2 ? "Director" : "Officer";
 
 	const resumeDate = officer.resumeUpdatedAt ? new Date(officer.resumeUpdatedAt) : null;
 	const resumeAgeDays = resumeDate
@@ -116,21 +111,13 @@ function RouteComponent() {
 				: hour >= 17 && hour < 21
 					? "Good evening"
 					: "Good night";
-	const timeEmoji =
-		hour >= 5 && hour < 12
-			? "🌅"
-			: hour >= 12 && hour < 17
-				? "🏙️"
-				: hour >= 17 && hour < 21
-					? "🌇"
-					: "🌆";
 
 	return (
 		<div className="space-y-6 px-4 pb-20 md:px-6">
 			<section className="rounded-2xl border border-white/10 bg-black/35 p-5 sm:p-7">
 				<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 					<div>
-						<h1 className="mt-1 text-2xl font-semibold text-white sm:text-3xl">{timeGreeting}, {firstName} {timeEmoji}</h1>
+						<h1 className="mt-1 text-2xl font-semibold text-white sm:text-3xl">{timeGreeting}, {firstName}</h1>
 						<p className="mt-2 text-sm text-white/70">Here is your quick snapshot and a few things to knock out this week.</p>
 					</div>
 					<div className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white/80">
@@ -171,43 +158,51 @@ function RouteComponent() {
 						<IdCard className="h-5 w-5" />
 						My ACM Snapshot
 					</h2>
-					<div className="mt-4 grid gap-4 lg:grid-cols-2">
-						<div className="rounded-xl border border-white/10 bg-white/3 p-4 lg:col-span-2">
-							<p className="text-xs uppercase tracking-wide text-white/60">
-								{hasMultipleActiveRoles ? "Current roles" : "Current role"}
+					<div className="mt-4 grid gap-4 lg:grid-cols-[1.35fr_1fr]">
+						<div className="rounded-xl border border-white/10 bg-white/3 p-4">
+							<p className="flex items-center gap-2 text-xs uppercase tracking-wide text-white/60">
+								<Milestone className="h-3.5 w-3.5" />
+								Timeline
 							</p>
-							{activeRoles.length > 0 ? (
-								<div className="mt-2 space-y-2">
-									{activeRoles.map((role) => (
-										<div key={`${role.title}-${role.division}-${role.startDate.term}-${role.startDate.year}`} className="rounded-lg border border-white/10 bg-white/2 px-3 py-2">
-											<p className="text-sm font-semibold text-white">{role.title}</p>
-											<p className="text-xs text-white/65">{role.division} Division</p>
-										</div>
-									))}
+							{sortedRoles.length > 0 ? (
+								<div className="mt-4 space-y-0">
+									{sortedRoles.map((role, index) => {
+										const isLast = index === sortedRoles.length - 1;
+										return (
+											<div
+												key={`${role.title}-${role.division}-${role.startDate.term}-${role.startDate.year}-${index}`}
+												className="grid grid-cols-[1.25rem_1fr] gap-3 pb-4"
+											>
+												<div className="relative flex justify-center">
+													<div className="mt-1.5 h-2.5 w-2.5 rounded-full bg-white/80 shadow-[0_0_10px_rgba(255,255,255,0.35)]" />
+													{!isLast && <div className="absolute top-4 h-[calc(100%-0.5rem)] w-px bg-white/20" />}
+												</div>
+												<div className="rounded-lg border border-white/10 bg-white/2 px-3 py-2">
+													<p className="text-sm font-semibold text-white">{role.title}</p>
+													<p className="text-xs text-white/65">{role.division} Division</p>
+													<p className="mt-1 text-xs text-white/60">
+														{formatTerm(role.startDate)} - {role.endDate ? formatTerm(role.endDate) : "Present"}
+													</p>
+												</div>
+											</div>
+										);
+									})}
 								</div>
 							) : (
-								<>
-									<p className="mt-1 text-lg font-semibold text-white">
-										{fallbackRole?.title ?? "No role assigned"}
-									</p>
-									<p className="text-xs text-white/65">
-										{fallbackRole ? `${fallbackRole.division} Division` : "Ask leadership to update your role"}
-									</p>
-								</>
+								<p className="mt-2 text-sm text-white/65">No roles assigned yet</p>
 							)}
-							<div className="mt-3 flex items-center justify-between text-xs text-white/70">
-								<span className="rounded-full border border-white/15 px-2 py-1">{accessLevelLabel}</span>
+							<div className="mt-2 flex items-center justify-end text-xs text-white/70">
 								<span>Joined {formatTerm(officer.joinDate)}</span>
 							</div>
 						</div>
 
 						<div className="rounded-xl border border-white/10 bg-white/3 p-4">
-							<p className="flex items-center gap-2 text-sm font-medium text-white">
-								<Milestone className="h-4 w-4" />
-								Timeline
+							<p className="flex items-center gap-2 text-xs uppercase tracking-wide text-white/60">
+								<Clock3 className="h-3.5 w-3.5" />
+								Profile health
 							</p>
+							<p className="mt-1 text-xs text-white/80">{resumeFreshness}</p>
 							<div className="mt-3 space-y-2 text-xs text-white/75">
-								<p>Expected graduation: {formatTerm(officer.expectedGrad)}</p>
 								<p>
 									Latest resume update:{" "}
 									{resumeDate ? fullDateFormatter.format(resumeDate) : "No resume uploaded"}
@@ -219,14 +214,6 @@ function RouteComponent() {
 										: "No photo upload yet"}
 								</p>
 							</div>
-						</div>
-
-						<div className="rounded-xl border border-white/10 bg-white/3 p-4">
-							<p className="flex items-center gap-2 text-xs uppercase tracking-wide text-white/60">
-								<Clock3 className="h-3.5 w-3.5" />
-								Presence and freshness
-							</p>
-							<p className="mt-1 text-xs text-white/80">{resumeFreshness}</p>
 							<div className="mt-2 grid grid-cols-3 gap-2 text-center">
 								<div className="rounded-lg border border-white/10 px-2 py-2">
 									<p className="text-lg font-semibold text-white">{officer.internships.length}</p>

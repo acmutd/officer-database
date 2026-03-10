@@ -118,7 +118,7 @@ function ProfileMenu() {
 							setOpen(false);
 							await logout();
 						}}
-						className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm text-white/90 transition-colors hover:bg-white/10 hover:text-white"
+						className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm text-red-300 transition-colors hover:bg-red-500/15 hover:text-red-200"
 					>
 						<LogOut className="h-4 w-4" />
 						Log out
