@@ -28,9 +28,7 @@ function RouteComponent() {
 
 	return (
 		<div className="px-4 pb-20 md:px-6">
-			<div className="rounded-xl border border-white/10 bg-black/40 p-4 shadow-xl sm:p-6">
-				<AdminOfficerOnboarding />
-			</div>
+			<AdminOfficerOnboarding />
 		</div>
 	);
 }
