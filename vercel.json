@@ -1,5 +1,6 @@
 {
     "rewrites": [
+        {"source": "/api/onboard", "destination": "https://us-central1-onboarding-445722.cloudfunctions.net/createusers"},
         {"source": "/(.*)", "destination": "/"}
     ]
 }

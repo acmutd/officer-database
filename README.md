@@ -44,6 +44,11 @@ npm run dev
 
 App runs at `http://localhost:3000`.
 
+### Environment Variables
+
+- `VITE_PUBLIC_API_URL` — base URL for existing officer database API.
+- `VITE_PUBLIC_OFFICER_ONBOARD_ENDPOINT` — deployed HTTP URL for the Google Workspace user-management cloud function.
+
 ## Scripts
 
 - `npm run dev` — start dev server

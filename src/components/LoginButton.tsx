@@ -8,21 +8,23 @@ export default function LoginButton() {
 	return (
 		<Button
 			className={cn(
-				"flex w-full max-w-md items-center justify-center space-x-2",
-				"rounded-full bg-white px-6 py-3 text-black",
-				"transition-colors hover:bg-gray-100"
+				"group flex w-full max-w-sm items-center justify-center gap-2",
+				"rounded-xl border border-white/20 bg-white text-black px-6 py-6 text-sm font-semibold sm:text-base",
+				"shadow-[0_10px_30px_rgba(255,255,255,0.12)] transition-all duration-200 ease-out",
+				"hover:-translate-y-0.5 hover:bg-white/95 hover:shadow-[0_14px_36px_rgba(255,255,255,0.18)]"
 			)}
 			onClick={() => login()}
 		>
-			<GoogleIcon />
+			<GoogleIcon className="transition-transform duration-200 ease-out group-hover:scale-110" />
 			<span>Sign in with Google</span>
 		</Button>
 	);
 }
 
-const GoogleIcon = () => {
+const GoogleIcon = ({ className }: { className?: string }) => {
 	return (
 		<svg
+			className={className}
 			width="20px"
 			height="20px"
 			viewBox="-3 0 262 262"
