@@ -35,7 +35,6 @@ const SingleOfficerSchema = CreateWorkspaceOfficerSchema.pick({
 const AdminOfficerOnboardingSchema = z.object({
 	mode: z.enum(["single", "batch"]).default("single"),
 	batch_org_unit_path: z.string().optional(),
-	selectedGroups: z.array(z.string()).default([]),
 	officers: z.array(SingleOfficerSchema).min(1, "Add at least one officer"),
 });
 
@@ -46,46 +45,6 @@ const CsvOfficerRowSchema = CreateWorkspaceOfficerSchema.pick({
 });
 
 type AdminOfficerOnboardingForm = z.input<typeof AdminOfficerOnboardingSchema>;
-
-const GROUP_OPTIONS = [
-	"media",
-	"research",
-	"development",
-	"projects",
-	"education",
-	"tip",
-	"community",
-	"outreach",
-	"acmindustry",
-	"finance-team",
-	"hackutd",
-	"hackutd-finance",
-	"hackutd-logistics",
-	"hackutdindustry",
-	"hackutd-experience",
-	"hackutd-marketing",
-	"sponsor",
-] as const;
-
-const GROUP_ALIASES: Record<(typeof GROUP_OPTIONS)[number], string> = {
-	media: "Media",
-	research: "Research",
-	development: "Development",
-	projects: "Projects",
-	acmindustry: "ACM Industry",
-	education: "Education",
-	tip: "TIP",
-	community: "Community",
-	outreach: "Outreach",
-	"finance-team": "Finance Team",
-	hackutd: "HackUTD",
-	"hackutd-finance": "HackUTD Finance",
-	"hackutd-logistics": "HackUTD Logistics",
-	hackutdindustry: "HackUTD Industry",
-	"hackutd-experience": "HackUTD Experience",
-	"hackutd-marketing": "HackUTD Marketing",
-	sponsor: "Sponsor",
-};
 
 const ORG_UNIT_OPTIONS = [
 	{ label: "Media", value: "/Media" },
@@ -98,10 +57,6 @@ const ORG_UNIT_OPTIONS = [
 	{ label: "Industry", value: "/Industry" },
 	{ label: "Sponsor", value: "/Sponsorship" },
 ];
-
-function toGroupEmail(groupName: string) {
-	return `${groupName}@acmutd.co`;
-}
 
 function createEmptyOfficer() {
 	return {
@@ -186,7 +141,6 @@ export function AdminOfficerOnboarding() {
 		defaultValues: {
 			mode: "single",
 			batch_org_unit_path: "",
-			selectedGroups: [],
 			officers: [createEmptyOfficer()],
 		},
 	});
@@ -198,7 +152,6 @@ export function AdminOfficerOnboarding() {
 	});
 	const mode = watch("mode");
 	const officers = watch("officers") ?? [];
-	const selectedGroups = watch("selectedGroups") ?? [];
 	const selectedBatchOrgUnit = watch("batch_org_unit_path") ?? "";
 
 	const handleCsvImport = async () => {
@@ -272,7 +225,6 @@ export function AdminOfficerOnboarding() {
 	};
 
 	const onSubmit = async (data: AdminOfficerOnboardingForm) => {
-		const groups = (data.selectedGroups ?? []).map(toGroupEmail);
 		const total = data.officers.length;
 
 		if (data.mode === "batch" && !data.batch_org_unit_path?.trim()) {
@@ -303,7 +255,7 @@ export function AdminOfficerOnboarding() {
 					last_name: officer.last_name,
 					send_to_email: officer.send_to_email,
 					org_unit_path: orgUnitPath,
-					groups,
+					groups: [],
 				});
 
 				if (!parsed.success) {
@@ -375,7 +327,6 @@ export function AdminOfficerOnboarding() {
 					data.mode === "batch"
 						? data.batch_org_unit_path ?? ""
 						: "",
-				selectedGroups: data.selectedGroups ?? [],
 				officers: [
 					{
 						...createEmptyOfficer(),
@@ -702,47 +653,6 @@ export function AdminOfficerOnboarding() {
 
 						<FieldError errors={[errors.officers]} />
 					</div>
-
-					<Field>
-						<FieldContent>
-							<FieldLabel className="text-white/70">Groups</FieldLabel>
-							<div className="grid grid-cols-1 gap-x-8 gap-y-2 pt-1 sm:grid-cols-2 lg:auto-cols-fr lg:grid-flow-col lg:grid-rows-6">
-								{GROUP_OPTIONS.map((groupName) => {
-									const checked = selectedGroups.includes(groupName);
-
-									return (
-										<label
-											key={groupName}
-											className="flex items-center gap-2 text-sm text-white/80"
-										>
-											<input
-												type="checkbox"
-												checked={checked}
-												onChange={(event) => {
-													if (event.target.checked) {
-														setValue(
-															"selectedGroups",
-															[...selectedGroups, groupName],
-															{ shouldDirty: true }
-														);
-														return;
-													}
-
-													setValue(
-														"selectedGroups",
-														selectedGroups.filter((value) => value !== groupName),
-														{ shouldDirty: true }
-													);
-												}}
-												className="size-4 rounded border border-white/20 bg-white/5 accent-white"
-											/>
-											<span>{GROUP_ALIASES[groupName]}</span>
-										</label>
-									);
-								})}
-							</div>
-						</FieldContent>
-					</Field>
 
 					<div className="flex justify-end pt-2">
 						<Button
