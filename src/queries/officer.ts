@@ -9,7 +9,7 @@ import {
 	updateOfficerName,
 	updateOfficerStatus,
 } from "@/functions/officer";
-import { mutationOptions, queryOptions } from "@tanstack/react-query";
+import { mutationOptions, queryOptions, type QueryClient } from "@tanstack/react-query";
 import type { Officer } from "@/schemas/officer";
 
 const OFFICER_STALE_TIME_MS = 2 * 60 * 1000;
@@ -37,71 +37,104 @@ const officersQuery = (archived: boolean) =>
 export const getCurrentOfficersQuery = officersQuery(false);
 export const getPastOfficersQuery = officersQuery(true);
 
+function mergeOfficerPatch(current: Officer, patch: Partial<Officer>): Officer {
+	return {
+		...current,
+		...patch,
+		socialLinks: patch.socialLinks
+			? { ...current.socialLinks, ...patch.socialLinks }
+			: current.socialLinks,
+		photo: patch.photo ? { ...current.photo, ...patch.photo } : current.photo,
+	};
+}
+
+export function patchOfficerCache(
+	client: QueryClient,
+	officerId: string,
+	patch: Partial<Officer>
+) {
+	const applyPatch = (officer: Officer) =>
+		officer.id === officerId ? mergeOfficerPatch(officer, patch) : officer;
+
+	client.setQueryData<Officer | null>(getOfficerQuery.queryKey, (current) =>
+		current ? applyPatch(current) : current
+	);
+
+	client.setQueryData<Officer | null>(
+		getOfficerByIdQuery(officerId, false).queryKey,
+		(current) => (current ? applyPatch(current) : current)
+	);
+
+	client.setQueryData<Officer | null>(
+		getOfficerByIdQuery(officerId, true).queryKey,
+		(current) => (current ? applyPatch(current) : current)
+	);
+
+	client.setQueryData<Officer[] | undefined>(getCurrentOfficersQuery.queryKey, (list) =>
+		list?.map(applyPatch)
+	);
+
+	client.setQueryData<Officer[] | undefined>(getPastOfficersQuery.queryKey, (list) =>
+		list?.map(applyPatch)
+	);
+}
+
+export function syncOfficerCache(client: QueryClient, officer: Officer) {
+	patchOfficerCache(client, officer.id, officer);
+}
+
 export const updateOfficerImageMutation = mutationOptions({
 	mutationFn: updateOfficerImage,
-	onSuccess: (_, variables, ___, context) => {
+	onSuccess: (imagePayload, variables, ___, context) => {
+		if (typeof imagePayload === "string") {
+			patchOfficerCache(context.client, variables.officerId, {
+				photo: {
+					url: imagePayload,
+					lastUpdatedAt: new Date().toISOString(),
+				},
+			});
+			return;
+		}
+
+		if (imagePayload && typeof imagePayload === "object") {
+			const data = imagePayload as { url?: string; lastUpdatedAt?: string };
+			if (data.url || data.lastUpdatedAt) {
+				const photoPatch: Officer["photo"] = {
+					lastUpdatedAt: data.lastUpdatedAt ?? new Date().toISOString(),
+				};
+				if (data.url) {
+					photoPatch.url = data.url;
+				}
+				patchOfficerCache(context.client, variables.officerId, {
+					photo: photoPatch,
+				});
+				return;
+			}
+		}
+
 		context.client.invalidateQueries(getOfficerByIdQuery(variables.officerId, false));
 		context.client.invalidateQueries(getOfficerByIdQuery(variables.officerId, true));
-		const currentOfficer = context.client.getQueryData<Officer | null>(getOfficerQuery.queryKey);
-		if (currentOfficer?.id === variables.officerId) {
-			context.client.refetchQueries(getOfficerQuery);
-		}
-		context.client.invalidateQueries(getCurrentOfficersQuery);
-		context.client.invalidateQueries(getPastOfficersQuery);
 	},
 });
 
 export const updateOfficerNameMutation = mutationOptions({
 	mutationFn: updateOfficerName,
-	onSuccess: (res, variables, __, context) => {
-		context.client.setQueryData(getOfficerByIdQuery(res.id, false).queryKey, res);
-		context.client.setQueryData(getOfficerByIdQuery(res.id, true).queryKey, res);
-		if (!variables.officerId) {
-			context.client.setQueryData(getOfficerQuery.queryKey, res);
-		} else {
-			const currentOfficer = context.client.getQueryData<Officer | null>(
-				getOfficerQuery.queryKey
-			);
-			if (currentOfficer?.id === variables.officerId) {
-				context.client.setQueryData(getOfficerQuery.queryKey, res);
-			}
-		}
-		context.client.invalidateQueries(getCurrentOfficersQuery);
-		context.client.invalidateQueries(getPastOfficersQuery);
+	onSuccess: (res, _, __, context) => {
+		syncOfficerCache(context.client, res);
 	},
 });
 
 export const updateAcademicInfoMutationOptions = mutationOptions({
 	mutationFn: updateAcademicInfo,
-	onSuccess: (res, variables, __, context) => {
-		context.client.setQueryData(getOfficerByIdQuery(res.id, false).queryKey, res);
-		context.client.setQueryData(getOfficerByIdQuery(res.id, true).queryKey, res);
-		if (!variables.officerId) {
-			context.client.setQueryData(getOfficerQuery.queryKey, res);
-		} else {
-			const currentOfficer = context.client.getQueryData<Officer | null>(
-				getOfficerQuery.queryKey
-			);
-			if (currentOfficer?.id === variables.officerId) {
-				context.client.setQueryData(getOfficerQuery.queryKey, res);
-			}
-		}
-		context.client.invalidateQueries(getCurrentOfficersQuery);
-		context.client.invalidateQueries(getPastOfficersQuery);
+	onSuccess: (res, _, __, context) => {
+		syncOfficerCache(context.client, res);
 	},
 });
 
 export const updateOfficerStatusMutation = mutationOptions({
 	mutationFn: updateOfficerStatus,
-	onSuccess: (res, variables, __, context) => {
-		context.client.setQueryData(
-			getOfficerByIdQuery(variables.officerId, false).queryKey,
-			res
-		);
-		context.client.setQueryData(
-			getOfficerByIdQuery(variables.officerId, true).queryKey,
-			res
-		);
+	onSuccess: (res, _variables, __, context) => {
+		syncOfficerCache(context.client, res);
 		context.client.invalidateQueries(getCurrentOfficersQuery);
 		context.client.invalidateQueries(getPastOfficersQuery);
 	},
@@ -109,22 +142,8 @@ export const updateOfficerStatusMutation = mutationOptions({
 
 export const archiveOfficerMutation = mutationOptions({
 	mutationFn: archiveOfficer,
-	onSuccess: (res, officerId: string, __, context) => {
-		const updatedOfficer = res;
-		context.client.setQueryData(
-			getOfficerByIdQuery(officerId, false).queryKey,
-			updatedOfficer
-		);
-		context.client.setQueryData(
-			getOfficerByIdQuery(officerId, true).queryKey,
-			updatedOfficer
-		);
-		// Also update the current officer query if it's the same officer
-		const currentOfficerKey = getOfficerQuery.queryKey;
-		const currentCachedOfficer = context.client.getQueryData<Officer | null>(currentOfficerKey);
-		if (currentCachedOfficer?.id === officerId) {
-			context.client.setQueryData(currentOfficerKey, updatedOfficer);
-		}
+	onSuccess: (res, _officerId: string, __, context) => {
+		syncOfficerCache(context.client, res);
 		context.client.invalidateQueries(getCurrentOfficersQuery);
 		context.client.invalidateQueries(getPastOfficersQuery);
 	},
@@ -132,22 +151,8 @@ export const archiveOfficerMutation = mutationOptions({
 
 export const unarchiveOfficerMutation = mutationOptions({
 	mutationFn: unarchiveOfficer,
-	onSuccess: (res, officerId: string, __, context) => {
-		const updatedOfficer = res;
-		context.client.setQueryData(
-			getOfficerByIdQuery(officerId, false).queryKey,
-			updatedOfficer
-		);
-		context.client.setQueryData(
-			getOfficerByIdQuery(officerId, true).queryKey,
-			updatedOfficer
-		);
-		// Also update the current officer query if it's the same officer
-		const currentOfficerKey = getOfficerQuery.queryKey;
-		const currentCachedOfficer = context.client.getQueryData<Officer | null>(currentOfficerKey);
-		if (currentCachedOfficer?.id === officerId) {
-			context.client.setQueryData(currentOfficerKey, updatedOfficer);
-		}
+	onSuccess: (res, _officerId: string, __, context) => {
+		syncOfficerCache(context.client, res);
 		context.client.invalidateQueries(getCurrentOfficersQuery);
 		context.client.invalidateQueries(getPastOfficersQuery);
 	},
