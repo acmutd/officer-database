@@ -12,20 +12,26 @@ import {
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { Officer } from "@/schemas/officer";
 
+const OFFICER_STALE_TIME_MS = 2 * 60 * 1000;
+const OFFICER_LIST_STALE_TIME_MS = 60 * 1000;
+
 export const getOfficerQuery = queryOptions({
 	queryKey: ["officer", "current"],
 	queryFn: getCurrentOfficer,
+	staleTime: OFFICER_STALE_TIME_MS,
 });
 
 export const getOfficerByIdQuery = (officerId: string, archived = false) =>
 	queryOptions({
 		queryKey: ["officer", officerId, archived ? "archived" : "current"],
 		queryFn: () => getOfficerById(officerId, archived),
+		staleTime: OFFICER_STALE_TIME_MS,
 	});
 const officersQuery = (archived: boolean) =>
 	queryOptions({
 		queryKey: ["officers", archived ? "archived" : "current"],
 		queryFn: () => getAllOfficers({ archived }),
+		staleTime: OFFICER_LIST_STALE_TIME_MS,
 	});
 
 export const getCurrentOfficersQuery = officersQuery(false);
@@ -96,8 +102,8 @@ export const updateOfficerStatusMutation = mutationOptions({
 			getOfficerByIdQuery(variables.officerId, true).queryKey,
 			res
 		);
-		context.client.refetchQueries(getCurrentOfficersQuery);
-		context.client.refetchQueries(getPastOfficersQuery);
+		context.client.invalidateQueries(getCurrentOfficersQuery);
+		context.client.invalidateQueries(getPastOfficersQuery);
 	},
 });
 

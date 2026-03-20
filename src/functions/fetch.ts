@@ -1,6 +1,7 @@
 import { auth } from "@/lib/firebase";
 
 const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
+const inflightGetRequests = new Map<string, Promise<Response>>();
 
 export type Endpoint =
 	| "/createOfficer"
@@ -23,12 +24,43 @@ export async function fetchWithAuth(endpoint: Endpoint, options: RequestInit) {
 		throw new Error("Unauthorized");
 	}
 
-	return fetch(`${API_URL}${endpoint}`, {
+	const method = options.method?.toUpperCase() ?? "GET";
+	const requestUrl = `${API_URL}${endpoint}`;
+
+	if (method === "GET") {
+		const requestKey = `${userId}:${requestUrl}`;
+		const existingRequest = inflightGetRequests.get(requestKey);
+
+		if (existingRequest) {
+			const existingResponse = await existingRequest;
+			return existingResponse.clone();
+		}
+
+		const requestPromise = fetch(requestUrl, {
+			...options,
+			headers: {
+				...options.headers,
+				Authorization: `Bearer ${idToken}`,
+				"X-User-Id": userId,
+			},
+		});
+
+		inflightGetRequests.set(requestKey, requestPromise);
+
+		try {
+			const response = await requestPromise;
+			return response.clone();
+		} finally {
+			inflightGetRequests.delete(requestKey);
+		}
+	}
+
+	return fetch(requestUrl, {
 		...options,
 		headers: {
 			...options.headers,
 			Authorization: `Bearer ${idToken}`,
-			"X-User-Id": userId!,
+			"X-User-Id": userId,
 		},
 	});
 }
