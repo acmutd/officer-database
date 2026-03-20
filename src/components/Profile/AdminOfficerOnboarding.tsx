@@ -19,6 +19,7 @@ import { CreateWorkspaceOfficerSchema } from "@/schemas/admin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useFieldArray, useForm } from "react-hook-form";
+import { FileSpreadsheet, Info, Upload } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -458,10 +459,16 @@ export function AdminOfficerOnboarding() {
 			<CardContent>
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 					{mode === "batch" ? (
-						<div className="grid gap-4 md:grid-cols-2">
+						<div className="space-y-4">
+							<p className="text-xs uppercase tracking-wide text-white/60">
+								Batch Setup
+							</p>
 							<Field>
 								<FieldContent>
-									<FieldLabel htmlFor="batch_org_unit_path" className="text-white/70">
+									<FieldLabel
+										htmlFor="batch_org_unit_path"
+										className="flex items-center gap-2 text-white/70"
+									>
 										Division (All Officers)
 									</FieldLabel>
 									<Select
@@ -489,10 +496,19 @@ export function AdminOfficerOnboarding() {
 
 							<Field>
 								<FieldContent>
-									<FieldLabel htmlFor="officer-csv-upload" className="text-white/70">
-										Import Officers (CSV)
-									</FieldLabel>
-									<div className="mt-2 space-y-3 rounded-lg border border-dashed border-white/20 bg-white/[0.03] p-4">
+									<div className="flex flex-wrap items-center gap-2">
+										<FieldLabel
+											htmlFor="officer-csv-upload"
+											className="flex items-center gap-2 text-white/70"
+										>
+											Import Officers (CSV)
+										</FieldLabel>
+										<span className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/5 px-2 py-0.5 text-[11px] font-medium text-white/70">
+											<Info className="size-3" aria-hidden="true" />
+											Optional
+										</span>
+									</div>
+									<div className="mt-2 space-y-3">
 										<input
 											id="officer-csv-upload"
 											type="file"
@@ -511,6 +527,7 @@ export function AdminOfficerOnboarding() {
 												htmlFor="officer-csv-upload"
 												className="inline-flex cursor-pointer items-center rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/20"
 											>
+												<Upload className="mr-2 size-4" aria-hidden="true" />
 												Choose CSV File
 											</label>
 											<p className="text-xs text-white/70">
@@ -535,10 +552,12 @@ export function AdminOfficerOnboarding() {
 											disabled={isSubmitting || !selectedCsvFile}
 											className="w-full bg-white/10 text-white hover:bg-white/20"
 										>
+											<FileSpreadsheet className="mr-2 size-4" aria-hidden="true" />
 											Parse CSV Into Cards
 										</Button>
-										<p className="text-xs text-white/60">
-											Expected columns: first name, last name, email
+										<p className="flex items-start gap-2 text-xs text-white/60">
+											<Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
+											You can skip CSV and add officers manually below. Expected columns: first name, last name, email.
 										</p>
 										{csvParseError ? (
 											<p className="text-xs text-red-300">{csvParseError}</p>
