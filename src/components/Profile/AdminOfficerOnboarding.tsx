@@ -19,6 +19,7 @@ import { CreateWorkspaceOfficerSchema } from "@/schemas/admin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useFieldArray, useForm } from "react-hook-form";
+import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -35,6 +36,12 @@ const AdminOfficerOnboardingSchema = z.object({
 	batch_org_unit_path: z.string().optional(),
 	selectedGroups: z.array(z.string()).default([]),
 	officers: z.array(SingleOfficerSchema).min(1, "Add at least one officer"),
+});
+
+const CsvOfficerRowSchema = CreateWorkspaceOfficerSchema.pick({
+	first_name: true,
+	last_name: true,
+	send_to_email: true,
 });
 
 type AdminOfficerOnboardingForm = z.input<typeof AdminOfficerOnboardingSchema>;
@@ -104,7 +111,65 @@ function createEmptyOfficer() {
 	};
 }
 
+function parseCsvRows(text: string) {
+	const rows: string[][] = [];
+	let currentRow: string[] = [];
+	let currentValue = "";
+	let inQuotes = false;
+
+	for (let index = 0; index < text.length; index += 1) {
+		const char = text[index];
+
+		if (char === '"') {
+			if (inQuotes && text[index + 1] === '"') {
+				currentValue += '"';
+				index += 1;
+				continue;
+			}
+
+			inQuotes = !inQuotes;
+			continue;
+		}
+
+		if (char === "," && !inQuotes) {
+			currentRow.push(currentValue);
+			currentValue = "";
+			continue;
+		}
+
+		if ((char === "\n" || char === "\r") && !inQuotes) {
+			if (char === "\r" && text[index + 1] === "\n") {
+				index += 1;
+			}
+
+			currentRow.push(currentValue);
+			rows.push(currentRow);
+			currentRow = [];
+			currentValue = "";
+			continue;
+		}
+
+		currentValue += char;
+	}
+
+	if (inQuotes) {
+		throw new Error("CSV contains an unclosed quoted value.");
+	}
+
+	if (currentValue.length > 0 || currentRow.length > 0) {
+		currentRow.push(currentValue);
+		rows.push(currentRow);
+	}
+
+	return rows;
+}
+
 export function AdminOfficerOnboarding() {
+	const [selectedCsvFile, setSelectedCsvFile] = useState<File | null>(null);
+	const [csvFileName, setCsvFileName] = useState("");
+	const [ignoreFirstRow, setIgnoreFirstRow] = useState(true);
+	const [csvParseError, setCsvParseError] = useState<string | null>(null);
+
 	const {
 		register,
 		handleSubmit,
@@ -134,6 +199,76 @@ export function AdminOfficerOnboarding() {
 	const officers = watch("officers") ?? [];
 	const selectedGroups = watch("selectedGroups") ?? [];
 	const selectedBatchOrgUnit = watch("batch_org_unit_path") ?? "";
+
+	const handleCsvImport = async () => {
+		if (!selectedCsvFile) {
+			const errorMessage = "Select a CSV file before importing.";
+			setCsvParseError(errorMessage);
+			toast.error(errorMessage);
+			return;
+		}
+
+		if (!selectedCsvFile.name.toLowerCase().endsWith(".csv")) {
+			const errorMessage = "Unsupported file type. Upload a .csv file.";
+			setCsvParseError(errorMessage);
+			toast.error(errorMessage);
+			return;
+		}
+
+		try {
+			const text = (await selectedCsvFile.text()).replace(/^\uFEFF/, "");
+			const rows = parseCsvRows(text)
+				.map((row) => row.map((value) => value.trim()))
+				.filter((row) => row.some((value) => value.length > 0));
+
+			const startIndex = ignoreFirstRow ? 1 : 0;
+
+			if (rows.length <= startIndex) {
+				throw new Error("CSV has no data rows to import.");
+			}
+
+			const parsedOfficers = rows.slice(startIndex).map((row, rowIndex) => {
+				const csvRowNumber = rowIndex + startIndex + 1;
+
+				if (row.length !== 3) {
+					throw new Error(
+						`Row ${csvRowNumber} must have exactly 3 columns: first name, last name, email.`
+					);
+				}
+
+				const parsedRow = CsvOfficerRowSchema.safeParse({
+					first_name: row[0],
+					last_name: row[1],
+					send_to_email: row[2],
+				});
+
+				if (!parsedRow.success) {
+					throw new Error(
+						`Row ${csvRowNumber} is invalid: ${
+							parsedRow.error.issues[0]?.message ?? "Invalid data"
+						}`
+					);
+				}
+
+				return {
+					...parsedRow.data,
+					org_unit_path: "",
+				};
+			});
+
+			replace(parsedOfficers);
+			clearErrors("officers");
+			setCsvParseError(null);
+			toast.success(`Imported ${parsedOfficers.length} officer(s) from CSV.`);
+		} catch (error) {
+			const message =
+				error instanceof Error
+					? error.message
+					: "Failed to parse CSV file.";
+			setCsvParseError(message);
+			toast.error(message);
+		}
+	};
 
 	const onSubmit = async (data: AdminOfficerOnboardingForm) => {
 		const groups = (data.selectedGroups ?? []).map(toGroupEmail);
@@ -263,6 +398,7 @@ export function AdminOfficerOnboarding() {
 		}
 
 		clearErrors();
+		setCsvParseError(null);
 		setValue("mode", nextMode, { shouldDirty: true });
 
 		if (nextMode === "single") {
@@ -348,6 +484,66 @@ export function AdminOfficerOnboarding() {
 									</Select>
 									<input type="hidden" {...register("batch_org_unit_path")} />
 									<FieldError errors={[errors.batch_org_unit_path]} />
+								</FieldContent>
+							</Field>
+
+							<Field>
+								<FieldContent>
+									<FieldLabel htmlFor="officer-csv-upload" className="text-white/70">
+										Import Officers (CSV)
+									</FieldLabel>
+									<div className="mt-2 space-y-3 rounded-lg border border-dashed border-white/20 bg-white/[0.03] p-4">
+										<input
+											id="officer-csv-upload"
+											type="file"
+											accept=".csv,text/csv"
+											disabled={isSubmitting}
+											onChange={(event) => {
+												const file = event.target.files?.[0] ?? null;
+												setSelectedCsvFile(file);
+												setCsvFileName(file?.name ?? "");
+												setCsvParseError(null);
+											}}
+											className="sr-only"
+										/>
+										<div className="flex flex-wrap items-center gap-2">
+											<label
+												htmlFor="officer-csv-upload"
+												className="inline-flex cursor-pointer items-center rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/20"
+											>
+												Choose CSV File
+											</label>
+											<p className="text-xs text-white/70">
+												{csvFileName || "No file selected"}
+											</p>
+										</div>
+										<label className="flex items-center gap-2 text-sm text-white/80">
+											<input
+												type="checkbox"
+												checked={ignoreFirstRow}
+												onChange={(event) => {
+													setIgnoreFirstRow(event.target.checked);
+													setCsvParseError(null);
+												}}
+												className="size-4 rounded border border-white/20 bg-white/5 accent-white"
+											/>
+											<span>Ignore first row (headers)</span>
+										</label>
+										<Button
+											type="button"
+											onClick={handleCsvImport}
+											disabled={isSubmitting || !selectedCsvFile}
+											className="w-full bg-white/10 text-white hover:bg-white/20"
+										>
+											Parse CSV Into Cards
+										</Button>
+										<p className="text-xs text-white/60">
+											Expected columns: first name, last name, email
+										</p>
+										{csvParseError ? (
+											<p className="text-xs text-red-300">{csvParseError}</p>
+										) : null}
+									</div>
 								</FieldContent>
 							</Field>
 						</div>
