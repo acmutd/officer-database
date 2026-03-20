@@ -459,10 +459,7 @@ export function AdminOfficerOnboarding() {
 			<CardContent>
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 					{mode === "batch" ? (
-						<div className="space-y-4">
-							<p className="text-xs uppercase tracking-wide text-white/60">
-								Batch Setup
-							</p>
+						<div className="space-y-3">
 							<Field>
 								<FieldContent>
 									<FieldLabel
@@ -508,7 +505,7 @@ export function AdminOfficerOnboarding() {
 											Optional
 										</span>
 									</div>
-									<div className="mt-2 space-y-3">
+									<div className="mt-2 space-y-2.5">
 										<input
 											id="officer-csv-upload"
 											type="file"
@@ -533,6 +530,15 @@ export function AdminOfficerOnboarding() {
 											<p className="text-xs text-white/70">
 												{csvFileName || "No file selected"}
 											</p>
+											<Button
+												type="button"
+												onClick={handleCsvImport}
+												disabled={isSubmitting || !selectedCsvFile}
+												className="ml-auto bg-white/10 text-white hover:bg-white/20"
+											>
+												<FileSpreadsheet className="mr-2 size-4" aria-hidden="true" />
+												Parse CSV Into Cards
+											</Button>
 										</div>
 										<label className="flex items-center gap-2 text-sm text-white/80">
 											<input
@@ -546,15 +552,6 @@ export function AdminOfficerOnboarding() {
 											/>
 											<span>Ignore first row (headers)</span>
 										</label>
-										<Button
-											type="button"
-											onClick={handleCsvImport}
-											disabled={isSubmitting || !selectedCsvFile}
-											className="w-full bg-white/10 text-white hover:bg-white/20"
-										>
-											<FileSpreadsheet className="mr-2 size-4" aria-hidden="true" />
-											Parse CSV Into Cards
-										</Button>
 										<p className="flex items-start gap-2 text-xs text-white/60">
 											<Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
 											You can skip CSV and add officers manually below. Expected columns: first name, last name, email.
