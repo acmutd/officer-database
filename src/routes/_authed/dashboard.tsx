@@ -12,6 +12,7 @@ import {
 	IdCard,
 	Milestone,
 } from "lucide-react";
+import { UpcomingACMEvents } from "@/components/Dashboard/UpcomingACMEvents";
 
 export const Route = createFileRoute("/_authed/dashboard")({
 	component: RouteComponent,
@@ -239,6 +240,8 @@ function RouteComponent() {
 					</div>
 				</div>
 			</section>
+
+			<UpcomingACMEvents />
 		</div>
 	);
 }
