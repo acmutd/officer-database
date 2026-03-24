@@ -2,35 +2,35 @@ import { mutationOptions } from "@tanstack/react-query";
 import {
 	getCurrentOfficersQuery,
 	getPastOfficersQuery,
-	getOfficerByIdQuery,
+	syncOfficerCache,
 } from "./officer";
 import { addOfficerRole, updateOfficerRole, removeOfficerRole } from "@/functions/roles";
 
-export const updateOfficerRoleMutation = (officerId: string) =>
+export const updateOfficerRoleMutation = (_officerId: string) =>
 	mutationOptions({
 		mutationFn: updateOfficerRole,
 		onSuccess: (res, _, __, ctx) => {
-			ctx.client.setQueryData(getOfficerByIdQuery(officerId).queryKey, res);
+			syncOfficerCache(ctx.client, res);
 			ctx.client.invalidateQueries(getCurrentOfficersQuery);
 			ctx.client.invalidateQueries(getPastOfficersQuery);
 		},
 	});
 
-export const addOfficerRoleMutation = (officerId: string) =>
+export const addOfficerRoleMutation = (_officerId: string) =>
 	mutationOptions({
 		mutationFn: addOfficerRole,
 		onSuccess: (res, _, __, ctx) => {
-			ctx.client.setQueryData(getOfficerByIdQuery(officerId).queryKey, res);
+			syncOfficerCache(ctx.client, res);
 			ctx.client.invalidateQueries(getCurrentOfficersQuery);
 			ctx.client.invalidateQueries(getPastOfficersQuery);
 		},
 	});
 
-export const removeOfficerRoleMutation = (officerId: string) =>
+export const removeOfficerRoleMutation = (_officerId: string) =>
 	mutationOptions({
 		mutationFn: removeOfficerRole,
 		onSuccess: (res, _, __, ctx) => {
-			ctx.client.setQueryData(getOfficerByIdQuery(officerId).queryKey, res);
+			syncOfficerCache(ctx.client, res);
 			ctx.client.invalidateQueries(getCurrentOfficersQuery);
 			ctx.client.invalidateQueries(getPastOfficersQuery);
 		},

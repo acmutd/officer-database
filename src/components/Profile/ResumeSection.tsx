@@ -32,12 +32,8 @@ export function ResumeSection({ officerId, archived = false }: Props) {
 
 	const { mutate: uploadResume, isPending: isUploading } = useMutation({
 		...uploadResumeMutation,
-		onSuccess: (_, __, ___, context) => {
-			if (officer?.id) {
-				context.client.invalidateQueries(getOfficerByIdQuery(officer.id, false));
-				context.client.invalidateQueries(getOfficerByIdQuery(officer.id, true));
-			}
-			context.client.refetchQueries(getOfficerQuery);
+		onSuccess: (data, variables, onMutateResult, mutationContext) => {
+			uploadResumeMutation.onSuccess?.(data, variables, onMutateResult, mutationContext);
 			toast.success("Resume uploaded successfully");
 		},
 		onError: (error) => {
