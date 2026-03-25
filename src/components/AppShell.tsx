@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import {
 	ArrowLeft,
 	Building2,
@@ -132,6 +132,7 @@ function ProfileMenu() {
 export function AppShell({ children }: AppShellProps) {
 	const [mobileOpen, setMobileOpen] = React.useState(false);
 	const { data: officer } = useQuery(getOfficerQuery);
+	const appTitle = "Officer Database";
 	const [desktopCollapsed, setDesktopCollapsed] = React.useState(() => {
 		if (typeof window === "undefined") {
 			return false;
@@ -139,7 +140,6 @@ export function AppShell({ children }: AppShellProps) {
 
 		return window.localStorage.getItem(SIDEBAR_MODE_STORAGE_KEY) === "true";
 	});
-	const pathname = useRouterState({ select: (state) => state.location.pathname });
 
 	React.useEffect(() => {
 		window.localStorage.setItem(SIDEBAR_MODE_STORAGE_KEY, String(desktopCollapsed));
@@ -148,16 +148,6 @@ export function AppShell({ children }: AppShellProps) {
 	const userIsAdmin = officer ? isAdmin(officer) : false;
 	const visibleNavLinks = navLinks;
 	const visibleAdminNavLinks = userIsAdmin ? adminNavLinks : [];
-
-	const pageTitle = pathname.startsWith("/directory")
-		? "Directory"
-		: pathname.startsWith("/dashboard")
-			? "Dashboard"
-		: pathname.startsWith("/resources")
-			? "Resources"
-		: pathname.startsWith("/onboarding")
-			? "Onboarding"
-			: "My Profile";
 
 	return (
 		<div className="relative h-screen overflow-hidden text-white">
@@ -388,13 +378,13 @@ export function AppShell({ children }: AppShellProps) {
 								<Link to="/" className="shrink-0 rounded-sm transition-opacity hover:opacity-90" aria-label="Go to home">
 									<img src="/acm.png" alt="ACM" className="h-6 w-6 shrink-0 rounded-sm object-contain sm:h-7 sm:w-7" />
 								</Link>
-								<h2 className="truncate text-base font-semibold text-white sm:text-lg">{pageTitle}</h2>
+								<h2 className="truncate text-base font-semibold text-white sm:text-lg">{appTitle}</h2>
 							</div>
 						</div>
 
 						<div className="pointer-events-none absolute left-1/2 flex max-w-[calc(100%-8rem)] -translate-x-1/2 items-center gap-2 lg:hidden">
 							<img src="/acm.png" alt="ACM" className="h-6 w-6 shrink-0 rounded-sm object-contain" />
-							<h2 className="truncate text-base font-semibold text-white">{pageTitle}</h2>
+							<h2 className="truncate text-base font-semibold text-white">{appTitle}</h2>
 						</div>
 
 						<div className="ml-auto">
