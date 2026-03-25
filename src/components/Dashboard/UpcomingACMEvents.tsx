@@ -24,12 +24,8 @@ function getGoogleCalendarUrl({
 
 export function UpcomingACMEvents() {
 	const { data: events = [], isLoading, isError } = useQuery(getUpcomingACMEventsQuery);
+	const chronologicalEvents = [...events].sort((a, b) => a.start.getTime() - b.start.getTime());
 
-	const shortDateFormat = new Intl.DateTimeFormat("en-US", {
-		weekday: "short",
-		month: "short",
-		day: "numeric",
-	});
 	const fullDateFormat = new Intl.DateTimeFormat("en-US", {
 		weekday: "long",
 		month: "long",
@@ -42,13 +38,14 @@ export function UpcomingACMEvents() {
 	});
 
 	return (
-		<section className="rounded-2xl border border-white/10 bg-black/30 p-5">
+		<section className="w-full max-w-xl rounded-2xl border border-white/10 bg-black/30 p-4 md:mr-auto">
 			<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<div>
 					<h2 className="flex items-center gap-2 text-lg font-semibold text-white">
 						<CalendarDays className="h-5 w-5" />
 						Upcoming ACM Events
 					</h2>
+					<p className="mt-1 text-xs text-white/65">Displayed in chronological order.</p>
 				</div>
 				<a
 					href="https://acmutd.co/events"
@@ -73,29 +70,30 @@ export function UpcomingACMEvents() {
 					</div>
 				)}
 
-				{!isLoading && !isError && events.length === 0 && (
+				{!isLoading && !isError && chronologicalEvents.length === 0 && (
 					<div className="rounded-xl border border-white/10 bg-white/3 px-4 py-4 text-sm text-white/70">No upcoming events at the moment. Check back soon.</div>
 				)}
 
-				{!isLoading && !isError && events.length > 0 && (
-					<div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-						{events.map((event) => (
+				{!isLoading && !isError && chronologicalEvents.length > 0 && (
+					<div className="space-y-3">
+						{chronologicalEvents.map((event) => (
 							<div
 								key={event.id}
-								className="flex h-full flex-col rounded-xl border border-white/10 bg-white/3 p-4 transition-colors hover:bg-white/6"
+								className="flex h-full flex-col rounded-xl border border-white/10 bg-white/3 p-3.5 transition-colors hover:bg-white/6"
 							>
-								<p className="text-[11px] font-medium uppercase tracking-wide text-white/55">{shortDateFormat.format(event.start)}</p>
-								<h3 className="mt-1 text-base font-semibold text-white">{event.title}</h3>
-								<p className="mt-1 text-xs text-white/70">{fullDateFormat.format(event.start)} at {timeFormat.format(event.start)}</p>
+								<div className="min-w-0 flex-1">
+										<h3 className="text-sm font-semibold text-white">{event.title}</h3>
+										<p className="mt-1 text-xs text-white/70">{fullDateFormat.format(event.start)} at {timeFormat.format(event.start)}</p>
 
-								{event.location && (
-									<p className="mt-2 flex items-start gap-1.5 text-xs text-white/70">
-										<MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-										<span className="line-clamp-1">{event.location}</span>
-									</p>
-								)}
+										{event.location && (
+											<p className="mt-2 flex items-start gap-1.5 text-xs text-white/70">
+												<MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+												<span className="line-clamp-1">{event.location}</span>
+											</p>
+										)}
 
-								{event.description && <p className="mt-2 line-clamp-2 text-xs text-white/65">{event.description}</p>}
+										{event.description && <p className="mt-2 line-clamp-2 text-xs text-white/65">{event.description}</p>}
+								</div>
 
 								<div className="mt-4 pt-1">
 									<a
