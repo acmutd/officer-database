@@ -383,7 +383,7 @@ export function AppShell({ children }: AppShellProps) {
 
 				{/* ── Main content ── */}
 				<div className="flex h-full min-h-0 min-w-0 flex-1 flex-col">
-					<header className="relative sticky top-0 z-30 flex h-16 items-center justify-between pr-4 sm:pr-6 lg:pr-8">
+					<header className="relative sticky top-0 z-30 flex h-16 items-center justify-between pr-4 sm:pr-6 lg:pr-8 bg-black/60 border-b border-white/10">
 						<div className="flex min-w-0 items-center gap-2 pl-2 sm:gap-3 sm:pl-3 lg:pl-4">
 							{/* Mobile hamburger only */}
 							<button
