@@ -154,10 +154,30 @@ export function AppShell({ children }: AppShellProps) {
 			<div className="relative flex h-full overflow-hidden">
 				<aside
 					className={cn(
-						"fixed left-0 top-16 z-20 hidden h-[calc(100vh-4rem)] border-r border-white/10 bg-black/50 backdrop-blur-md transition-[width] duration-300 ease-in-out lg:flex lg:flex-col",
+						"relative z-20 hidden h-full shrink-0 border-r border-white/10 bg-black/50 backdrop-blur-md transition-[width] duration-300 ease-in-out lg:flex lg:flex-col",
 						desktopCollapsed ? "w-14" : "w-48"
 					)}
 				>
+					<div className={cn("border-b border-white/10 py-3", desktopCollapsed ? "px-2" : "px-3")}>
+						<Link
+							to="/"
+							className={cn(
+								"flex h-9 w-full items-center rounded-lg text-white transition-colors hover:bg-white/10",
+								desktopCollapsed ? "justify-center" : "gap-2 px-2"
+							)}
+							aria-label="Go to home"
+						>
+							<img src="/acm.png" alt="ACM" className="h-6 w-6 shrink-0 rounded-sm object-contain" />
+							<span
+								className={cn(
+									"block overflow-hidden whitespace-nowrap text-sm font-semibold transition-[max-width,opacity,transform] duration-300 ease-in-out",
+									desktopCollapsed ? "max-w-0 translate-x-1 opacity-0" : "max-w-32 translate-x-0 opacity-100"
+								)}
+							>
+								{appTitle}
+							</span>
+						</Link>
+					</div>
 					<nav className={cn("flex-1 space-y-2 overflow-y-auto py-4 transition-all duration-300 ease-in-out", desktopCollapsed ? "px-2" : "px-3")}>
 						{visibleNavLinks.map((item) => (
 							<Link
@@ -374,12 +394,6 @@ export function AppShell({ children }: AppShellProps) {
 							>
 								<Menu className="h-4 w-4" />
 							</button>
-							<div className="hidden min-w-0 items-center gap-2 lg:flex">
-								<Link to="/" className="shrink-0 rounded-sm transition-opacity hover:opacity-90" aria-label="Go to home">
-									<img src="/acm.png" alt="ACM" className="h-6 w-6 shrink-0 rounded-sm object-contain sm:h-7 sm:w-7" />
-								</Link>
-								<h2 className="truncate text-base font-semibold text-white sm:text-lg">{appTitle}</h2>
-							</div>
 						</div>
 
 						<div className="pointer-events-none absolute left-1/2 flex max-w-[calc(100%-8rem)] -translate-x-1/2 items-center gap-2 lg:hidden">
@@ -392,7 +406,7 @@ export function AppShell({ children }: AppShellProps) {
 						</div>
 					</header>
 
-					<main className={cn("min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-5 transition-[padding-left] duration-300 ease-in-out sm:px-3 lg:px-4 lg:py-8", desktopCollapsed ? "lg:pl-16" : "lg:pl-52")}>
+					<main className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-5 sm:px-3 lg:px-4 lg:py-8">
 						<div className="w-full">{children}</div>
 					</main>
 				</div>
