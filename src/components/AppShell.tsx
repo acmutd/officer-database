@@ -2,13 +2,13 @@ import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
-	ArrowLeft,
 	Building2,
 	ClipboardCheck,
 	Info,
 	LayoutDashboard,
 	LogOut,
 	Menu,
+	PanelLeft,
 	User,
 	Users,
 	X,
@@ -155,28 +155,41 @@ export function AppShell({ children }: AppShellProps) {
 				<aside
 					className={cn(
 						"relative z-20 hidden h-full shrink-0 border-r border-white/10 bg-black/50 backdrop-blur-md transition-[width] duration-300 ease-in-out lg:flex lg:flex-col",
-						desktopCollapsed ? "w-14" : "w-48"
+						desktopCollapsed ? "w-14" : "w-56"
 					)}
 				>
-					<div className={cn("border-b border-white/10 py-3", desktopCollapsed ? "px-2" : "px-3")}>
-						<Link
-							to="/"
-							className={cn(
-								"flex h-9 w-full items-center rounded-lg text-white transition-colors hover:bg-white/10",
-								desktopCollapsed ? "justify-center" : "gap-2 px-2"
-							)}
-							aria-label="Go to home"
-						>
-							<img src="/acm.png" alt="ACM" className="h-6 w-6 shrink-0 rounded-sm object-contain" />
-							<span
-								className={cn(
-									"block overflow-hidden whitespace-nowrap text-sm font-semibold transition-[max-width,opacity,transform] duration-300 ease-in-out",
-									desktopCollapsed ? "max-w-0 translate-x-1 opacity-0" : "max-w-32 translate-x-0 opacity-100"
-								)}
-							>
-								{appTitle}
-							</span>
-						</Link>
+					<div className={cn("py-3", desktopCollapsed ? "px-2" : "px-3")}>
+						{desktopCollapsed ? (
+							<div className="flex justify-center">
+								<button
+									onClick={() => setDesktopCollapsed((prev) => !prev)}
+									className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/15 bg-white/5 text-white/90 transition-colors hover:bg-white/10"
+									aria-label="Expand sidebar"
+									title="Expand sidebar"
+								>
+									<PanelLeft className="h-4 w-4" />
+								</button>
+							</div>
+						) : (
+							<div className="flex items-center gap-2">
+								<Link
+									to="/"
+									className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-lg px-2 text-white transition-colors hover:bg-white/10"
+									aria-label="Go to home"
+								>
+									<img src="/acm.png" alt="ACM" className="h-6 w-6 shrink-0 rounded-sm object-contain" />
+									<span className="block truncate whitespace-nowrap text-sm font-semibold text-white">{appTitle}</span>
+								</Link>
+								<button
+									onClick={() => setDesktopCollapsed((prev) => !prev)}
+									className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/15 bg-white/5 text-white/90 transition-colors hover:bg-white/10"
+									aria-label="Collapse sidebar"
+									title="Collapse sidebar"
+								>
+									<PanelLeft className="h-4 w-4" />
+								</button>
+							</div>
+						)}
 					</div>
 					<nav className={cn("flex-1 space-y-2 overflow-y-auto py-4 transition-all duration-300 ease-in-out", desktopCollapsed ? "px-2" : "px-3")}>
 						{visibleNavLinks.map((item) => (
@@ -293,24 +306,6 @@ export function AppShell({ children }: AppShellProps) {
 							</>
 						)}
 					</nav>
-					<div className={cn("border-t border-white/10 py-3", desktopCollapsed ? "px-2" : "px-3")}>
-						<button
-							onClick={() => setDesktopCollapsed((prev) => !prev)}
-							className={cn(
-								"flex h-9 w-full items-center rounded-lg border border-white/15 bg-white/5 text-white/90 transition-colors hover:bg-white/10",
-								"justify-center"
-							)}
-							aria-label={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-							title={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-						>
-							<ArrowLeft
-								className={cn(
-									"h-4 w-4 transition-transform duration-300 ease-in-out",
-									desktopCollapsed ? "rotate-180" : "rotate-0"
-								)}
-							/>
-						</button>
-					</div>
 				</aside>
 
 				<div
