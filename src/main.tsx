@@ -13,6 +13,7 @@ import { AuthContextProvider, useAuth } from "./lib/auth.tsx";
 import { Spinner } from "./components/Spinner.tsx";
 
 // Create a new router instance
+const ROUTER_PRELOAD_STALE_TIME_MS = 2 * 60 * 1000;
 
 const TanStackQueryProviderContext = TanStackQueryProvider.getContext();
 const router = createRouter({
@@ -24,7 +25,7 @@ const router = createRouter({
 	defaultPreload: "intent",
 	scrollRestoration: true,
 	defaultStructuralSharing: true,
-	defaultPreloadStaleTime: 0,
+	defaultPreloadStaleTime: ROUTER_PRELOAD_STALE_TIME_MS,
 });
 
 // Register the router instance for type safety

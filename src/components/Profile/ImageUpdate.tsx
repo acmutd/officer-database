@@ -43,7 +43,13 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 	const avatar = getOfficerImageUrl(photo);
 	const { mutate: updateUserImage, isPending } = useMutation({
 		...updateOfficerImageMutation,
-		onSuccess: () => {
+		onSuccess: (data, variables, onMutateResult, mutationContext) => {
+			updateOfficerImageMutation.onSuccess?.(
+				data,
+				variables,
+				onMutateResult,
+				mutationContext
+			);
 			toast.success("Image updated successfully", {
 				action: {
 					label: "Refresh",
