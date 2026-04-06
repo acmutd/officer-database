@@ -24,4 +24,13 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  server: {
+    proxy: {
+      '/api/onboard': {
+        target: 'https://us-central1-onboarding-445722.cloudfunctions.net',
+        changeOrigin: true,
+        rewrite: () => '/createusers',
+      },
+    },
+  },
 })

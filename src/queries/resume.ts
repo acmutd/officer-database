@@ -4,6 +4,7 @@ import {
 	getOfficerResumeUrl,
 } from "@/functions/officer";
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
+import { patchOfficerCache } from "./officer";
 
 export const getResumeQuery = queryOptions({
 	queryKey: ["officer", "current"],
@@ -19,4 +20,10 @@ export const getResumeUrlQuery = (officerId: string) =>
 
 export const uploadResumeMutation = mutationOptions({
 	mutationFn: uploadOfficerResume,
+	onSuccess: (_, variables, __, ctx) => {
+		patchOfficerCache(ctx.client, variables.officerId, {
+			resumeUpdatedAt: new Date().toISOString(),
+		});
+		ctx.client.invalidateQueries(getResumeUrlQuery(variables.officerId));
+	},
 });

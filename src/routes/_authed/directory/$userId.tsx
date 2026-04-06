@@ -3,7 +3,7 @@ import { ACMErrorComponent } from "@/components/ErrorComponent";
 import { ProfileView } from "@/components/Profile/ProfileView";
 import { Spinner } from "@/components/Spinner";
 import { isExecutive } from "@/lib/admin";
-import { getOfficerByIdQuery, getOfficerQuery, getPastOfficersQuery } from "@/queries/officer";
+import { getOfficerByIdQuery, getOfficerQuery } from "@/queries/officer";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import z from "zod";
@@ -21,10 +21,6 @@ const searchTabSchema = searchSchema.optional().default(searchSchema.parse({}));
 export const Route = createFileRoute("/_authed/directory/$userId")({
 	validateSearch: searchTabSchema,
 	component: RouteComponent,
-	loader: async ({ context }) => {
-		// Warm the past officers list to help determine archived status without 404s
-		await context.queryClient.prefetchQuery(getPastOfficersQuery);
-	},
 	errorComponent: ACMErrorComponent,
 	pendingComponent: Spinner,
 });
@@ -33,9 +29,8 @@ function RouteComponent() {
 	const { userId } = Route.useParams();
 	const { archived } = Route.useSearch();
 	const { data: viewer } = useSuspenseQuery(getOfficerQuery);
-	const { data: pastOfficers } = useSuspenseQuery(getPastOfficersQuery);
-	const effectiveArchived = archived ?? Boolean(pastOfficers?.some((o) => o.id === userId));
-	const { data: officer } = useSuspenseQuery(getOfficerByIdQuery(userId, effectiveArchived));
+	const { data: officer } = useSuspenseQuery(getOfficerByIdQuery(userId, archived ?? false));
+	const effectiveArchived = archived ?? Boolean(officer?.isArchived);
 	const canEditProfile = viewer?.id === userId || (viewer ? isExecutive(viewer) : false);
 
 	if (!officer) {
@@ -43,11 +38,11 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="flex flex-col md:flex-row justify-around gap-6 md:gap-8 px-4 md:px-6">
-			<div className="container w-full md:w-1/4 flex-col">
+		<div className="flex flex-col justify-around gap-6 px-4 md:flex-row md:gap-8 md:px-6">
+			<div className="w-full md:w-1/4">
 				<ProfileView officerId={userId} archived={effectiveArchived} editable={canEditProfile} />
 			</div>
-			<div className="container flex w-full md:w-3/4 flex-col gap-8">
+			<div className="flex w-full flex-col gap-8 md:w-3/4">
 				<DirectoryProfileTabs
 					officerId={userId}
 					archived={effectiveArchived}

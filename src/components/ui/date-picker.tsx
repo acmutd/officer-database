@@ -20,12 +20,13 @@ interface DatePickerProps {
 	onChange?: (date: string) => void
 	placeholder?: string
 	className?: string
+	minDate?: Date
 	maxDate?: Date
 }
 
 export const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
 	(
-		{ value, onChange, placeholder = "Select date", className, maxDate },
+		{ value, onChange, placeholder = "Select date", className, minDate, maxDate },
 		ref
 	) => {
 		const [month, setMonth] = React.useState<number>(
@@ -41,6 +42,10 @@ export const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
 
 		const isDateDisabled = (selectedDay: number, selectedMonth: number, selectedYear: number) => {
 			const selectedDate = new Date(selectedYear, selectedMonth, selectedDay)
+			if (minDate) {
+				const minDateOnly = new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate())
+				if (selectedDate < minDateOnly) return true
+			}
 			if (maxDate) {
 				const maxDateOnly = new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate())
 				if (selectedDate > maxDateOnly) return true
@@ -92,7 +97,10 @@ export const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
 		const currentYear = new Date().getFullYear()
 	let yearOptions = Array.from({ length: 50 }, (_, i) => currentYear - 25 + i)
 
-	// Filter years based on maxDate constraint
+	// Filter years based on min/max constraints
+	if (minDate) {
+		yearOptions = yearOptions.filter(y => y >= minDate.getFullYear())
+	}
 	if (maxDate) {
 		yearOptions = yearOptions.filter(y => y <= maxDate.getFullYear())
 	}
