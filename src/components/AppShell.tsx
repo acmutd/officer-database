@@ -2,13 +2,13 @@ import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
-	ArrowLeft,
 	Building2,
 	ClipboardCheck,
 	Info,
 	LayoutDashboard,
 	LogOut,
 	Menu,
+	PanelLeft,
 	User,
 	Users,
 	X,
@@ -137,7 +137,6 @@ export function AppShell({ children }: AppShellProps) {
 		if (typeof window === "undefined") {
 			return false;
 		}
-
 		return window.localStorage.getItem(SIDEBAR_MODE_STORAGE_KEY) === "true";
 	});
 
@@ -152,20 +151,54 @@ export function AppShell({ children }: AppShellProps) {
 	return (
 		<div className="relative h-screen overflow-hidden text-white">
 			<div className="relative flex h-full overflow-hidden">
+
+				{/* ── Desktop sidebar ── */}
 				<aside
 					className={cn(
-						"fixed left-0 top-16 z-20 hidden h-[calc(100vh-4rem)] border-r border-white/10 bg-black/50 backdrop-blur-md transition-[width] duration-300 ease-in-out lg:flex lg:flex-col",
-						desktopCollapsed ? "w-14" : "w-48"
+						"relative z-20 hidden h-full shrink-0 border-r border-white/10 bg-black/50 backdrop-blur-md transition-[width] duration-300 ease-in-out lg:flex lg:flex-col",
+						desktopCollapsed ? "w-16" : "w-56"
 					)}
 				>
+					{/* Sidebar header: logo always links to /, title fades, toggle always visible */}
+					<div
+						className={cn(
+							"shrink-0 border-b border-white/10 px-2",
+							desktopCollapsed ? "flex h-16 items-center justify-center" : "flex h-16 items-center gap-2"
+						)}
+					>
+						<Link
+							to="/"
+							className={cn(
+								"inline-flex h-9 shrink-0 items-center justify-center rounded-lg text-white transition-colors hover:bg-white/10",
+								"min-w-0 gap-2 px-2",
+								!desktopCollapsed && "flex-1",
+								desktopCollapsed && "hidden"
+							)}
+							aria-label="Go to home"
+							title="Home"
+						>
+							<img src="/acm.png" alt="ACM" className="h-6 w-6 shrink-0 rounded-sm object-contain" />
+							<span className="block min-w-0 truncate whitespace-nowrap text-sm font-semibold text-white">{appTitle}</span>
+						</Link>
+
+						<button
+							onClick={() => setDesktopCollapsed((prev) => !prev)}
+							className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/15 bg-white/5 text-white/90 transition-all duration-300 hover:bg-white/10"
+							aria-label={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+							title={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+						>
+							<PanelLeft className={cn("h-4 w-4 transition-transform duration-300", desktopCollapsed && "rotate-180")} />
+						</button>
+					</div>
+
+					{/* Nav links */}
 					<nav className={cn("flex-1 space-y-2 overflow-y-auto py-4 transition-all duration-300 ease-in-out", desktopCollapsed ? "px-2" : "px-3")}>
 						{visibleNavLinks.map((item) => (
 							<Link
 								key={item.label}
 								to={item.to}
 								activeProps={{
-									className:
-										"border-white/30 bg-white/10 text-white",
+									className: "border-white/30 bg-white/10 text-white",
 								}}
 								className={cn(
 									"flex w-full border border-transparent text-white/80 transition-all duration-300 ease-in-out hover:border-white/20 hover:bg-white/5 hover:text-white",
@@ -243,11 +276,10 @@ export function AppShell({ children }: AppShellProps) {
 									disabled
 									aria-disabled="true"
 									className={cn(
-										"flex w-full border border-dashed border-white/20 text-white/45 transition-all duration-300 ease-in-out",
+										"flex w-full cursor-not-allowed border border-dashed border-white/20 text-white/45 transition-all duration-300 ease-in-out",
 										desktopCollapsed
 											? "mx-auto h-9 w-9 items-center justify-center rounded-lg p-0"
-											: "-ml-0.5 h-9 items-center rounded-lg p-0 text-left",
-										"cursor-not-allowed"
+											: "-ml-0.5 h-9 items-center rounded-lg p-0 text-left"
 									)}
 									title={desktopCollapsed ? "ACM HR (Coming Soon)" : undefined}
 								>
@@ -273,26 +305,9 @@ export function AppShell({ children }: AppShellProps) {
 							</>
 						)}
 					</nav>
-					<div className={cn("border-t border-white/10 py-3", desktopCollapsed ? "px-2" : "px-3")}>
-						<button
-							onClick={() => setDesktopCollapsed((prev) => !prev)}
-							className={cn(
-								"flex h-9 w-full items-center rounded-lg border border-white/15 bg-white/5 text-white/90 transition-colors hover:bg-white/10",
-								"justify-center"
-							)}
-							aria-label={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-							title={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-						>
-							<ArrowLeft
-								className={cn(
-									"h-4 w-4 transition-transform duration-300 ease-in-out",
-									desktopCollapsed ? "rotate-180" : "rotate-0"
-								)}
-							/>
-						</button>
-					</div>
 				</aside>
 
+				{/* ── Mobile overlay ── */}
 				<div
 					className={cn(
 						"fixed inset-x-0 bottom-0 top-16 z-40 bg-black/70 backdrop-blur-sm transition-opacity duration-300 ease-in-out lg:hidden",
@@ -300,13 +315,15 @@ export function AppShell({ children }: AppShellProps) {
 					)}
 					onClick={() => setMobileOpen(false)}
 				/>
+
+				{/* ── Mobile sidebar ── */}
 				<aside
 					className={cn(
 						"fixed left-0 top-16 z-50 h-[calc(100vh-4rem)] w-72 max-w-[88vw] overflow-y-auto border-r border-white/10 bg-black/95 px-4 py-5 transition-transform duration-300 ease-in-out lg:hidden",
 						mobileOpen ? "translate-x-0" : "-translate-x-full"
 					)}
 				>
-					<div className="mb-6 flex items-center justify-between">
+					<div className="mb-4 flex items-center justify-between border-b border-white/10 pb-4">
 						<Link to="/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 rounded-lg px-1 py-1 text-white transition-colors hover:bg-white/10">
 							<img src="/acm.png" alt="ACM" className="h-6 w-6 rounded-sm object-contain" />
 						</Link>
@@ -364,9 +381,11 @@ export function AppShell({ children }: AppShellProps) {
 					</nav>
 				</aside>
 
-				<div className="min-h-0 min-w-0 flex h-full flex-1 flex-col">
-					<header className="relative sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-black/45 pr-4 backdrop-blur-md sm:pr-6 lg:pr-8">
+				{/* ── Main content ── */}
+				<div className="flex h-full min-h-0 min-w-0 flex-1 flex-col">
+					<header className="relative sticky top-0 z-30 flex h-16 items-center justify-between pr-4 sm:pr-6 lg:pr-8 bg-black/60 border-b border-white/10">
 						<div className="flex min-w-0 items-center gap-2 pl-2 sm:gap-3 sm:pl-3 lg:pl-4">
+							{/* Mobile hamburger only */}
 							<button
 								onClick={() => setMobileOpen(true)}
 								className="rounded-lg border border-white/15 p-2 text-white lg:hidden"
@@ -374,14 +393,9 @@ export function AppShell({ children }: AppShellProps) {
 							>
 								<Menu className="h-4 w-4" />
 							</button>
-							<div className="hidden min-w-0 items-center gap-2 lg:flex">
-								<Link to="/" className="shrink-0 rounded-sm transition-opacity hover:opacity-90" aria-label="Go to home">
-									<img src="/acm.png" alt="ACM" className="h-6 w-6 shrink-0 rounded-sm object-contain sm:h-7 sm:w-7" />
-								</Link>
-								<h2 className="truncate text-base font-semibold text-white sm:text-lg">{appTitle}</h2>
-							</div>
 						</div>
 
+						{/* Mobile centered logo + title */}
 						<div className="pointer-events-none absolute left-1/2 flex max-w-[calc(100%-8rem)] -translate-x-1/2 items-center gap-2 lg:hidden">
 							<img src="/acm.png" alt="ACM" className="h-6 w-6 shrink-0 rounded-sm object-contain" />
 							<h2 className="truncate text-base font-semibold text-white">{appTitle}</h2>
@@ -392,10 +406,11 @@ export function AppShell({ children }: AppShellProps) {
 						</div>
 					</header>
 
-					<main className={cn("min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-5 transition-[padding-left] duration-300 ease-in-out sm:px-3 lg:px-4 lg:py-8", desktopCollapsed ? "lg:pl-16" : "lg:pl-52")}>
+					<main className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-5 sm:px-3 lg:px-4 lg:py-8">
 						<div className="w-full">{children}</div>
 					</main>
 				</div>
+
 			</div>
 		</div>
 	);
