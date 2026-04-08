@@ -15,11 +15,18 @@ type Props = {
 	officerId: string;
 	firstName: string;
 	lastName: string;
+	editable?: boolean;
 };
 
 
 
-export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
+export function ImageUpdate({
+	photo,
+	officerId,
+	firstName,
+	lastName,
+	editable = false,
+}: Props) {
 	const avatarOutputSize = 720;
 
 	const defaultAdjustments: ImageAdjustments = {
@@ -243,19 +250,21 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 					accept="image/*"
 					className="hidden"
 				/>
-				<Button
-					size="icon"
-					variant="secondary"
-					className="absolute -right-1 bottom-0 cursor-pointer rounded-full shadow-xl transition-shadow duration-300 hover:shadow-purple-500/20"
-					onClick={handleImageClick}
-					disabled={isPending}
-				>
-					{isPending ? (
-						<Loader2 className="h-4 w-4 animate-spin" />
-					) : (
-						<Pencil className="h-4 w-4" />
-					)}
-				</Button>
+				{editable && (
+					<Button
+						size="icon"
+						variant="secondary"
+						className="absolute -right-1 bottom-0 cursor-pointer rounded-full shadow-xl transition-shadow duration-300 hover:shadow-purple-500/20"
+						onClick={handleImageClick}
+						disabled={isPending}
+					>
+						{isPending ? (
+							<Loader2 className="h-4 w-4 animate-spin" />
+						) : (
+							<Pencil className="h-4 w-4" />
+						)}
+					</Button>
+				)}
 			</div>
 		</>
 	);

@@ -1,9 +1,11 @@
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 import { RoleList } from "./RoleList";
 import { ExternalLinks } from "../Socials/ExternalLinks";
 import { ImageUpdate } from "./ImageUpdate";
 import { UserAvatar } from "./UserAvatar";
 import { UpdateName } from "./UpdateName";
+import { AcademicInfo } from "./AcademicInfo";
 import {
 	getOfficerQuery,
 	getOfficerByIdQuery,
@@ -29,6 +31,7 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 	const { data: officer, isLoading } = useQuery(
 		officerId ? getOfficerByIdQuery(officerId, archived) : getOfficerQuery
 	);
+	const [isEditing, setIsEditing] = useState(false);
 
 	const { data: viewer } = useQuery(getOfficerQuery);
 	const isViewerExecutive = viewer ? isExecutive(viewer) : false;
@@ -46,8 +49,8 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 	}
 	return (
 		<div className="overflow-hidden rounded-3xl border border-white/10 bg-black/40 p-6 md:p-8 shadow-2xl backdrop-blur-xl">
-			<div className="flex flex-col gap-6 text-center">
-			<div className="flex w-full items-center justify-between px-1 pt-2">
+			<div className="flex flex-col gap-6">
+				<div className="flex w-full items-start justify-between gap-4 px-1 pt-2">
 					<div className="z-10 -ml-6 mb-2 -mt-4">
 						{isViewerExecutive && officerId && (
 							<Popover>
@@ -94,9 +97,9 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 											className="justify-start rounded-lg text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
 											disabled={isArchiving || isUnarchiving}
 											onClick={() =>
-												officer.isArchived
-													? unarchive(officer.id)
-													: archive(officer.id)
+											officer.isArchived
+												? unarchive(officer.id)
+												: archive(officer.id)
 											}
 										>
 											{(isArchiving || isUnarchiving) && (
@@ -110,35 +113,38 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 						)}
 					</div>
 
-					<div className="z-10 -mr-6 mb-2 -mt-4">
-						<div
-							className={cn(
-								"flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
-								officer.isActive
-									? "border-green-500/20 bg-green-500/10 text-green-400"
-									: "border-red-500/20 bg-red-500/10 text-red-400"
-							)}
-						>
+					<div className="flex items-center gap-2">
+						<div className="z-10 -mr-6 mb-2 -mt-4">
 							<div
 								className={cn(
-									"h-1.5 w-1.5 rounded-full shadow-[0_0_8px]",
+									"flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
 									officer.isActive
-										? "bg-green-400 shadow-green-500/50"
-										: "bg-red-400 shadow-red-500/50"
+										? "border-green-500/20 bg-green-500/10 text-green-400"
+										: "border-red-500/20 bg-red-500/10 text-red-400"
 								)}
-							/>
-							{officer.isActive ? "Active" : "Inactive"}
+							>
+								<div
+									className={cn(
+										"h-1.5 w-1.5 rounded-full shadow-[0_0_8px]",
+										officer.isActive
+											? "bg-green-400 shadow-green-500/50"
+											: "bg-red-400 shadow-red-500/50"
+									)}
+								/>
+								{officer.isActive ? "Active" : "Inactive"}
+							</div>
 						</div>
 					</div>
 				</div>
 
-			<div className="relative -mt-6 flex flex-col items-center justify-center">
+				<div className="relative -mt-6 flex flex-col items-center justify-center gap-4 text-center">
 					{editable ? (
 						<ImageUpdate
 							officerId={officer.id}
 							firstName={officer.firstName}
 							lastName={officer.lastName}
 							photo={officer.photo}
+							editable={isEditing}
 						/>
 					) : (
 						<UserAvatar
@@ -148,36 +154,52 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 							className="shadow-2xl"
 						/>
 					)}
+
+					{editable ? (
+						<UpdateName
+							officerId={officer.id}
+							firstName={officer.firstName}
+							lastName={officer.lastName}
+							editable={isEditing}
+						/>
+					) : (
+						<h1 className="text-2xl font-semibold tracking-tight text-white">
+							{officer.firstName} {officer.lastName}
+						</h1>
+					)}
+
+					<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70 -mt-3">
+						<RoleList roles={officer.roles} showAll />
+					</div>
 				</div>
 
-				{editable ? (
-					<UpdateName
+				<Separator className="mt-2 bg-white/10" />
+
+				<div className="flex flex-col gap-6 pt-2">
+					<AcademicInfo
 						officerId={officer.id}
-						firstName={officer.firstName}
-						lastName={officer.lastName}
+						archived={archived}
+						editable={editable && isEditing}
+						variant="inline"
 					/>
-				) : (
-					<h1 className="text-2xl font-semibold tracking-tight text-white">
-						{officer.firstName} {officer.lastName}
-					</h1>
-				)}
 
-				<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70 -mt-3">
-					<RoleList roles={officer.roles} showAll />
+					<Separator className="bg-white/10" />
+
+					<div className="flex flex-col gap-4">
+						<span className="text-xs font-semibold uppercase text-white/60">
+							Socials
+						</span>
+						<ExternalLinks
+							officerId={officer.id}
+							links={officer.socialLinks}
+							editable={editable}
+							onEditRequest={() => setIsEditing(true)}
+							isEditing={isEditing}
+							onCancelEdit={() => setIsEditing(false)}
+							onFinishEdit={() => setIsEditing(false)}
+						/>
+					</div>
 				</div>
-			</div>
-
-			<Separator className="mt-6 bg-white/10" />
-
-			<div className="flex flex-col gap-4 pt-8">
-				<span className="text-xs font-semibold uppercase text-white/60">
-					Socials
-				</span>
-				<ExternalLinks
-					officerId={officer.id}
-					links={officer.socialLinks}
-					editable={editable}
-				/>
 			</div>
 		</div>
 	);

@@ -1,7 +1,6 @@
 import { type Officer, StandingSchema, TermSchema } from "@/schemas/officer";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import { updateAcademicInfoMutationOptions } from "@/queries/officer";
 import {
 	Field,
@@ -24,7 +23,6 @@ import { toast } from "sonner";
 import { useEffect } from "react";
 
 const UpdateAcademicsSchema = z.object({
-	netId: z.string().min(1, "Net ID is required"),
 	creditStanding: StandingSchema,
 	yearStanding: StandingSchema,
 	expectedGrad: TermSchema,
@@ -37,14 +35,12 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 	const startYear = 2020; // matches TermSchema minimum
 	const years = Array.from({ length: currentYear + 6 - startYear + 1 }, (_, i) => startYear + i);
 	const initialValues = {
-		netId: officer.netId,
 		creditStanding: officer.creditStanding,
 		yearStanding: officer.yearStanding,
 		expectedGrad: officer.expectedGrad,
 	};
 
 	const {
-		register,
 		handleSubmit,
 		formState: { errors, isDirty },
 		control,
@@ -61,7 +57,6 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 	useEffect(() => {
 		reset(initialValues);
 	}, [
-		officer.netId,
 		officer.creditStanding,
 		officer.yearStanding,
 		officer.expectedGrad.term,
@@ -71,7 +66,11 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 
 	const onSubmit = async (data: UpdateAcademicsFormData) => {
 		try {
-			await updateAcademicInfo({ officerId: officer.id, ...data });
+			await updateAcademicInfo({
+				officerId: officer.id,
+				netId: officer.netId,
+				...data,
+			});
 			reset(data);
 			toast.success("Academic info updated successfully");
 		} catch (error) {
@@ -83,84 +82,67 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 			<FieldGroup>
 				<Field>
 					<FieldContent>
-						<FieldLabel htmlFor="netId" className="text-white/70">
-							Net ID
+						<FieldLabel htmlFor="yearStanding" className="text-white/70">
+							Standing (by year)
 						</FieldLabel>
-						<Input
-							id="netId"
-							{...register("netId")}
-							className="border-white/10 bg-white/5 text-white placeholder:text-white/50"
-							placeholder="Enter your Net ID"
+						<Controller
+							name="yearStanding"
+							control={control}
+							render={({ field }) => (
+								<Select value={field.value} onValueChange={field.onChange}>
+									<SelectTrigger className="border-white/10 bg-white/5 text-white">
+										<SelectValue placeholder="Select year standing" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="Freshman">Freshman</SelectItem>
+										<SelectItem value="Sophomore">Sophomore</SelectItem>
+										<SelectItem value="Junior">Junior</SelectItem>
+										<SelectItem value="Senior">Senior</SelectItem>
+										<SelectItem value="Graduate">Graduate</SelectItem>
+										<SelectItem value="Alumni">Alumni</SelectItem>
+									</SelectContent>
+								</Select>
+							)}
 						/>
-						<FieldError errors={[errors.netId]} />
+						<FieldError errors={[errors.yearStanding]} />
 					</FieldContent>
 				</Field>
 
-				<div className="grid grid-cols-2 gap-4">
-					<Field>
-						<FieldContent>
-							<FieldLabel htmlFor="yearStanding" className="text-white/70">
-								Standing (by year)
-							</FieldLabel>
-							<Controller
-								name="yearStanding"
-								control={control}
-								render={({ field }) => (
-									<Select value={field.value} onValueChange={field.onChange}>
-										<SelectTrigger className="border-white/10 bg-white/5 text-white">
-											<SelectValue placeholder="Select year standing" />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value="Freshman">Freshman</SelectItem>
-											<SelectItem value="Sophomore">Sophomore</SelectItem>
-											<SelectItem value="Junior">Junior</SelectItem>
-											<SelectItem value="Senior">Senior</SelectItem>
-											<SelectItem value="Graduate">Graduate</SelectItem>
-											<SelectItem value="Alumni">Alumni</SelectItem>
-										</SelectContent>
-									</Select>
-								)}
-							/>
-							<FieldError errors={[errors.yearStanding]} />
-						</FieldContent>
-					</Field>
-
-					<Field>
-						<FieldContent>
-							<FieldLabel htmlFor="creditStanding" className="text-white/70">
-								Standing (by credit)
-							</FieldLabel>
-							<Controller
-								name="creditStanding"
-								control={control}
-								render={({ field }) => (
-									<Select value={field.value} onValueChange={field.onChange}>
-										<SelectTrigger className="border-white/10 bg-white/5 text-white">
-											<SelectValue placeholder="Select credit standing" />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value="Freshman">Freshman</SelectItem>
-											<SelectItem value="Sophomore">Sophomore</SelectItem>
-											<SelectItem value="Junior">Junior</SelectItem>
-											<SelectItem value="Senior">Senior</SelectItem>
-											<SelectItem value="Graduate">Graduate</SelectItem>
-											<SelectItem value="Alumni">Alumni</SelectItem>
-										</SelectContent>
-									</Select>
-								)}
-							/>
-							<FieldError errors={[errors.creditStanding]} />
-						</FieldContent>
-					</Field>
-				</div>
+				<Field>
+					<FieldContent>
+						<FieldLabel htmlFor="creditStanding" className="text-white/70">
+							Standing (by credit)
+						</FieldLabel>
+						<Controller
+							name="creditStanding"
+							control={control}
+							render={({ field }) => (
+								<Select value={field.value} onValueChange={field.onChange}>
+									<SelectTrigger className="border-white/10 bg-white/5 text-white">
+										<SelectValue placeholder="Select credit standing" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="Freshman">Freshman</SelectItem>
+										<SelectItem value="Sophomore">Sophomore</SelectItem>
+										<SelectItem value="Junior">Junior</SelectItem>
+										<SelectItem value="Senior">Senior</SelectItem>
+										<SelectItem value="Graduate">Graduate</SelectItem>
+										<SelectItem value="Alumni">Alumni</SelectItem>
+									</SelectContent>
+								</Select>
+							)}
+						/>
+						<FieldError errors={[errors.creditStanding]} />
+					</FieldContent>
+				</Field>
 
 				<Field>
 					<FieldContent>
 						<FieldLabel className="text-white/70">
 							Expected Graduation
 						</FieldLabel>
-						<div className="flex space-x-2">
-							<div className="flex-1">
+						<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+							<div>
 								<Controller
 									name="expectedGrad.term"
 									control={control}
@@ -178,7 +160,7 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 									)}
 								/>
 							</div>
-							<div className="flex-1">
+							<div>
 								<Controller
 									name="expectedGrad.year"
 									control={control}
