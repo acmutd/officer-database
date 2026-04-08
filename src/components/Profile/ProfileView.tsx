@@ -19,7 +19,7 @@ import { isExecutive } from "@/lib/admin";
 import { Button } from "../ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { EllipsisVertical, Loader2 } from "lucide-react";
+import { CalendarDays, EllipsisVertical, GraduationCap, Loader2 } from "lucide-react";
 
 type Props = {
 	officerId?: string;
@@ -175,31 +175,70 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 
 				<Separator className="mt-2 bg-white/10" />
 
-				<div className="flex flex-col gap-6 pt-2">
-					<AcademicInfo
-						officerId={officer.id}
-						archived={archived}
-						editable={editable && isEditing}
-						variant="inline"
-					/>
+				{isEditing ? (
+					<div className="flex flex-col gap-6 pt-2">
+						<AcademicInfo
+							officerId={officer.id}
+							archived={archived}
+							editable={editable}
+							variant="inline"
+						/>
 
-					<Separator className="bg-white/10" />
+						<Separator className="bg-white/10" />
 
+						<div className="flex flex-col gap-4">
+							<span className="text-xs font-semibold uppercase text-white/60">
+								Socials
+							</span>
+							<ExternalLinks
+								officerId={officer.id}
+								links={officer.socialLinks}
+								editable={editable}
+								onEditRequest={() => setIsEditing(true)}
+								isEditing
+								onCancelEdit={() => setIsEditing(false)}
+								onFinishEdit={() => setIsEditing(false)}
+							/>
+						</div>
+					</div>
+				) : (
 					<div className="flex flex-col gap-4">
-						<span className="text-xs font-semibold uppercase text-white/60">
-							Socials
-						</span>
+						<div className="flex flex-col gap-4 pl-3 text-sm text-white/80">
+							<div className="flex items-start gap-2">
+								<GraduationCap className="mt-0.5 h-4 w-4 text-white/55" />
+								<div className="space-y-1">
+									<div className="text-[11px] font-semibold uppercase tracking-wider text-white/45">
+										Year Standing
+									</div>
+									<span>{officer.yearStanding}</span>
+								</div>
+							</div>
+							<div className="flex items-start gap-2">
+								<CalendarDays className="mt-0.5 h-4 w-4 text-white/55" />
+								<div className="space-y-1">
+									<div className="text-[11px] font-semibold uppercase tracking-wider text-white/45">
+										Expected Graduation
+									</div>
+									<span>
+										{officer.expectedGrad.term} {officer.expectedGrad.year}
+									</span>
+								</div>
+							</div>
+						</div>
+
+						<div className="h-px bg-white/10" />
+
 						<ExternalLinks
 							officerId={officer.id}
 							links={officer.socialLinks}
 							editable={editable}
+							compact
 							onEditRequest={() => setIsEditing(true)}
-							isEditing={isEditing}
 							onCancelEdit={() => setIsEditing(false)}
 							onFinishEdit={() => setIsEditing(false)}
 						/>
 					</div>
-				</div>
+				)}
 			</div>
 		</div>
 	);

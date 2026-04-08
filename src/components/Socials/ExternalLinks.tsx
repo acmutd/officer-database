@@ -13,6 +13,7 @@ type Props = {
 	links: SocialLinks;
 	editable?: boolean;
 	isEditing?: boolean;
+	compact?: boolean;
 	onEditRequest?: () => void;
 	onCancelEdit?: () => void;
 	onFinishEdit?: () => void;
@@ -23,6 +24,7 @@ export function ExternalLinks({
 	links,
 	editable = false,
 	isEditing = false,
+	compact = false,
 	onEditRequest,
 	onCancelEdit,
 	onFinishEdit,
@@ -60,7 +62,7 @@ export function ExternalLinks({
 	}
 
 	return (
-			<div className="flex flex-col gap-4 items-start">
+			<div className={compact ? "flex flex-col gap-2 items-start" : "flex flex-col gap-4 items-start"}>
 				{hasLinks ? (
 					<>
 						{links.linkedin && <LinkedInLink url={links.linkedin} />}
@@ -78,7 +80,11 @@ export function ExternalLinks({
 						type="button"
 						variant="outline"
 						size="sm"
-						className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+						className={
+							compact
+								? "mt-1 border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+								: "border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+						}
 						onClick={onEditRequest}
 					>
 						Edit Profile

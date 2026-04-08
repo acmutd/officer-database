@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import UpdateAcademics from "./UpdateAcademics";
 import { getOfficerByIdQuery, getOfficerQuery } from "@/queries/officer";
 import type { Officer } from "@/schemas/officer";
+import { CalendarDays, GraduationCap } from "lucide-react";
 
 type Props = {
 	officerId?: string;
@@ -15,7 +16,8 @@ function AcademicContent({ officer }: { officer: Officer }) {
 	return (
 		<div className="space-y-4">
 			<div className="space-y-1">
-				<div className="text-[11px] font-semibold uppercase tracking-wider text-white/45">
+				<div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/45">
+					<GraduationCap className="h-3 w-3" />
 					Year Standing
 				</div>
 				<div className="text-sm text-white">
@@ -24,16 +26,8 @@ function AcademicContent({ officer }: { officer: Officer }) {
 			</div>
 
 			<div className="space-y-1">
-				<div className="text-[11px] font-semibold uppercase tracking-wider text-white/45">
-					Credit Standing
-				</div>
-				<div className="text-sm text-white">
-					{officer.creditStanding}
-				</div>
-			</div>
-
-			<div className="space-y-1">
-				<div className="text-[11px] font-semibold uppercase tracking-wider text-white/45">
+				<div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/45">
+					<CalendarDays className="h-3 w-3" />
 					Expected Graduation
 				</div>
 				<div className="text-sm text-white">
@@ -70,7 +64,7 @@ export function AcademicInfo({
 				<span className="text-xs font-semibold uppercase text-white/60">
 					Academic Information
 				</span>
-				<div className="pl-4">{content}</div>
+				<div className="pl-6">{content}</div>
 			</div>
 		);
 	}

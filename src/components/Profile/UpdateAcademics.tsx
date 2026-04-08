@@ -21,9 +21,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useEffect } from "react";
+import { CalendarDays, GraduationCap } from "lucide-react";
 
 const UpdateAcademicsSchema = z.object({
-	creditStanding: StandingSchema,
 	yearStanding: StandingSchema,
 	expectedGrad: TermSchema,
 });
@@ -35,7 +35,6 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 	const startYear = 2020; // matches TermSchema minimum
 	const years = Array.from({ length: currentYear + 6 - startYear + 1 }, (_, i) => startYear + i);
 	const initialValues = {
-		creditStanding: officer.creditStanding,
 		yearStanding: officer.yearStanding,
 		expectedGrad: officer.expectedGrad,
 	};
@@ -57,7 +56,6 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 	useEffect(() => {
 		reset(initialValues);
 	}, [
-		officer.creditStanding,
 		officer.yearStanding,
 		officer.expectedGrad.term,
 		officer.expectedGrad.year,
@@ -69,6 +67,7 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 			await updateAcademicInfo({
 				officerId: officer.id,
 				netId: officer.netId,
+				creditStanding: officer.creditStanding,
 				...data,
 			});
 			reset(data);
@@ -80,115 +79,95 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 			<FieldGroup>
-				<Field>
-					<FieldContent>
-						<FieldLabel htmlFor="yearStanding" className="text-white/70">
-							Standing (by year)
-						</FieldLabel>
-						<Controller
-							name="yearStanding"
-							control={control}
-							render={({ field }) => (
-								<Select value={field.value} onValueChange={field.onChange}>
-									<SelectTrigger className="border-white/10 bg-white/5 text-white">
-										<SelectValue placeholder="Select year standing" />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectItem value="Freshman">Freshman</SelectItem>
-										<SelectItem value="Sophomore">Sophomore</SelectItem>
-										<SelectItem value="Junior">Junior</SelectItem>
-										<SelectItem value="Senior">Senior</SelectItem>
-										<SelectItem value="Graduate">Graduate</SelectItem>
-										<SelectItem value="Alumni">Alumni</SelectItem>
-									</SelectContent>
-								</Select>
-							)}
-						/>
-						<FieldError errors={[errors.yearStanding]} />
-					</FieldContent>
-				</Field>
+				<div className="space-y-4">
+					<Field>
+						<FieldContent>
+							<FieldLabel htmlFor="yearStanding" className="text-white/70">
+								<span className="inline-flex items-center gap-1.5">
+									<GraduationCap className="h-3.5 w-3.5" />
+									Standing (by year)
+								</span>
+							</FieldLabel>
+							<Controller
+								name="yearStanding"
+								control={control}
+								render={({ field }) => (
+									<Select value={field.value} onValueChange={field.onChange}>
+										<SelectTrigger className="border-white/10 bg-white/5 text-white">
+											<SelectValue placeholder="Select year standing" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="Freshman">Freshman</SelectItem>
+											<SelectItem value="Sophomore">Sophomore</SelectItem>
+											<SelectItem value="Junior">Junior</SelectItem>
+											<SelectItem value="Senior">Senior</SelectItem>
+											<SelectItem value="Graduate">Graduate</SelectItem>
+											<SelectItem value="Alumni">Alumni</SelectItem>
+										</SelectContent>
+									</Select>
+								)}
+							/>
+							<FieldError errors={[errors.yearStanding]} />
+						</FieldContent>
+					</Field>
 
-				<Field>
-					<FieldContent>
-						<FieldLabel htmlFor="creditStanding" className="text-white/70">
-							Standing (by credit)
-						</FieldLabel>
-						<Controller
-							name="creditStanding"
-							control={control}
-							render={({ field }) => (
-								<Select value={field.value} onValueChange={field.onChange}>
-									<SelectTrigger className="border-white/10 bg-white/5 text-white">
-										<SelectValue placeholder="Select credit standing" />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectItem value="Freshman">Freshman</SelectItem>
-										<SelectItem value="Sophomore">Sophomore</SelectItem>
-										<SelectItem value="Junior">Junior</SelectItem>
-										<SelectItem value="Senior">Senior</SelectItem>
-										<SelectItem value="Graduate">Graduate</SelectItem>
-										<SelectItem value="Alumni">Alumni</SelectItem>
-									</SelectContent>
-								</Select>
-							)}
-						/>
-						<FieldError errors={[errors.creditStanding]} />
-					</FieldContent>
-				</Field>
-
-				<Field>
-					<FieldContent>
-						<FieldLabel className="text-white/70">
-							Expected Graduation
-						</FieldLabel>
-						<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-							<div>
-								<Controller
-									name="expectedGrad.term"
-									control={control}
-									render={({ field }) => (
-										<Select value={field.value} onValueChange={field.onChange}>
-											<SelectTrigger className="border-white/10 bg-white/5 text-white">
-												<SelectValue placeholder="Select term" />
-											</SelectTrigger>
-											<SelectContent>
-												<SelectItem value="Fall">Fall</SelectItem>
-												<SelectItem value="Spring">Spring</SelectItem>
-												<SelectItem value="Summer">Summer</SelectItem>
-											</SelectContent>
-										</Select>
-									)}
-								/>
+					<Field>
+						<FieldContent>
+							<FieldLabel className="text-white/70">
+								<span className="inline-flex items-center gap-1.5">
+									<CalendarDays className="h-3.5 w-3.5" />
+									Expected Graduation
+								</span>
+							</FieldLabel>
+							<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+								<div>
+									<Controller
+										name="expectedGrad.term"
+										control={control}
+										render={({ field }) => (
+											<Select value={field.value} onValueChange={field.onChange}>
+												<SelectTrigger className="border-white/10 bg-white/5 text-white">
+													<SelectValue placeholder="Select term" />
+												</SelectTrigger>
+												<SelectContent>
+													<SelectItem value="Fall">Fall</SelectItem>
+													<SelectItem value="Spring">Spring</SelectItem>
+													<SelectItem value="Summer">Summer</SelectItem>
+												</SelectContent>
+											</Select>
+										)}
+									/>
+								</div>
+								<div>
+									<Controller
+										name="expectedGrad.year"
+										control={control}
+										render={({ field }) => (
+											<Select
+												value={field.value.toString()}
+												onValueChange={(value) => field.onChange(parseInt(value))}
+											>
+												<SelectTrigger className="border-white/10 bg-white/5 text-white">
+													<SelectValue placeholder="Select year" />
+												</SelectTrigger>
+												<SelectContent>
+													{years.map((year) => (
+														<SelectItem key={year} value={year.toString()}>
+															{year}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+										)}
+									/>
+								</div>
 							</div>
-							<div>
-								<Controller
-									name="expectedGrad.year"
-									control={control}
-									render={({ field }) => (
-										<Select
-											value={field.value.toString()}
-											onValueChange={(value) => field.onChange(parseInt(value))}
-										>
-											<SelectTrigger className="border-white/10 bg-white/5 text-white">
-												<SelectValue placeholder="Select year" />
-											</SelectTrigger>
-											<SelectContent>
-												{years.map((year) => (
-													<SelectItem key={year} value={year.toString()}>
-														{year}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-									)}
-								/>
-							</div>
-						</div>
-						<FieldError
-							errors={[errors.expectedGrad?.term, errors.expectedGrad?.year]}
-						/>
-					</FieldContent>
-				</Field>
+							<FieldError
+								errors={[errors.expectedGrad?.term, errors.expectedGrad?.year]}
+							/>
+						</FieldContent>
+					</Field>
+				</div>
 			</FieldGroup>
 
 			<div className="flex justify-end">
