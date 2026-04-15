@@ -64,7 +64,7 @@ export function AcademicInfo({
 				<span className="text-xs font-semibold uppercase text-white/60">
 					Academic Information
 				</span>
-				<div className="pl-6">{content}</div>
+				{content}
 			</div>
 		);
 	}

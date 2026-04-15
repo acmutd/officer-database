@@ -83,7 +83,7 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 					<Field>
 						<FieldContent>
 							<FieldLabel htmlFor="yearStanding" className="text-white/70">
-								<span className="inline-flex items-center gap-1.5">
+								<span className="inline-flex items-center gap-1.5 mt-2">
 									<GraduationCap className="h-3.5 w-3.5" />
 									Standing (by year)
 								</span>
