@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { RoleList } from "./RoleList";
 import { ExternalLinks } from "../Socials/ExternalLinks";
 import { ImageUpdate } from "./ImageUpdate";
@@ -20,6 +20,7 @@ import { Button } from "../ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarDays, EllipsisVertical, GraduationCap, Loader2 } from "lucide-react";
+import type { UpdateAcademicsHandle } from "./UpdateAcademics";
 
 type Props = {
 	officerId?: string;
@@ -32,6 +33,7 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 		officerId ? getOfficerByIdQuery(officerId, archived) : getOfficerQuery
 	);
 	const [isEditing, setIsEditing] = useState(false);
+	const academicFormRef = useRef<UpdateAcademicsHandle>(null);
 
 	const { data: viewer } = useQuery(getOfficerQuery);
 	const isViewerExecutive = viewer ? isExecutive(viewer) : false;
@@ -182,6 +184,8 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 							archived={archived}
 							editable={editable}
 							variant="inline"
+							hideSubmitButton
+							academicFormRef={academicFormRef}
 						/>
 
 						<Separator className="bg-white/10" />
@@ -198,6 +202,7 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 								isEditing
 								onCancelEdit={() => setIsEditing(false)}
 								onFinishEdit={() => setIsEditing(false)}
+								onBeforeSave={() => academicFormRef.current?.submit()}
 							/>
 						</div>
 					</div>

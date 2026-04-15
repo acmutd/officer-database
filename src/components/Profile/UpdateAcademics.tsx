@@ -20,7 +20,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { CalendarDays, GraduationCap } from "lucide-react";
 
 const UpdateAcademicsSchema = z.object({
@@ -30,7 +30,19 @@ const UpdateAcademicsSchema = z.object({
 
 type UpdateAcademicsFormData = z.infer<typeof UpdateAcademicsSchema>;
 
-export default function UpdateAcademics({ officer }: { officer: Officer }) {
+export type UpdateAcademicsHandle = {
+	submit: () => Promise<void>;
+};
+
+type Props = {
+	officer: Officer;
+	showSubmitButton?: boolean;
+};
+
+const UpdateAcademics = forwardRef<UpdateAcademicsHandle, Props>(function UpdateAcademics(
+	{ officer, showSubmitButton = true },
+	ref
+) {
 	const currentYear = new Date().getFullYear();
 	const startYear = 2020; // matches TermSchema minimum
 	const years = Array.from({ length: currentYear + 6 - startYear + 1 }, (_, i) => startYear + i);
@@ -74,8 +86,15 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 			toast.success("Academic info updated successfully");
 		} catch (error) {
 			toast.error("Failed to update academic info");
+			throw error;
 		}
 	};
+
+	useImperativeHandle(ref, () => ({
+		submit: async () => {
+			await handleSubmit(onSubmit)();
+		},
+	}));
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 			<FieldGroup>
@@ -170,15 +189,19 @@ export default function UpdateAcademics({ officer }: { officer: Officer }) {
 				</div>
 			</FieldGroup>
 
-			<div className="flex justify-end">
-				<Button
-					type="submit"
-					disabled={isPending || !isDirty}
-					className="bg-acm-gradient"
-				>
-					{isPending ? "Saving..." : "Save Changes"}
-				</Button>
-			</div>
+			{showSubmitButton && (
+				<div className="flex justify-end">
+					<Button
+						type="submit"
+						disabled={isPending || !isDirty}
+						className="bg-acm-gradient"
+					>
+						{isPending ? "Saving..." : "Save Changes"}
+					</Button>
+				</div>
+			)}
 		</form>
 	);
-}
+});
+
+export default UpdateAcademics;

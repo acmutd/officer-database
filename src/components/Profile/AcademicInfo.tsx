@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
-import UpdateAcademics from "./UpdateAcademics";
+import UpdateAcademics, { type UpdateAcademicsHandle } from "./UpdateAcademics";
 import { getOfficerByIdQuery, getOfficerQuery } from "@/queries/officer";
 import type { Officer } from "@/schemas/officer";
 import { CalendarDays, GraduationCap } from "lucide-react";
@@ -10,6 +10,8 @@ type Props = {
 	archived?: boolean;
 	editable?: boolean;
 	variant?: "card" | "inline";
+	hideSubmitButton?: boolean;
+	academicFormRef?: React.Ref<UpdateAcademicsHandle>;
 };
 
 function AcademicContent({ officer }: { officer: Officer }) {
@@ -43,6 +45,8 @@ export function AcademicInfo({
 	archived = false,
 	editable = false,
 	variant = "card",
+	hideSubmitButton = false,
+	academicFormRef,
 }: Props) {
 	const { data: officer } = useQuery(
 		officerId ? getOfficerByIdQuery(officerId, archived) : getOfficerQuery
@@ -53,7 +57,11 @@ export function AcademicInfo({
 	}
 
 	const content = editable ? (
-		<UpdateAcademics officer={officer} />
+		<UpdateAcademics
+			officer={officer}
+			showSubmitButton={!hideSubmitButton}
+			ref={academicFormRef}
+		/>
 	) : (
 		<AcademicContent officer={officer} />
 	);

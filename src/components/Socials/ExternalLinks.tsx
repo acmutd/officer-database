@@ -17,6 +17,7 @@ type Props = {
 	onEditRequest?: () => void;
 	onCancelEdit?: () => void;
 	onFinishEdit?: () => void;
+	onBeforeSave?: () => Promise<void> | void;
 };
 
 export function ExternalLinks({
@@ -28,6 +29,7 @@ export function ExternalLinks({
 	onEditRequest,
 	onCancelEdit,
 	onFinishEdit,
+	onBeforeSave,
 }: Props) {
 	const hasLinks = useMemo(
 		() => Boolean(links.linkedin || links.github || links.instagram || links.personalEmail),
@@ -57,6 +59,7 @@ export function ExternalLinks({
 				links={links}
 				onCancel={onCancelEdit}
 				onSuccess={onFinishEdit}
+				onBeforeSave={onBeforeSave}
 			/>
 		);
 	}
