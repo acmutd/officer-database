@@ -170,7 +170,7 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 						</h1>
 					)}
 
-					<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70 -mt-3">
+					<div className="flex flex-wrap justify-center gap-2 text-sm text-white/70 mt-1">
 						<RoleList roles={officer.roles} showAll />
 					</div>
 				</div>

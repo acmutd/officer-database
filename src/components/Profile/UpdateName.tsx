@@ -69,11 +69,11 @@ export function UpdateName({ officerId, firstName, lastName, editable = false }:
 	return (
 		<form
 			onSubmit={handleSubmit(onSubmit)}
-			className="mx-auto flex w-full flex-col gap-6"
+			className="mx-auto flex w-full flex-col gap-6 text-left"
 		>
 			<div className="grid gap-4 md:grid-cols-2">
 				<div className="space-y-2">
-					<label className="text-sm font-medium text-white/70">
+					<label className="block text-sm font-medium text-white/70">
 						First Name
 					</label>
 					<Input
@@ -86,7 +86,7 @@ export function UpdateName({ officerId, firstName, lastName, editable = false }:
 					)}
 				</div>
 				<div className="space-y-2">
-					<label className="text-sm font-medium text-white/70">Last Name</label>
+					<label className="block text-sm font-medium text-white/70">Last Name</label>
 					<Input
 						{...register("lastName")}
 						placeholder="Last Name"
@@ -97,15 +97,15 @@ export function UpdateName({ officerId, firstName, lastName, editable = false }:
 					)}
 				</div>
 			</div>
-		<Button
-			type="submit"
-			disabled={isPending || !isDirty}
-			className="sr-only"
-			aria-hidden="true"
-			tabIndex={-1}
-		>
-			{isPending ? "Saving..." : "Save Changes"}
-		</Button>
+			<Button
+				type="submit"
+				disabled={isPending || !isDirty}
+				className="sr-only"
+				aria-hidden="true"
+				tabIndex={-1}
+			>
+				{isPending ? "Saving..." : "Save Changes"}
+			</Button>
 		</form>
 	);
 }
