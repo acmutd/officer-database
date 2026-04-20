@@ -19,7 +19,14 @@ import { isExecutive } from "@/lib/admin";
 import { Button } from "../ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarDays, EllipsisVertical, GraduationCap, Loader2 } from "lucide-react";
+import {
+	ArchiveRestore,
+	CalendarDays,
+	CheckCircle2,
+	EllipsisVertical,
+	GraduationCap,
+	Loader2,
+} from "lucide-react";
 import type { UpdateAcademicsHandle } from "./UpdateAcademics";
 
 type Props = {
@@ -77,7 +84,7 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 										<Button
 											variant="ghost"
 											size="sm"
-											className="justify-start rounded-lg text-xs"
+											className="h-auto w-full justify-start rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-left text-xs text-white hover:bg-white/10 hover:text-white"
 											disabled={isUpdatingStatus}
 											onClick={() =>
 												updateStatus({
@@ -90,13 +97,18 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 											{isUpdatingStatus && (
 												<Loader2 className="mr-2 h-3 w-3 animate-spin" />
 											)}
-											{officer.isActive ? "Deactivate" : "Activate"}
+											{!isUpdatingStatus && (
+												<CheckCircle2 className="mr-2 h-3.5 w-3.5" />
+											)}
+										<div className="flex flex-col items-start gap-0.5">
+											<span>{officer.isActive ? "Deactivate" : "Activate"}</span>
+										</div>
 										</Button>
 
 										<Button
 											variant="ghost"
 											size="sm"
-											className="justify-start rounded-lg text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+											className="h-auto w-full justify-start rounded-xl border border-destructive/20 bg-destructive/5 px-3 py-3 text-left text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
 											disabled={isArchiving || isUnarchiving}
 											onClick={() =>
 											officer.isArchived
@@ -107,7 +119,12 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 											{(isArchiving || isUnarchiving) && (
 												<Loader2 className="mr-2 h-3 w-3 animate-spin" />
 											)}
-											{officer.isArchived ? "Unarchive" : "Archive"}
+											{!(isArchiving || isUnarchiving) && (
+												<ArchiveRestore className="mr-2 h-3.5 w-3.5" />
+											)}
+											<div className="flex flex-col items-start gap-0.5">
+												<span>{officer.isArchived ? "Unarchive" : "Archive"}</span>
+											</div>
 										</Button>
 									</div>
 								</PopoverContent>
