@@ -1,8 +1,72 @@
 import { auth } from "@/lib/firebase";
 import { OfficerSchema, type Officer } from "@/schemas/officer";
-import { fetchWithAuth } from "./fetch";
+import { fetchWithAuth, fetchWithAuthForUser } from "./fetch";
 import type { Endpoint } from "./fetch";
 import { isExecutive } from "@/lib/admin";
+
+type OfficerNameParts = {
+	firstName: string;
+	lastName: string;
+};
+
+type CreateOfficerRequestBody = {
+	id: string;
+	firstName: string;
+	lastName: string;
+	netId: string;
+	socialLinks: {
+		linkedin?: string;
+		github?: string;
+		instagram?: string;
+		personalEmail?: string;
+	};
+	creditStanding: Officer["creditStanding"];
+	yearStanding: Officer["yearStanding"];
+	expectedGrad: Officer["expectedGrad"];
+	internships: Officer["internships"];
+	research: Officer["research"];
+	joinDate: Officer["joinDate"];
+	roles: Officer["roles"];
+	accessLevel: Officer["accessLevel"];
+	displayOnWebsite: boolean;
+	isActive: Officer["isActive"];
+	isArchived: Officer["isArchived"];
+	photo: Officer["photo"];
+};
+
+function splitDisplayName(name: string): OfficerNameParts {
+	const normalized = name.trim();
+	if (!normalized) {
+		return {
+			firstName: "Unknown",
+			lastName: "Unknown",
+		};
+	}
+
+	const [firstName = "Unknown", ...rest] = normalized.split(/\s+/);
+
+	return {
+		firstName,
+		lastName: rest.join(" ") || firstName,
+	};
+}
+
+function getOfficerNameParts(user: {
+	displayName: string | null;
+	email: string | null;
+	uid: string;
+}): OfficerNameParts {
+	if (user.displayName?.trim()) {
+		return splitDisplayName(user.displayName);
+	}
+
+	if (user.email?.trim()) {
+		const localPart = user.email.split("@")[0] ?? user.uid;
+		return splitDisplayName(localPart.replace(/[._-]+/g, " "));
+	}
+
+	return splitDisplayName(user.uid);
+}
 
 export async function getCurrentOfficer(): Promise<Officer | null> {
 	const idToken = await auth.currentUser?.getIdToken();
@@ -25,7 +89,7 @@ async function createOfficer(): Promise<Officer> {
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify(createDefaultOfficer(id, name)),
+		body: JSON.stringify(createDefaultOfficer(id, splitDisplayName(name))),
 	});
 	const data = await officer.json();
 	return OfficerSchema.parse(data);
@@ -45,6 +109,34 @@ export async function getOrCreateOfficer(): Promise<Officer> {
 
 	if (!officer) {
 		return createOfficer();
+	}
+
+	return officer;
+}
+
+export async function getOrCreateOfficerForUser(user: {
+	uid: string;
+	displayName: string | null;
+	email: string | null;
+	getIdToken: () => Promise<string>;
+}): Promise<Officer> {
+	let officer = await getOfficerByIdForUser(user, user.uid);
+
+	if (!officer) {
+		officer = await getOfficerByIdForUser(user, user.uid, true);
+	}
+
+	if (!officer) {
+		const officerResponse = await fetchWithAuthForUser(user, `/createOfficer`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(createDefaultOfficer(user.uid, getOfficerNameParts(user))),
+		});
+
+		const data = await officerResponse.json();
+		return OfficerSchema.parse(data);
 	}
 
 	return officer;
@@ -74,6 +166,37 @@ export async function getOfficerById(
 		console.error(res.statusText);
 		return null;
 	}
+	const data = await res.json();
+	return OfficerSchema.parse(data);
+}
+
+async function getOfficerByIdForUser(
+	user: {
+		uid: string;
+		getIdToken: () => Promise<string>;
+	},
+	officerId: string,
+	archived = false
+): Promise<Officer | null> {
+	const endpoint = archived
+		? (`/getOfficer?id=${officerId}&archived=true` as const)
+		: (`/getOfficer?id=${officerId}` as const);
+
+	const res = await fetchWithAuthForUser(user, endpoint, {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+
+	if (!res.ok) {
+		if (res.status === 404 && !archived) {
+			return getOfficerByIdForUser(user, officerId, true);
+		}
+		console.error(res.statusText);
+		return null;
+	}
+
 	const data = await res.json();
 	return OfficerSchema.parse(data);
 }
@@ -203,15 +326,19 @@ export async function unarchiveOfficer(officerId: string): Promise<Officer> {
 	return OfficerSchema.parse(data);
 }
 
-const createDefaultOfficer = (officerId: string, name: string): Officer => {
+const createDefaultOfficer = (
+	officerId: string,
+	nameParts: OfficerNameParts
+): CreateOfficerRequestBody => {
 	return {
 		id: officerId,
-		firstName: name.split(" ")[0],
-		lastName: name.split(" ")[1],
+		firstName: nameParts.firstName,
+		lastName: nameParts.lastName,
 		netId: "xxx123456",
 		socialLinks: {
 			linkedin: undefined,
 			github: undefined,
+			instagram: undefined,
 			personalEmail: undefined,
 		},
 		creditStanding: "Freshman",
@@ -228,6 +355,7 @@ const createDefaultOfficer = (officerId: string, name: string): Officer => {
 		},
 		roles: [],
 		accessLevel: 1,
+		displayOnWebsite: false,
 		isActive: true,
 		isArchived: false,
 		photo: {},
