@@ -9,7 +9,7 @@ import {
 import { flushSync } from "react-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { auth, googleProvider } from "./firebase";
-import { getOrCreateOfficer } from "@/functions/officer";
+import { getOrCreateOfficerForUser } from "@/functions/officer";
 import { getOfficerQuery } from "@/queries/officer";
 
 export type AuthContextType = {
@@ -40,6 +40,10 @@ export function AuthContextProvider({
 			});
 
 			if (user) {
+				void getOrCreateOfficerForUser(user).then((officer) => {
+					queryClient.setQueryData(getOfficerQuery.queryKey, officer);
+				});
+
 				queryClient.prefetchQuery(getOfficerQuery);
 			} else {
 				queryClient.removeQueries(getOfficerQuery);
@@ -59,7 +63,7 @@ export function AuthContextProvider({
 	const login = React.useCallback(async () => {
 		const result = await signInWithPopup(auth, googleProvider);
 
-		const officer = await getOrCreateOfficer();
+		const officer = await getOrCreateOfficerForUser(result.user);
 
 		flushSync(() => {
 			setUser(result.user);

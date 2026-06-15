@@ -1,5 +1,10 @@
 import { auth } from "@/lib/firebase";
 
+type AuthenticatedUser = {
+	uid: string;
+	getIdToken: () => Promise<string>;
+};
+
 const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
 const inflightGetRequests = new Map<string, Promise<Response>>();
 
@@ -61,6 +66,53 @@ export async function fetchWithAuth(endpoint: Endpoint, options: RequestInit) {
 			...options.headers,
 			Authorization: `Bearer ${idToken}`,
 			"X-User-Id": userId,
+		},
+	});
+}
+
+export async function fetchWithAuthForUser(
+	user: AuthenticatedUser,
+	endpoint: Endpoint,
+	options: RequestInit
+) {
+	const idToken = await user.getIdToken();
+	const method = options.method?.toUpperCase() ?? "GET";
+	const requestUrl = `${API_URL}${endpoint}`;
+
+	if (method === "GET") {
+		const requestKey = `${user.uid}:${requestUrl}`;
+		const existingRequest = inflightGetRequests.get(requestKey);
+
+		if (existingRequest) {
+			const existingResponse = await existingRequest;
+			return existingResponse.clone();
+		}
+
+		const requestPromise = fetch(requestUrl, {
+			...options,
+			headers: {
+				...options.headers,
+				Authorization: `Bearer ${idToken}`,
+				"X-User-Id": user.uid,
+			},
+		});
+
+		inflightGetRequests.set(requestKey, requestPromise);
+
+		try {
+			const response = await requestPromise;
+			return response.clone();
+		} finally {
+			inflightGetRequests.delete(requestKey);
+		}
+	}
+
+	return fetch(requestUrl, {
+		...options,
+		headers: {
+			...options.headers,
+			Authorization: `Bearer ${idToken}`,
+			"X-User-Id": user.uid,
 		},
 	});
 }
