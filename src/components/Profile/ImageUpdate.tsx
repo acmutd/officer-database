@@ -1,14 +1,16 @@
-import { Pencil, Loader2 } from "lucide-react";
+import { Pencil, Loader2, Camera as CameraIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { useMutation } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { updateOfficerImageMutation } from "@/queries/officer";
 import { toast } from "sonner";
 import type { Photo } from "@/schemas/officer";
 import { getOfficerImageUrl } from "@/lib/image";
 import { CropModal, type ImageAdjustments } from "./cropModal";
 import type { Area } from "react-easy-crop";
+import { Camera as CameraComponent } from "./Camera";
 
 type Props = {
 	photo: Photo;
@@ -69,6 +71,22 @@ export function ImageUpdate({
 		},
 	});
 	const fileInputRef = React.useRef<HTMLInputElement>(null);
+	const [showCamera, setShowCamera] = React.useState(false);
+	const [isMobile, setIsMobile] = useState(false);
+
+	// Detects if A user is on mobile to determine whether to show the webcam preview (desktop) or open IOS/Android camera directly (mobile).
+	useEffect(() => {
+		const ua = navigator.userAgent || navigator.vendor || '';
+		if (/android/i.test(ua) || /iPad|iPhone|iPod/.test(ua)) {
+			setIsMobile(true);
+		}
+	}, []);
+
+	const cleanupImageSource = React.useCallback((src: string | null) => {
+		if (src?.startsWith("blob:")) {
+			URL.revokeObjectURL(src);
+		}
+	}, []);
 
 	const handleImageClick = () => {
 		fileInputRef.current?.click();
@@ -196,7 +214,7 @@ export function ImageUpdate({
 			updateUserImage({ officerId, file });
 
 			setShowCropper(false);
-			URL.revokeObjectURL(imageSrc);
+			cleanupImageSource(imageSrc);
 			setImageSrc(null);
 
 		} catch {
@@ -204,31 +222,39 @@ export function ImageUpdate({
 		}
 		};
 
+	const handleCapture = (imageSrc: string) => {
+		setImageSrc(imageSrc);
+		setCrop({ x: 0, y: 0 });
+		setZoom(1);
+		setRotation(0);
+		setAdjustments(defaultAdjustments);
+		setShowCropper(true);
+		setShowCamera(false);
+	};
+
 	return (
 		<>
-				<CropModal
-					open={showCropper}
-					imageSrc={imageSrc}
-					crop={crop}
-					zoom={zoom}
-					rotation={rotation}
-					adjustments={adjustments}
-					onCropChange={setCrop}
-					onZoomChange={setZoom}
-					onRotationChange={setRotation}
-					onAdjustmentChange={handleAdjustmentChange}
-					onResetAdjustments={resetAdjustments}
-					onCropComplete={setArea}
-					onClose={() => {
-						if (imageSrc) URL.revokeObjectURL(imageSrc);
-						setShowCropper(false);
-						setImageSrc(null);
-					}}
-					onSave={handleSaveCrop}
-					isSaving={isPending}
-					/>
-
-
+			<CropModal
+				open={showCropper}
+				imageSrc={imageSrc}
+				crop={crop}
+				zoom={zoom}
+				rotation={rotation}
+				adjustments={adjustments}
+				onCropChange={setCrop}
+				onZoomChange={setZoom}
+				onRotationChange={setRotation}
+				onAdjustmentChange={handleAdjustmentChange}
+				onResetAdjustments={resetAdjustments}
+				onCropComplete={setArea}
+				onClose={() => {
+					cleanupImageSource(imageSrc);
+					setShowCropper(false);
+					setImageSrc(null);
+				}}
+				onSave={handleSaveCrop}
+				isSaving={isPending}
+			/>
 			<div className="group relative flex flex-col items-center">
 				<Avatar className="h-36 w-36 shadow-2xl">
 					{photo.url && (
@@ -249,6 +275,7 @@ export function ImageUpdate({
 					onChange={handleImageChange}
 					accept="image/*"
 					className="hidden"
+					{...(isMobile ? { capture: "environment" } : {})}
 				/>
 				{editable && (
 					<Button
@@ -266,6 +293,14 @@ export function ImageUpdate({
 					</Button>
 				)}
 			</div>
+			<Dialog open={showCamera} onOpenChange={setShowCamera}>
+				<DialogContent className="max-w-md border-white/10 bg-gradient-to-br from-white/5 to-white/10 text-white shadow-2xl backdrop-blur-xl sm:rounded-3xl">
+					<DialogHeader className="items-center text-center">
+						<DialogTitle>Take a Photo</DialogTitle>
+					</DialogHeader>
+					<CameraComponent onCapture={handleCapture} onClose={() => setShowCamera(false)} />
+				</DialogContent>
+			</Dialog>
 		</>
 	);
 }
