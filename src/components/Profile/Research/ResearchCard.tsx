@@ -3,13 +3,7 @@ import type { Research } from "@/schemas/officer";
 import { Calendar, FlaskConical, Users } from "lucide-react";
 import { DeleteResearchModal } from "./DeleteResearchModal";
 import { EditResearchModal } from "./EditResearchModal";
-
-const formatDate = (value: string) =>
-	new Date(value).toLocaleDateString("en-US", {
-		month: "long",
-		day: "numeric",
-		year: "numeric",
-	});
+import { formatDateOnly as formatDate } from "@/lib/utils";
 
 type Props = {
 	officerId?: string;
