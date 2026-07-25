@@ -1,4 +1,4 @@
-import { Pencil, Loader2, Camera as CameraIcon } from "lucide-react";
+import { Pencil, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
