@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import type { SocialLinks } from "@/schemas/officer";
 import { Button } from "@/components/ui/button";
@@ -12,29 +12,29 @@ type Props = {
 	officerId?: string;
 	links: SocialLinks;
 	editable?: boolean;
+	isEditing?: boolean;
+	compact?: boolean;
+	onEditRequest?: () => void;
+	onCancelEdit?: () => void;
+	onFinishEdit?: () => void;
+	onBeforeSave?: () => Promise<void> | void;
 };
 
-export function ExternalLinks({ officerId, links, editable = false }: Props) {
+export function ExternalLinks({
+	officerId,
+	links,
+	editable = false,
+	isEditing = false,
+	compact = false,
+	onEditRequest,
+	onCancelEdit,
+	onFinishEdit,
+	onBeforeSave,
+}: Props) {
 	const hasLinks = useMemo(
 		() => Boolean(links.linkedin || links.github || links.instagram || links.personalEmail),
 		[links.github, links.instagram, links.linkedin, links.personalEmail]
 	);
-
-	const [isEditing, setIsEditing] = useState(false);
-
-	useEffect(() => {
-		if (!editable) {
-			setIsEditing(false);
-		}
-	}, [editable]);
-
-	const handleCancel = () => {
-		setIsEditing(false);
-	};
-
-	const handleSuccess = () => {
-		setIsEditing(false);
-	};
 
 	if (!editable) {
 		return (
@@ -52,9 +52,20 @@ export function ExternalLinks({ officerId, links, editable = false }: Props) {
 		);
 	}
 
+	if (isEditing) {
+		return (
+			<EditSocials
+				officerId={officerId}
+				links={links}
+				onCancel={onCancelEdit}
+				onSuccess={onFinishEdit}
+				onBeforeSave={onBeforeSave}
+			/>
+		);
+	}
+
 	return (
-		<div className="space-y-4">
-			<div className="flex flex-col gap-2 items-start">
+			<div className={compact ? "flex flex-col gap-2 items-start" : "flex flex-col gap-4 items-start"}>
 				{hasLinks ? (
 					<>
 						{links.linkedin && <LinkedInLink url={links.linkedin} />}
@@ -67,28 +78,21 @@ export function ExternalLinks({ officerId, links, editable = false }: Props) {
 						No social links yet. Add one below.
 					</span>
 				)}
-
-				{editable && !isEditing && (
+				{editable && onEditRequest && (
 					<Button
 						type="button"
 						variant="outline"
 						size="sm"
-						className="border-white/20 bg-white/10 text-sm text-white hover:bg-white/15 hover:text-white/40 place-self-center w-full"
-						onClick={() => setIsEditing(true)}
+						className={
+							compact
+								? "mt-1 border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+								: "border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+						}
+						onClick={onEditRequest}
 					>
-						{hasLinks ? "Edit Links" : "Add Links"}
+						Edit Profile
 					</Button>
 				)}
 			</div>
-
-			{editable && isEditing && (
-				<EditSocials
-					officerId={officerId}
-					links={links}
-					onCancel={handleCancel}
-					onSuccess={handleSuccess}
-				/>
-			)}
-		</div>
 	);
 }

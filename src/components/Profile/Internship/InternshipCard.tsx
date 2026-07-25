@@ -3,13 +3,7 @@ import type { Internships } from "@/schemas/officer";
 import { DeleteInternshipModal } from "./DeleteInternshipModal";
 import { EditInternshipModal } from "./EditInternshipModal";
 import { Briefcase, Calendar } from "lucide-react";
-
-const formatDate = (value: string) =>
-	new Date(value).toLocaleDateString("en-US", {
-		month: "long",
-		day: "numeric",
-		year: "numeric",
-	});
+import { formatDateOnly as formatDate } from "@/lib/utils";
 
 type Props = {
 	officerId?: string;

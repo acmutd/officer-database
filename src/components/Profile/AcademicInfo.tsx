@@ -1,21 +1,80 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
-import UpdateAcademics from "./UpdateAcademics";
+import UpdateAcademics, { type UpdateAcademicsHandle } from "./UpdateAcademics";
 import { getOfficerByIdQuery, getOfficerQuery } from "@/queries/officer";
+import type { Officer } from "@/schemas/officer";
+import { CalendarDays, GraduationCap } from "lucide-react";
 
 type Props = {
 	officerId?: string;
 	archived?: boolean;
 	editable?: boolean;
+	variant?: "card" | "inline";
+	hideSubmitButton?: boolean;
+	academicFormRef?: React.Ref<UpdateAcademicsHandle>;
 };
 
-export function AcademicInfo({ officerId, archived = false, editable = false }: Props) {
+function AcademicContent({ officer }: { officer: Officer }) {
+	return (
+		<div className="space-y-4">
+			<div className="space-y-1">
+				<div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/45">
+					<GraduationCap className="h-3 w-3" />
+					Year Standing
+				</div>
+				<div className="text-sm text-white">
+					{officer.yearStanding}
+				</div>
+			</div>
+
+			<div className="space-y-1">
+				<div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/45">
+					<CalendarDays className="h-3 w-3" />
+					Expected Graduation
+				</div>
+				<div className="text-sm text-white">
+					{officer.expectedGrad.term} {officer.expectedGrad.year}
+				</div>
+			</div>
+		</div>
+	);
+}
+
+export function AcademicInfo({
+	officerId,
+	archived = false,
+	editable = false,
+	variant = "card",
+	hideSubmitButton = false,
+	academicFormRef,
+}: Props) {
 	const { data: officer } = useQuery(
 		officerId ? getOfficerByIdQuery(officerId, archived) : getOfficerQuery
 	);
 
 	if (!officer) {
 		return null;
+	}
+
+	const content = editable ? (
+		<UpdateAcademics
+			officer={officer}
+			showSubmitButton={!hideSubmitButton}
+			ref={academicFormRef}
+		/>
+	) : (
+		<AcademicContent officer={officer} />
+	);
+
+	if (variant === "inline") {
+		return (
+			<div className="space-y-4">
+				<span className="text-xs font-semibold uppercase text-white/60">
+					Academic Information
+				</span>
+				{content}
+			</div>
+		);
 	}
 
 	return (
@@ -25,50 +84,7 @@ export function AcademicInfo({ officerId, archived = false, editable = false }: 
 					Academic Information
 				</CardTitle>
 			</CardHeader>
-			<CardContent className="p-6">
-				{editable ? (
-					<UpdateAcademics officer={officer} />
-				) : (
-					<div className="space-y-4">
-						<div className="group rounded-lg border border-white/10 bg-white/5 p-4 transition-colors hover:bg-white/10">
-							<div className="text-sm font-medium tracking-wider text-white/50 uppercase">
-								Net ID
-							</div>
-							<div className="mt-2 text-lg font-medium text-white">
-								{officer.netId}
-							</div>
-						</div>
-
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-							<div className="group rounded-lg border border-white/10 bg-white/5 p-4 transition-colors hover:bg-white/10">
-								<div className="text-sm font-medium tracking-wider text-white/50 uppercase">
-									Year Standing
-								</div>
-								<div className="mt-2 text-lg font-medium text-white">
-									{officer.yearStanding}
-								</div>
-							</div>
-							<div className="group rounded-lg border border-white/10 bg-white/5 p-4 transition-colors hover:bg-white/10">
-								<div className="text-sm font-medium tracking-wider text-white/50 uppercase">
-									Credit Standing
-								</div>
-								<div className="mt-2 text-lg font-medium text-white">
-									{officer.creditStanding}
-								</div>
-							</div>
-						</div>
-
-						<div className="group rounded-lg border border-white/10 bg-white/5 p-4 transition-colors hover:bg-white/10">
-							<div className="text-sm font-medium tracking-wider text-white/50 uppercase">
-								Expected Graduation
-							</div>
-							<div className="mt-2 text-lg font-medium text-white">
-								{officer.expectedGrad.term} {officer.expectedGrad.year}
-							</div>
-						</div>
-					</div>
-				)}
-			</CardContent>
+			<CardContent className="p-6">{content}</CardContent>
 		</Card>
 	);
 }

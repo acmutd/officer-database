@@ -1,4 +1,4 @@
-import { Pencil, Loader2, Camera as CameraIcon } from "lucide-react";
+import { Pencil, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
@@ -17,11 +17,18 @@ type Props = {
 	officerId: string;
 	firstName: string;
 	lastName: string;
+	editable?: boolean;
 };
 
 
 
-export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
+export function ImageUpdate({
+	photo,
+	officerId,
+	firstName,
+	lastName,
+	editable = false,
+}: Props) {
 	const avatarOutputSize = 720;
 
 	const defaultAdjustments: ImageAdjustments = {
@@ -270,11 +277,11 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 					className="hidden"
 					{...(isMobile ? { capture: "environment" } : {})}
 				/>
-				<div className="absolute -right-1 top-0 flex space-x-1">
+				{editable && (
 					<Button
 						size="icon"
 						variant="secondary"
-						className="absolute -right-1 top-27 cursor-pointer rounded-full shadow-xl transition-shadow duration-300 hover:shadow-purple-500/20"
+						className="absolute -right-1 bottom-0 cursor-pointer rounded-full shadow-xl transition-shadow duration-300 hover:shadow-purple-500/20"
 						onClick={handleImageClick}
 						disabled={isPending}
 					>
@@ -284,22 +291,7 @@ export function ImageUpdate({ photo, officerId, firstName, lastName }: Props) {
 							<Pencil className="h-4 w-4" />
 						)}
 					</Button>
-					<Button
-						size="icon"
-						variant="secondary"
-						className="cursor-pointer rounded-full shadow-xl transition-shadow duration-300 hover:shadow-purple-500/20"
-						onClick={() => {
-		if (isMobile) {
-			handleImageClick();
-		} else {
-			setShowCamera(true);
-		}
-	}}
-						disabled={isPending}
-					>
-						<CameraIcon className="h-4 w-4" />
-					</Button>
-				</div>
+				)}
 			</div>
 			<Dialog open={showCamera} onOpenChange={setShowCamera}>
 				<DialogContent className="max-w-md border-white/10 bg-gradient-to-br from-white/5 to-white/10 text-white shadow-2xl backdrop-blur-xl sm:rounded-3xl">

@@ -1,5 +1,4 @@
 import { ACMErrorComponent } from "@/components/ErrorComponent";
-import { AcademicInfo } from "@/components/Profile/AcademicInfo";
 import { InternshipList } from "@/components/Profile/Internship/InternshipList";
 import { ProfileView } from "@/components/Profile/ProfileView";
 import { ResearchList } from "@/components/Profile/Research/ResearchList";
@@ -38,7 +37,6 @@ function RouteComponent() {
 				<ProfileView editable />
 			</div>
 			<div className="flex w-full flex-col gap-8 md:w-3/4">
-				<AcademicInfo editable />
 				<InternshipList editable />
 				<ResearchList editable />
 				<ResumeSection />

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -19,10 +19,10 @@ type Props = {
 	officerId?: string;
 	firstName: string;
 	lastName: string;
+	editable?: boolean;
 };
 
-export function UpdateName({ officerId, firstName, lastName }: Props) {
-	const [isEditing, setIsEditing] = useState(false);
+export function UpdateName({ officerId, firstName, lastName, editable = false }: Props) {
 	const initialValues = {
 		firstName,
 		lastName,
@@ -51,34 +51,17 @@ export function UpdateName({ officerId, firstName, lastName }: Props) {
 			await updateName({ officerId, ...data });
 			reset(data);
 			toast.success("Name updated successfully");
-			setIsEditing(false);
 		} catch (error) {
 			toast.error("Failed to update name");
 		}
 	};
 
-	const handleCancel = () => {
-		reset(initialValues);
-		setIsEditing(false);
-	};
-
-	if (!isEditing) {
+	if (!editable) {
 		return (
 			<div className="flex flex-col items-stretch gap-2 text-center">
 				<h1 className="text-2xl font-bold text-white">
 					{firstName} {lastName}
 				</h1>
-				<Button
-					onClick={() => {
-						reset(initialValues);
-						setIsEditing(true);
-					}}
-					variant="outline"
-					size="sm"
-					className="border-white/20 bg-white/10 text-sm text-white hover:bg-white/20 hover:text-white/20"
-				>
-					Edit
-				</Button>
 			</div>
 		);
 	}
@@ -86,11 +69,11 @@ export function UpdateName({ officerId, firstName, lastName }: Props) {
 	return (
 		<form
 			onSubmit={handleSubmit(onSubmit)}
-			className="mx-auto flex w-full flex-col gap-6"
+			className="mx-auto flex w-full flex-col gap-6 text-left"
 		>
 			<div className="grid gap-4 md:grid-cols-2">
 				<div className="space-y-2">
-					<label className="text-sm font-medium text-white/70">
+					<label className="block text-sm font-medium text-white/70">
 						First Name
 					</label>
 					<Input
@@ -103,7 +86,7 @@ export function UpdateName({ officerId, firstName, lastName }: Props) {
 					)}
 				</div>
 				<div className="space-y-2">
-					<label className="text-sm font-medium text-white/70">Last Name</label>
+					<label className="block text-sm font-medium text-white/70">Last Name</label>
 					<Input
 						{...register("lastName")}
 						placeholder="Last Name"
@@ -114,23 +97,15 @@ export function UpdateName({ officerId, firstName, lastName }: Props) {
 					)}
 				</div>
 			</div>
-			<div className="flex gap-3">
-				<Button
-					type="button"
-					onClick={handleCancel}
-					variant="outline"
-					className="border-white/20 bg-white/10 px-6 text-white hover:bg-white/20"
-				>
-					Cancel
-				</Button>
-				<Button
-					type="submit"
-					disabled={isPending || !isDirty}
-					className="bg-acm-gradient px-6"
-				>
-					{isPending ? "Saving..." : "Save Changes"}
-				</Button>
-			</div>
+			<Button
+				type="submit"
+				disabled={isPending || !isDirty}
+				className="sr-only"
+				aria-hidden="true"
+				tabIndex={-1}
+			>
+				{isPending ? "Saving..." : "Save Changes"}
+			</Button>
 		</form>
 	);
 }
