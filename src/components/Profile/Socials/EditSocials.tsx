@@ -23,6 +23,7 @@ type EditSocialsProps = {
 	links: SocialLinks;
 	onCancel?: () => void;
 	onSuccess?: () => void;
+	onBeforeSave?: () => Promise<void> | void;
 };
 
 const emailValidator = z.email();
@@ -74,7 +75,13 @@ const inputClassName =
 
 type SocialLinksFormValues = z.infer<typeof SocialLinksFormSchema>;
 
-export function EditSocials({ officerId, links, onCancel, onSuccess }: EditSocialsProps) {
+export function EditSocials({
+	officerId,
+	links,
+	onCancel,
+	onSuccess,
+	onBeforeSave,
+}: EditSocialsProps) {
 	const {
 		register,
 		handleSubmit,
@@ -104,6 +111,10 @@ export function EditSocials({ officerId, links, onCancel, onSuccess }: EditSocia
 	}, [links.github, links.instagram, links.linkedin, links.personalEmail, reset]);
 
 	const onSubmit = async (values: SocialLinksFormValues) => {
+		if (onBeforeSave) {
+			await onBeforeSave();
+		}
+
 		const updated: SocialLinks = { ...links };
 
 		const applyField = (

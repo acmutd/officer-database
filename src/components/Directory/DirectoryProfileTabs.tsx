@@ -1,4 +1,3 @@
-import { AcademicInfo } from "../Profile/AcademicInfo";
 import { InternshipList } from "../Profile/Internship/InternshipList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ResearchList } from "../Profile/Research/ResearchList";
@@ -48,7 +47,6 @@ export function DirectoryProfileTabs({ officerId, archived = false, editable = f
 				</TabsTrigger>
 			</TabsList>
 			<TabsContent value="background" className="mt-6 flex flex-col gap-y-6">
-				<AcademicInfo officerId={officerId} archived={archived} editable={editable} />
 				<InternshipList officerId={officerId} archived={archived} editable={editable} />
 				<ResearchList officerId={officerId} archived={archived} editable={editable} />
 				{editable && <ResumeSection officerId={officerId} archived={archived} />}
