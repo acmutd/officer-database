@@ -24,6 +24,7 @@ type EditSocialsProps = {
 	onCancel?: () => void;
 	onSuccess?: () => void;
 	onBeforeSave?: () => Promise<void> | void;
+	extraDirty?: boolean;
 };
 
 const emailValidator = z.email();
@@ -81,6 +82,7 @@ export function EditSocials({
 	onCancel,
 	onSuccess,
 	onBeforeSave,
+	extraDirty = false,
 }: EditSocialsProps) {
 	const {
 		register,
@@ -113,6 +115,11 @@ export function EditSocials({
 	const onSubmit = async (values: SocialLinksFormValues) => {
 		if (onBeforeSave) {
 			await onBeforeSave();
+		}
+
+		if (!isDirty) {
+			onSuccess?.();
+			return;
 		}
 
 		const updated: SocialLinks = { ...links };
@@ -283,7 +290,7 @@ export function EditSocials({
 				<Button
 					type="submit"
 					className="h-9 bg-acm-gradient px-4 text-white transition"
-					disabled={isPending || !isDirty}
+					disabled={isPending || (!isDirty && !extraDirty)}
 				>
 					{isPending ? (
 						<>

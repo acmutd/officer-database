@@ -12,6 +12,7 @@ type Props = {
 	variant?: "card" | "inline";
 	hideSubmitButton?: boolean;
 	academicFormRef?: React.Ref<UpdateAcademicsHandle>;
+	onDirtyChange?: (dirty: boolean) => void;
 };
 
 function AcademicContent({ officer }: { officer: Officer }) {
@@ -47,6 +48,7 @@ export function AcademicInfo({
 	variant = "card",
 	hideSubmitButton = false,
 	academicFormRef,
+	onDirtyChange,
 }: Props) {
 	const { data: officer } = useQuery(
 		officerId ? getOfficerByIdQuery(officerId, archived) : getOfficerQuery
@@ -61,6 +63,7 @@ export function AcademicInfo({
 			officer={officer}
 			showSubmitButton={!hideSubmitButton}
 			ref={academicFormRef}
+			onDirtyChange={onDirtyChange}
 		/>
 	) : (
 		<AcademicContent officer={officer} />
