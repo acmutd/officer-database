@@ -373,7 +373,7 @@ export function RoleCard({ role, officerId, index }: RoleCardProps) {
 										/>
 									</div>
 									<FieldError
-										errors={[errors.endDate?.term, errors.endDate?.year]}
+										errors={[errors.endDate, errors.endDate?.term, errors.endDate?.year]}
 									/>
 								</div>
 							)
