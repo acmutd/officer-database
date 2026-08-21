@@ -37,10 +37,11 @@ export type UpdateAcademicsHandle = {
 type Props = {
 	officer: Officer;
 	showSubmitButton?: boolean;
+	onDirtyChange?: (dirty: boolean) => void;
 };
 
 const UpdateAcademics = forwardRef<UpdateAcademicsHandle, Props>(function UpdateAcademics(
-	{ officer, showSubmitButton = true },
+	{ officer, showSubmitButton = true, onDirtyChange },
 	ref
 ) {
 	const currentYear = new Date().getFullYear();
@@ -73,6 +74,10 @@ const UpdateAcademics = forwardRef<UpdateAcademicsHandle, Props>(function Update
 		officer.expectedGrad.year,
 		reset,
 	]);
+
+	useEffect(() => {
+		onDirtyChange?.(isDirty);
+	}, [isDirty, onDirtyChange]);
 
 	const onSubmit = async (data: UpdateAcademicsFormData) => {
 		try {

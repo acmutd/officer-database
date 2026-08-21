@@ -40,6 +40,7 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 		officerId ? getOfficerByIdQuery(officerId, archived) : getOfficerQuery
 	);
 	const [isEditing, setIsEditing] = useState(false);
+	const [isAcademicDirty, setIsAcademicDirty] = useState(false);
 	const academicFormRef = useRef<UpdateAcademicsHandle>(null);
 
 	const { data: viewer } = useQuery(getOfficerQuery);
@@ -203,6 +204,7 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 							variant="inline"
 							hideSubmitButton
 							academicFormRef={academicFormRef}
+							onDirtyChange={setIsAcademicDirty}
 						/>
 
 						<Separator className="bg-white/10" />
@@ -217,9 +219,18 @@ export function ProfileView({ officerId, archived = false, editable = false }: P
 								editable={editable}
 								onEditRequest={() => setIsEditing(true)}
 								isEditing
-								onCancelEdit={() => setIsEditing(false)}
-								onFinishEdit={() => setIsEditing(false)}
-								onBeforeSave={() => academicFormRef.current?.submit()}
+								onCancelEdit={() => {
+									setIsEditing(false);
+									setIsAcademicDirty(false);
+								}}
+								onFinishEdit={() => {
+									setIsEditing(false);
+									setIsAcademicDirty(false);
+								}}
+								onBeforeSave={() =>
+									isAcademicDirty ? academicFormRef.current?.submit() : undefined
+								}
+								extraDirty={isAcademicDirty}
 							/>
 						</div>
 					</div>
