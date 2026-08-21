@@ -77,12 +77,31 @@ export const ResearchSchema = ResearchBaseSchema.superRefine((value, ctx) => {
 	}
 });
 
+const TERM_ORDER = ["Spring", "Summer", "Fall"] as const;
+
+function compareTerm(a: z.infer<typeof TermSchema>, b: z.infer<typeof TermSchema>) {
+	if (a.year !== b.year) return a.year - b.year;
+	return TERM_ORDER.indexOf(a.term) - TERM_ORDER.indexOf(b.term);
+}
+
 export const RoleSchema = z.object({
 	title: z.string().min(1),
 	division: z.string().min(1),
 	level: z.number().int().min(1).max(3),
 	startDate: TermSchema,
 	endDate: TermSchema.nullable(),
+}).superRefine((value, ctx) => {
+	if (!value.endDate) {
+		return;
+	}
+
+	if (compareTerm(value.endDate, value.startDate) < 0) {
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			path: ["endDate"],
+			message: "End date cannot be before start date",
+		});
+	}
 });
 
 export const PhotoSchema = z
